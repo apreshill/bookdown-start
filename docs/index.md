@@ -1,7 +1,7 @@
 --- 
-title: "A Minimal Bookdown Book"
-author: "Sean Kross"
-date: "2016-12-09"
+title: "Probability & Statistics"
+author: "Alison Presmanes Hill, Katina Papadakis, and M. Jackson Marr"
+date: "2018-08-24"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib]
