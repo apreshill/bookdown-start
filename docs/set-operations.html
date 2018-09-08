@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Probability &amp; Statistics</title>
+  <meta name="description" content="Everything you need (and nothing more) to start a bookdown book.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Probability &amp; Statistics" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="http://seankross.com/bookdown-start/" />
+  
+  <meta property="og:description" content="Everything you need (and nothing more) to start a bookdown book." />
+  <meta name="github-repo" content="seankross/bookdown-start" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Probability &amp; Statistics" />
+  
+  <meta name="twitter:description" content="Everything you need (and nothing more) to start a bookdown book." />
+  
+
+<meta name="author" content="Alison Presmanes Hill, Katina Papadakis, and M. Jackson Marr">
+
+
+<meta name="date" content="2018-08-24">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="subsets.html">
+<link rel="next" href="some-theorems-involving-sets.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Bookdown Book</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-the-algebra-of-sets.html"><a href="introduction-to-the-algebra-of-sets.html"><i class="fa fa-check"></i><b>1</b> Introduction to the Algebra of Sets</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-the-algebra-of-sets.html"><a href="introduction-to-the-algebra-of-sets.html#sets"><i class="fa fa-check"></i><b>1.1</b> Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="subsets.html"><a href="subsets.html"><i class="fa fa-check"></i><b>2</b> Subsets</a><ul>
+<li class="chapter" data-level="2.1" data-path="subsets.html"><a href="subsets.html#venn-diagrams"><i class="fa fa-check"></i><b>2.1</b> Venn Diagrams</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="set-operations.html"><a href="set-operations.html"><i class="fa fa-check"></i><b>3</b> Set Operations</a><ul>
+<li class="chapter" data-level="3.1" data-path="set-operations.html"><a href="set-operations.html#union"><i class="fa fa-check"></i><b>3.1</b> 1. Union</a></li>
+<li class="chapter" data-level="3.2" data-path="set-operations.html"><a href="set-operations.html#intersection"><i class="fa fa-check"></i><b>3.2</b> 2. Intersection</a></li>
+<li class="chapter" data-level="3.3" data-path="set-operations.html"><a href="set-operations.html#difference"><i class="fa fa-check"></i><b>3.3</b> 3. Difference</a></li>
+<li class="chapter" data-level="3.4" data-path="set-operations.html"><a href="set-operations.html#complement"><i class="fa fa-check"></i><b>3.4</b> 4. Complement</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="some-theorems-involving-sets.html"><a href="some-theorems-involving-sets.html"><i class="fa fa-check"></i><b>4</b> Some Theorems Involving Sets</a></li>
+<li class="chapter" data-level="5" data-path="diving-in.html"><a href="diving-in.html"><i class="fa fa-check"></i><b>5</b> Diving In</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Probability &amp; Statistics</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="set-operations" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Set Operations</h1>
+<div id="union" class="section level2">
+<h2><span class="header-section-number">3.1</span> 1. Union</h2>
+<p>The union of sets A and B, denoted <span class="math inline">\(A \cup B\)</span>, consists of all elements belonging to A <strong>or</strong> B [or both A and B].</p>
+<p><span class="math inline">\(\hspace{1.5 in} x \in A\cup V \Rightarrow x\in A\)</span> <strong>or</strong> <span class="math inline">\(x \in B\)</span> <strong>or</strong> <span class="math inline">\(x\in\)</span> both A and B.</p>
+
+
+<p><span class="math inline">\(\hspace{1.25 in} A \cup B\)</span> <span class="math inline">\(\hspace{2.75 in}A \cup B\)</span> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+</div>
+<div id="intersection" class="section level2">
+<h2><span class="header-section-number">3.2</span> 2. Intersection</h2>
+<p>The set of all elements belonging to <strong>both</strong> A <strong>and</strong> B, denoted by <span class="math inline">\(A \cap B\)</span> (or sometimes AB).</p>
+
+<p><span class="math inline">\(\hspace{.25 in} x \in A \cap B \Rightarrow x \in A\)</span> <strong>and</strong> <span class="math inline">\(x \in B\)</span><br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+
+<p><span class="math inline">\(\hspace{.25in} A \cup B = \o\)</span> [Sets are mutually exclusive]</p>
+<p><span class="math inline">\(\hspace{.25 in}\)</span> If <span class="math inline">\(x \in A\)</span>, <span class="math inline">\(x \notin B\)</span> and vice versa.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+
+</div>
+<div id="difference" class="section level2">
+<h2><span class="header-section-number">3.3</span> 3. Difference</h2>
+<p>The set of elements in A that <strong>do not</strong> belong to B is called the difference of A and B and denoted A – B (sometimes A/B).</p>
+
+<p><span class="math inline">\(\hspace{.25in} x \in A - B \Rightarrow\)</span> <span class="math inline">\(\hspace{.25in} x \in A\)</span> and <span class="math inline">\(x \notin B\)</span><br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+</div>
+<div id="complement" class="section level2">
+<h2><span class="header-section-number">3.4</span> 4. Complement</h2>
+<p>If <span class="math inline">\(B \subset A\)</span>, then A – B is calld the complement of B relative to A, denoted</p>
+<p><span class="math inline">\({B}&#39;_{A}\left [ \textup{or } \bar{B} _{A} \textup{ or } - B_{A} \right ]\)</span></p>
+<p>If A=U, U-B is called simply the complement of B denoted</p>
+<p><span class="math inline">\({B}&#39;\left [ \textup{or } \bar{B} \textup{ or } \sim B\right ]\)</span></p>
+
+<p><span class="math inline">\(\vspace{1 in}\)</span></p>
+<p><span class="math inline">\(\pagebreak\)</span></p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="subsets.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="some-theorems-involving-sets.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,444 @@
+---
+title: "Notes 6:  Mathematical Expectation and the Properties of Distributions"
+header-includes:
+    \usepackage{scrextend,tikz}
+    \usetikzlibrary{shapes,snakes}
+    \subtitle{MATH 530-630}
+output: pdf_document
+---
+The concept of expectation arose in the context of games of chance. A basic question is: What should you pay to play the game? This should depend on **expected** winnings. Here's the basic idea:  
+
+
+$\hspace*{10 mm}$ "If a person stands to win an amount _a_ with probability _p_ (and nothing with probability 1 -- _p_),  
+$\hspace*{10 mm}$ her mathematical expectations is $a \cdot p$."   
+
+&nbsp;
+
+_Example:_ 
+
+\begin{addmargin}[20mm]{0mm}
+1000 raffle tickets are sold for a cash prize of \$500. The probability of a win for each ticket is p = 1/1000 and the mathematical expectations is a $\cdot$ p = \$500 $\cdot$ (1/1000) = \$0.50.   
+
+Another way to look at it is a ticket holder can expect to lose 99.9\% of the time and win \$500 0.1\% of the time and thus win an average of \$0.0/50. Thus, \$0.50 is a fair price for a ticket (not including overhead to run the raffle, of course).
+\end{addmargin}
+
+Let's change the game slightly by adding some other possibilities.
+
+1 ticket &nbsp; &nbsp; pays $500 &nbsp;&nbsp;&nbsp;&nbsp; P(500) = 1/1000  
+2 tickets &nbsp; &nbsp; pay $250 &nbsp;&nbsp;&nbsp;&nbsp; P(250) = 2/1000  
+3 tickets &nbsp; &nbsp; pay $125 &nbsp;&nbsp;&nbsp;&nbsp; P(125) = 3/1000  
+99 tickets &nbsp; &nbsp; pay $0  
+
+Thus, the expected winnings are  
+$$(0.994) \cdot  \$0 + (0.003) \cdot  \$125 + (0.002) \cdot  \$250 + (0.001) \cdot  \$500 \approx \$1.38 $$ 
+
+If the probability of winning amounts $a_{1}, a_{2}, ... a_{k}$ with probability $p(a_{1}), p(a_{2}), ... p(a_{k})$, then the mathematical expectation is     
+$$E = a_{1} p(a_{1}) + a_{2} p(a_{2}) + ... a_{k} p(a_{k})$$  
+
+So for a discrete random variable, X  
+$$Z(X) = \sum_{k}^{ }  x_{k} p(x_{k})$$  
+
+This is a **weighted average** of possible values of X, each weighted by the probability that X assumes that value.  
+
+_Example_ $\hspace{5mm}$ Find E(X) when X: outcomes when we toss a die.  
+$$E(X) = 1(1/6) + 2(1/6) + 2(1/6) + 4(1/6) + 5(1/6) + 6(1/6)= 7/2 = 3.5$$  
+
+_Example_ $\hspace{5mm}$ E(X), X: # in 4 tosses of a coin.  
+$$E(X) = 0(1/16) + 1(4/16) + 2(6/16) + 3(4/16) + 4(1/16) = 2$$  
+
+Note here then n = 4, p = 1/2. In general, for the Binomial Distribution, E(X) = np. (I'll show this shortly).  
+
+
+E(X) corresponds to what is called the **arithmetic mean**, $\mu$. This is but one measure of **central tendency** of a distribution.  
+
+_Example:_ $\hspace{5mm}$ The mean of a set of test grades:  
+
+$$E(G) = \frac{g_{1}}{n} + \frac{g_{2}}{n} + ... + \frac{g_{n}}{n} = \frac{\sum\limits_{i=1}^{n} g_{i}}{n}$$  
+
+This takes the probability of any particular grade to be 1/n, i.e. equally probable.  
+
+Distributions can be characterized by measures of expression called **moments** of the distribution. The two most important moments for our purposes are the **arithmetic mean** and the **variance**.   
+
+E(X) is called the **first moment** of a distribution and corresponds to the physical concept of **center of gravity**. Think of a set of weights hanging from a rod.  
+
+&nbsp;  
+\begin{figure}[!htb]
+\centering
+\resizebox{.8 \linewidth}{!}{
+\tikzset{
+    triangle/.style={
+        draw,
+        regular polygon,
+        regular polygon sides=3,
+        fill=black,
+        node distance=0cm,
+        minimum height=.01em
+    }
+}
+\tikzset{
+    square/.style={
+        draw,
+        regular polygon,
+        regular polygon sides=4,
+        fill=white,
+        node distance=0cm,
+        minimum size=1em
+    }
+}
+\begin{tikzpicture}
+\draw (-4,2) -- (4,2) node[triangle,midway,below] (A) {} node[midway,below=.5cm] {c.g.};
+\draw (-3.8,2) -- (-3.8,-1) node[square,midway] {\scriptsize $W_1$};
+\draw (-2,2) -- (-2,-.7) node at (-2,.5) [square] {\scriptsize $W_2$};
+\draw (1.5,2) -- (1.5,-.3) node at (1.5,.5) [square] {\scriptsize $W_3$};
+\draw (3.8,2) -- (3.8,-.8) node at (3.8,.5) [square] {\scriptsize $W_4$};
+\draw [densely dotted] (0,2.4) -- (0,2) node [midway,right] {\scriptsize $X_{\text{cg}}$};
+\draw [densely dotted] (0,1) -- (0,-1);
+\draw [<->] (-3.8,-.9) -- (0,-.9) node [midway,fill=white,white,text=black,square] {$x_1$};
+\draw [<->] (-2,-.3) -- (0,-.3) node [midway,fill=white,white,text=black,square] {$x_2$};
+\draw [<->] (0,-.1) -- (1.5,-.1) node [midway,fill=white,white,text=black,square] {$x_3$};
+\draw [<->] (0,-.7) -- (3.8,-.7) node [midway,fill=white,white,text=black,square] {$x_4$};
+\end{tikzpicture}
+}
+\end{figure}
+&nbsp;  
+
+
+If $x_{cg}$ is the center of gravity you know from physics that the sum of torques around $x_{cg}$, $\sum \gamma = 0$, so $w_{1} x_{1} +w_{2} x_{2} = w_{3}x_{3} + w_{4}x_{4}$.  
+
+So far we have confined ourselves to discrete distributions. For a continuous distribution, i.e., a continuous random variable X having a density function f(x), the expectation of X is defined as  
+$$E(X) = \int_{-\infty }^{\infty } x f(x) dx = \mu$$  
+
+Recall our earlier example of a continuous distribution  
+$$F(x) = \left\{\begin{matrix}
+\frac{x^{2}}{9} & (0 <  x > 3)\\ 
+ 0 & \text{elsewhere}
+\end{matrix}\right.$$  
+
+$$E(X) = \mu = \int_{0}^{3} x  \left (  \frac{x^{2}}{9}\right )  
+dx =  \int_{0}^{3}  \frac{x^{3}}{9}
+dx = \frac{x^{4}}{36} = 9/4$$  
+
+##Algebra of Expectation  
+
+_Theorem 29._ $\hspace{5mm}$ If c is any constant, then
+
+$\hspace{30mm} E(cX) = cE(X)$  
+
+_Theorem 30._ $\hspace{5mm}$ If X and Y are any random variables, then 
+
+$\hspace{30mm} E(X + Y) = E(X) + E(Y)$  
+
+_Theorem 31._ $\hspace{5mm}$ If a is a constant, 
+
+$\hspace{30mm} E(X \pm  a) = E(X) \pm a$  
+
+_Theorem 32._ $\hspace{5mm}$ If X and Y are **independent** random variables, 
+
+$\hspace{30mm} E(X \cdot Y) = E(X) \cdot E(Y)$  
+
+&nbsp;  
+
+We can use Theorem 30 to show that E(X) for X: Binomial = $n \cdot p$.  
+E(X) for the binomial is the expected number of successes in _n_ trials. We could find this from the definition of the binomial, but it's messy (try it). [Hays does it this way.]  
+
+Instead, to find E(X) define _n_ new random variables $X_{1}$ as follows:  
+
+&nbsp;  
+
+$\text{For I } = 1,2,...,n \text{ let} X_I = \left\{\begin{matrix}
+1 & \text{if the ith trial is a success}\\ 
+ 0 & \text{otherwise}
+\end{matrix}\right.$
+
+&nbsp;
+
+The X$_I$s are called **indicator** random variables.
+
+For each trial the indicator "indicates" if the trial is a success or not. For example, we flip a coin 6 times with the following outcomes
+
+$\hspace{25mm}$ H H T T H H   (p = 1/2)
+
+Then X = 4, X$_1$ = 1, X$_2$ = 1, X$_3$ = 0, X$_4$ = 0, X$_5$ = 1, X$_6$ = 1.
+
+In general, the total number of successes is the sum of all the indicators for any binomial distribution
+
+$\hspace{25mm} X = \displaystyle\sum\limits_{i=1}^n X_i$
+
+By Theorem 30, 
+
+$\hspace{20mm} E(X) = E(X_{1}) + ... + E(X_{n})$  
+
+For any $X_{I}, \hspace{20mm} E(X_{1}) = 0 \cdot Prob (0) + 1 \cdot Prob (1)$  
+
+$\hspace*{49mm} = 0 \cdot q + 1 \cdot p = p$  
+
+so $E(X) = n \cdot p$  
+
+## Second Moment - Variance and Standard Deviation  
+
+How do we characterize the **spread** of a distribution? One crude measure is simply the **range** $X_{\text{max}} - X_{\text{min}}$. This takes into account only the extreme scores and lacks nice mathematical properties. What about the relation of **all** the values to the expected value, $E(X) = \mu$? Take, for example,  
+
+$\hspace*{20mm} \displaystyle\sum\limits_i (x_{i} - \mu)$, i.e. the sum of the deviation of each score from the mean. What is the expected value of $(X - \mu)$? We know from Theorem 31 that
+
+$\hspace*{20mm} E(X - \mu) = E(X) - \mu = 0$.  
+
+This is clearly not interesting.
+
+We need to have a positive value for a measure of dispersion that takes into account **all** the values. The most common and useful measure is the average of the squared deviations from the mean, called the **variance**.  
+
+If X is a **discrete** random variable, the variance, Var[X] is  
+
+$$\sigma _{x}^{2} = E(X - \mu)^{2} = \sum_{i=n}^{n} (x_{i} - \mu)^{2} \cdot P(x_{i}).$$
+
+If the probabilites, $p(x_{i})$ are all equal, then  
+
+$\sigma_{x}   = \displaystyle\frac{1}{n}\sum\limits_{i=1}^{n} (x_{i} - \mu)^{2}$.  
+
+If X is a **continuous** random variable, with the density function, f(x), then  
+$$\text{Var}[f(x)]=\sigma _{x}   = E[(X - \mu) ^{2}] = \int_{-\infty }^{\infty} (x - \mu)^{2} \cdot f(x) \cdot dx$$  
+
+Take the earlier example  
+$$F(x) = \left\{\begin{matrix}
+\frac{x^{2}}{9} & (0 <  x > 3)\\ 
+ 0 & \text{elsewhere}
+\end{matrix}\right.$$  
+
+$$\mu = \int_{0}^{3} x \left ( x^{2}/9 \right )dx =  \left.\begin{matrix}
+ \displaystyle\frac{x^{4}}{36} 
+\end{matrix}\right|_{0}^{3} = 9/4$$  
+
+$$\text{Var}[f(x)] = \sigma_{x}^{2} = \int_{0}^{3} \left(x - \frac{9}{4}\right)^{2} \cdot \frac{x^2}{9} \text{ }dx = \int_{0}^{3} \left [ \frac{x^{4}}{9} - \frac{x^{3}}{2} + \frac{9}{16} x^{2} \right ]dx = \left.\frac{x^{5}}{45}-\frac{x^{4}}{8} + \frac{3x^3}{16}\right|_{0}^{3} = 0.3375$$  
+
+$\sigma ^{x} = \sqrt{\sigma_x^2} = 0.5809$ is the **standard deviation** (the same units as the mean, $\mu$).  
+
+Such methods tend to be arduous. Here's a better way:  
+
+&nbsp;  
+ 
+
+**Theorem 33.** 
+
+Proof:  
+
+$\hspace*{20mm}E[(X-\mu)^2] = E(X^2) - [E(X)]^2$  
+$\hspace*{20mm}E[(X-\mu)^2] = E[X^2 - 2X_{\mu} + \mu^2]$  
+$\hspace*{20mm}=E(X^2) - E(2X_{\mu}) + E(\mu^2)$  
+$\hspace*{20mm}=E(X^2) - 2 \mu E(X) + \mu^2$  
+
+$\hspace*{20mm}$ But, $\mu^2 = [E(X)]^2$ so  
+
+$\hspace*{20mm} E[(X-\mu)^2] = E(X^2) - 2\mu^2 + \mu^2$  
+$\hspace*{20mm} =E(X^2) - 2[E(X)]^2 + [E(X)]^2$  
+$\hspace*{20mm} = E(X^2) - [E(X)]^2$  
+
+$\hspace*{40mm}$ **QED**  
+
+This theorem provides an efficient way for calculating variance from data.  
+
+\begin{align*}
+&\sigma_{x}^{2} = \frac{1}{n} \sum_{i=1}^{n} X_{i}^{2} - \begin{bmatrix} \frac{\sum (x_{i})}{n}\end{bmatrix}^2 \\
+&= \frac{1}{n} \sum x_{i}^{2} - \mu^2 \\
+&\sigma_{x}^{2} = \sqrt{\frac{1}{n} \sum xi^2 -\mu^2} \\
+&= \sqrt{\frac{1}{n} \left(\sum x_i^2\right) - \frac{[\sum (x_i)]^2}{n^2}} \\
+&= \frac{\sqrt{n \sum  x_i^2 - [\sum (x_i)]^2}}{n}
+\end{align*}
+
+For discrete distributions then  
+
+$$Var[X] = \sigma_x^2 = \sum_{i=1}^{n} x_{i}^{2} \cdot p(x_i) - \left[\sum x_i p(x_i)\right]^2 $$  
+
+_Example:_ 
+
+\begin{addmargin}[20mm]{0mm}
+Find the variance and standard deviation of the number of points that occur with a single toss of a die.  
+
+$E(X) = 1 \cdot(1/6) + 2 \cdot(1/6) + 3 \cdot(1/6) + 4 \cdot(1/6) + 5 \cdot(1/6) + 6 \cdot(1/6) = 7/2$  
+
+$Var[X] = \sigma_x^2 = E(X^2) - [E(X)]^2$  
+
+$= 1/6[1^2 + 2^2 + 3^2 + 4^2 + 5^2 + 6^2] - (7/2)^2$  
+
+$= (91/6) - (49/4) = 35/12$  
+
+$\sigma_x = \sqrt{(35/12)}$  
+
+\end{addmargin}
+&nbsp;  
+
+For continuous distributions  
+
+$Var[X] = \sigma_x^2 = \displaystyle\int_{- \infty}^{\infty} x^2 f(x) dx - \begin{bmatrix} \displaystyle\int_{- \infty}^{\infty} x f(x) dx \end{bmatrix}^2$ 
+
+$f(x) = \left\{\begin{matrix} \frac{x^2}{9} & (0 \leq x < 3)\\ 0 & \text{elsewhere} \end{matrix}\right.$  
+
+$Var[X] = \sigma_x^2 = \displaystyle\int_{0}^{3} x^2 \left(\frac{x^2}{9}\right) dx - \left[ \displaystyle\int_{0}^{3} x \left(\frac{x^2}{9}\right) dx \right]^2$  
+
+$= \left.\displaystyle\frac{x^5}{45} \right|_0^3 - \begin{bmatrix}\left.\displaystyle\frac{x^4}{36}\right|_0^3\end{bmatrix} ^2 = \displaystyle\frac{243}{45} - \begin{bmatrix} \displaystyle\frac{81}{36} \end{bmatrix}^2 =0.3375$  
+
+&nbsp;   
+
+Here's perhaps a less intuitive example  
+
+$f(x) = \left\{\begin{matrix} \frac{1}{4} & -2 \leq x < 2\\ 0 & \text{elsewhere} \end{matrix}\right.$  
+
+
+```{r, echo=FALSE, fig.height= 2, fig.width= 3}
+library(ggplot2)
+
+ggplot(data.frame(x = -2.5:2.5, y = 0:1.5)) + 
+  geom_rect(aes(x = x, y = y), xmin = -2, xmax = 2, ymin = 0, ymax = .75, colour="black", lwd=.25, fill=NA) +
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0, yintercept = 0) + 
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+        panel.background=element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + 
+  annotate("text", x= -0.5, y = 0.85, label= "f(x)", size = 3)
+```
+
+&nbsp;  
+
+This is called a **uniform** distribution.  
+In general a uniform distribution has the form  
+
+$f(x) = \left\{\begin{matrix} \frac{1}{b-a} & (a \leq x \leq b)\\ 0 & \text{elsewhere} \end{matrix}\right.$    
+
+&nbsp;  
+
+You might judge that the variance of such a distribution would just equal its range, but **no**.  
+For an example,  
+
+$E(X) = \displaystyle\int_{-2}^{2} x \cdot \frac{1}{4} \cdot dx = 0$  
+
+&nbsp;  
+
+as you would guess.  
+
+&nbsp;  
+
+But, 
+$Var(X) = E(X^2) - [E(X)]^2$  
+$= \displaystyle\int_{-2}^{2} x^2 \cdot \frac{1}{4} \cdot dx - 0 = \left.\displaystyle\frac{x^3}{12}\right|_{-2}^2 = \displaystyle\frac{4}{3}$  
+and $\sigma_x = \displaystyle\frac{2 \sqrt{3}}{3}$  
+
+&nbsp;  
+
+Theories on variance  
+
+_Theorem 34._ $\hspace*{5mm} \text{Var}[a] = 0 \hspace{5mm} a = \text{constant}$  
+
+_Theorem 35._ $\hspace*{5mm} \text{Var}[aX + b] = a^2X$  
+
+_Theorem 36._ $\hspace*{5mm} \text{Var}[-X] = Var[X]$  
+
+_Theorem 37._ $\hspace*{5mm} \text{Var}[X + 4] = V[X] + V[4]$  
+$\hspace*{25mm} \text{and Var }[X - 4] = V[X] + V[4]$  
+$\hspace*{25mm}$ **If** $X$ and $Y$ are **independent**.  
+
+_Theorem 38._ $\hspace*{5mm} \text{Var}[X] = E[(X-a)^2]$ is a **minimum** when $a = \mu = E(X)$  
+$\hspace*{25mm}$ **How would you show this?**  
+
+&nbsp;  
+
+Now we can find Var[Binomial Distribution] easily.  
+
+We show that for X: binomial distribution  
+
+$\text{Var}[X] = npq$  
+
+
+We use the indicators as before  
+
+$X_i = \begin{cases} 1 & \text{if there is a success on trial } i\\ 0 & \text{otherwise} \end{cases}$  
+
+$X =X_1 + X_2 + ... + X{n\cdot}$ These are **independent** so,  
+
+$\text{Var}[X] = \text{Var}[X_1] + \text{Var}[X_2] + ... + \text{Var}[X_n]$  
+
+But $\text{Var}[X_i] = E(X_i^2) - [EX_i]^2$  
+
+Each $X_i = 1 \text{ or } 0 \text{ so } E(X_i^2) = E(X_i) = p$  
+
+So $\text{Var}[X_i] = p - p^2 = p(1-p) = pq$  
+
+But there are $n$ of these, so  
+
+$\text{Var}[X] = npq$, \quad QED.  
+
+&nbsp;  
+
+###Standardized Scores  
+
+Let's start with a distribution that looks like this.  
+
+&nbsp;  
+
+
+```{r, echo=FALSE, fig.height= 2.5, fig.width= 3.5}
+library(ggplot2)
+norm <- qplot(-25:25,stat="function",geom="line",fun=dnorm,args=list(mean=0,sd=10)) +
+    scale_y_continuous(expand=c(0,0)) +
+    geom_vline(xintercept = 0) + 
+    geom_vline(xintercept = c(13, -13, 23, -23), yintercept= 0, linetype = "dashed") +
+    geom_hline(yintercept = 0) +
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+          panel.background=element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
+norm + annotate("text",x=0.7,y=.035,label="X:f(x)",family="serif",size=4) +
+    annotate("text",x=-5,y=0.002,label="~mu",parse=TRUE,family="serif",size=4) +
+    annotate("text",x=5,y=0.004,label="~x[i]",parse=TRUE,family="serif",size=4)
+```  
+
+Pick some value x$_i$ and find  
+
+$z = \displaystyle\frac {x_{i} - E(X_{i})}{\sigma} = \displaystyle\frac{x_{i} - \mu}{\sigma}$  
+
+This measures the _number of standard deviations_ $x_{1}$ _is from_ $\mu$. For example, if  
+
+$z = 1 = \displaystyle\frac{x_{i} - \mu}{\sigma} , x_{i} - \mu = \sigma$  
+
+or $x_{i} = \mu + \sigma$ (1.0 from the mean).  
+
+What is $E(z)$? What is $\text{Var}[z]$?  
+
+These questions are about the **distribution of standardized scores** derived from some distribution.  
+
+\begin{align*}
+&E(z) = E\left [ \frac{x - \mu}{\sigma} \right ] = \frac{1}{\sigma} [E(x) - E(\mu)] = 0\\
+&\text{Var}(z) = E(z^{2}) - [E(z)]^{2} = E(z^{2}) \\
+&= E\left [ \frac{(X - \mu) ^2} {\sigma^2} \right ] = \frac{1}{\sigma^2} E\left[(X-\mu)^2\right] = \frac{\sigma^2}{\sigma^2} = 1
+\end{align*}
+
+So the mean of a distribution of standardized scores is **always** 0 and the variance (and standard deviation) is **always** 1.  
+
+Why all this fuss about variance? Because it is related to what might be called "error." If we draw a random sample from a distribution of a random variable how representative is that sample of the parent distribution?  
+
+**This is the fundamental question we will be addressing for most of the rest of the course.**  
+The most general approach to this question is embodied in **Tchebychev's Inequality Theorem.**  
+
+&nbsp;
+
+_Theorem 39._ $\hspace*{5mm} P\left[\displaystyle\frac{\left | X - \mu \right |}{\sigma} \geq k\right ] \leq \displaystyle\frac{1}{k^2}$  
+
+We read this as, "the probability this random value will take on a value which differs from the mean by at least _k_  standard deviations is at most $\displaystyle\frac{1}{k^2}$."  
+
+For example, the probability of getting a value $x_{i}$ that differs from the mean of this distribution by at least 2 standard deviations is at most $\displaystyle\frac{1}{2^2} = 0.25$."  
+
+&nbsp;  
+
+**This is a very conservative estimate - and it doesn't matter what the distribution is!**
+
+Here's an example where we know what the distribution is: An insurance company judges that 30% of its customers will file a claim in a year. Should they expect something to be wrong if, say, 2292 of its 6200 policy holders file at least one claim in a year? The distributiono in this case is **Binomial** with p = 0.3, $\mu$ = np = $(6200)(0.3) = 1860$.  
+
+$\sigma = \sqrt{npq} = \sqrt{(6200)(0.3)(0.7)} = \sqrt{1302} \approx 36$  
+
+$z = \displaystyle\frac{12292 - 18601}{36} = 12$ s.d.'s  
+
+$P(z \geq 12) \leq \left [\displaystyle\frac{1}{12^2} = 0.007 \right]$ - Something's wrong!  
+
+Cramer subsequently showed that if the distribution is symmetrical and unimodal, then   
+
+$P(\left |  z \right |\geq k) \leq \displaystyle\frac{4}{9} \left (\displaystyle\frac{1}{k^2} \right)$.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

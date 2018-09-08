@@ -1,0 +1,685 @@
+---
+title: "Probability Handout 3: Conditional Probability"
+subtitle: "MATH 530-630"
+header-includes:
+    \usepackage{tikz,subcaption,scrextend,forest,nicefrac}
+    \usetikzlibrary{decorations.pathmorphing,decorations.markings,trees,positioning}
+    \subtitle{MATH 530-630}
+output: 
+  pdf_document: 
+    toc: yes
+    toc_depth: 3
+    keep_tex: true
+    highlight: kate
+---
+
+
+What is $P(E_{1} \cap E_{2})$? To address this question consider experiments with _two_ stages where
+
+(1) the second stage depends on the first.  
+
+$\hspace*{2mm}$ _or_  
+
+(2) the stages are independent.  
+
+&nbsp;  
+
+_Example_$\hspace*{5mm}$ P(King) = 4/52, but suppose you know it's a _picture card_ (n = 16).  
+$\hspace*{20mm}$ We say  
+$\hspace*{20mm}$ P(K | picture)  
+$\hspace*{20mm}$ "Probability of a king, given you know it's a picture card."  
+
+&nbsp;  
+
+Here's the situation in terms of sets.  
+
+\begin{figure}[!htb]
+\centering
+\resizebox{.4 \linewidth}{!}{
+\def\smallcircle{(0,-1.5) circle (1.5cm)}
+\def\midcircle{(0,-.5) circle (3cm)}
+\def\bigcircle{(0,0) circle (4.5cm)}
+\begin{tikzpicture}
+\draw [thick] \smallcircle;
+\draw [align=center] \smallcircle node {Kings \\ n = 4};
+\draw [thick] \midcircle;
+\draw [align=center] (0,1.2) node {Picture \\ n = 16};
+\draw [thick] \bigcircle;
+\draw [align=center] (0,3.5) node {Cards \\ n = 52};
+\end{tikzpicture}
+}
+\end{figure}
+
+$\hspace*{10mm}$ Cut the universe down to pictures, then find P(K) in that universe.
+
+$\hspace*{10mm}$ So, P(K | picture) = 4/16 = 1/4.
+
+$\hspace*{10mm}$ Another way to think of this is
+
+$\hspace*{10mm}$ P(K | picture) = $\displaystyle \frac{P(K \cap \text{picture})}{\text{P(picture)}} = \frac{4/52}{16/52}$
+
+$\hspace*{10mm}$ [Note that $(K \cap \text{picture}) = K$, and $P(K) = 4/52$]  
+
+_Example 2._$\hspace*{3mm}$ Find the probability that a toss of a die yields a number < 4 if 
+
+$\hspace*{20mm}$ (a) no other information is given.  
+$\hspace*{20mm} P(< 4) = P(1) + P(2) + P(3) = 3/6 = 1/3$  
+
+$\hspace*{20mm}$ (b) the toss is known to an odd number.  
+$\hspace*{20mm}$ # odd: {1, 3, 5} P(< 4 | odd) = 2/3  
+
+$\hspace*{20mm}$ that is $\displaystyle\frac{\#\text{ possibilites in the (< 4) world}}{\#\text{ possibilities in the "odd" world}} = \frac{2}{3}$  
+
+$\hspace*{20mm}$ or, $\displaystyle\frac{P(< 4 \cap \text{odd})}{P(\text{odd})} = \frac{2/6}{3/6} = \frac{2}{3} = P(< 4 | \text{odd})$
+
+In general, the *definition* of conditional probability is
+
+$\hspace*{20mm}$ P(B|A) = $\displaystyle\frac{P(B \cap A)}{P(A)} \qquad [P(A) \neq 0]$
+
+$\hspace*{20mm}$ or, P(B $\cap$ A) = P(A) * P(B|A)
+
+$\hspace*{20mm}$ i.e., the relative probability of (B $\cap$ A) and A. B must be in the sample space of A.
+
+_Example 3._ $\hspace*{3mm}$ Given you know a family has two children and at least one is a boy, what is the probability that they are **both** boys?
+
+$\hspace*{20mm}$ S = {(b,g),(b,b),(g,b),(g,g)}
+
+\begin{figure}[!htb]
+\centering
+\resizebox{.4 \linewidth}{!}{
+\begin{tikzpicture}
+\draw [thick] circle (4.5 cm);
+\draw [decorate, decoration={snake, segment length=31mm, amplitude=5mm}, line width=1mm] (-3.1820,3.1820) -- (4.4829,0.3922);
+\draw [thick] (-2.2,.5) circle (1.3cm) node {\Large (b,b)};
+\draw [line width=.5mm, ->] (-4.5,-2.5) -- (-2.9,.5);
+\draw (-4.7,-2.5) node {\Large B:};
+\draw (2,3) node {\Large (g,g)};
+\draw (-.8,-1.5) node {\Large (b,g)};
+\draw (.8,-2.6) node {\Large (g,b)};
+\draw [->, line width=.5mm] (5.5,-1.7) -- (2, -1.7);
+\draw [align = left] (8,-1.9) node {\Large A: "At least one is a \\ \Large boy" world};
+\end{tikzpicture}
+}
+\end{figure}
+
+$\hspace*{20mm}$ P((b,b) | at least one is a boy) = 1/3
+
+$\hspace*{10mm}$ or, $\qquad P(B|A) = \displaystyle\frac{P(B \cap A)}{P(A)} = \frac{P(B)}{P(A)} = \frac{1/4}{3/4} = \frac{1}{3}$
+
+_Example 4._ $\hspace*{3mm}$ You can take a course in Chemistry or Statistics, but not both. You judge that P(\text{`A'}$_{\text{stat}}$) = 1/2 and P(\text{`A'}$_{\text{chem}}$) = 1/3.
+
+\begin{addmargin}[2em]{0em}
+You flip a coin to decide which to take. Assuming your judgement about your grade is correct, what is the probability you end up with an \text{`A'} in chemistry? Note that what you need to find here is P(`A' $\cap$ chem).
+
+We know that
+
+$P(\text{`A'} | \text{chem}) = 1/3 = \displaystyle\frac{P(\text{`A'} \cap \text{chem})}{P(\text{chem})} = \frac{P(\text{`A'} \cap \text{chem})}{1/2}.$
+
+Then,
+
+P(\text{`A'} $\cap$ chem) = 1/3 * 1/2 = 1/6.
+
+Learn to draw a \textbf{tree diagram}. This will help you immensely in setting up problems.
+
+P(\text{`A'} $\cap$ chem):
+
+\vspace{2mm}
+
+\newcounter{forestalias}
+\forestset{
+  probability tree/.style={
+    for tree={
+      grow=0,
+      marble=black,
+      s sep+=2.5mm,
+      if n=1{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [midway, below, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      }{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [midway, above, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      },
+      before packing={
+        content={},
+        typeset node,
+      },
+    },
+    before drawing tree={
+      for tree={
+        if n children=0{
+          TeX={\stepcounter{forestalias}},
+          alias={n\theforestalias}
+        }{}
+      }
+    }
+  },
+  marble/.style={circle, minimum width=2.5pt, fill=black, draw=#1, inner sep=0pt},
+  make descendant marble/.style={
+    edge=#1,
+    delay n={int(level())}{
+      for descendants={
+        if n children=0{
+          append={[, grow=0, marble=#1, no edge, l+=-10mm]}
+        }{},
+      },
+    },
+  },
+}
+\resizebox{.5\linewidth}{!}{
+\begin{forest}
+  probability tree,
+  [, name=t0 
+        [\nicefrac{1}{2}
+                [\nicefrac{1}{2}][\nicefrac{1}{2}]
+        ]
+        [\nicefrac{1}{2}, name=t1 
+                [\nicefrac{2}{3}][\nicefrac{1}{3}, name=t2]
+        ]
+  ]
+\node (l1) at (n1) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\bar{\text{`A'}}$}] {};
+\node (l2) at (n2) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\text{`A'}$}] {};
+\node (l3) at (n3) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\bar{\text{`A'}}$}] {};
+\node (l4) at (n4) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\text{`A'}$}] {};
+\draw (0,1) node {\footnotesize Chem.};
+\draw (0,-1) node {\footnotesize Stat.};
+\draw (3.5,.8) node {\scriptsize $\frac{1}{2}*\frac{1}{3}=\frac{1}{6}$};
+\end{forest}
+}
+\vspace{4mm}
+
+Now, let's reverse the problem and ask:  Given an \text{`A'} was earned in a class, what is the probability that chemistry was taken?
+
+\end{addmargin}
+
+**Draw a tree.**
+
+\begin{addmargin}[2em]{0em}
+
+\usecounter{forestalias}
+\forestset{
+  probability tree/.style={
+    for tree={
+      grow=0,
+      marble=black,
+      s sep+=2.5mm,
+      if n=1{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [midway, below, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      }{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [midway, above, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      },
+      before packing={
+        content={},
+        typeset node,
+      },
+    },
+    before drawing tree={
+      for tree={
+        if n children=0{
+          TeX={\stepcounter{forestalias}},
+          alias={n\theforestalias}
+        }{}
+      }
+    }
+  },
+  marble/.style={circle, minimum width=2.5pt, fill=black, draw=#1, inner sep=0pt},
+  make descendant marble/.style={
+    edge=#1,
+    delay n={int(level())}{
+      for descendants={
+        if n children=0{
+          append={[, grow=0, marble=#1, no edge, l+=-10mm]}
+        }{},
+      },
+    },
+  },
+}
+\resizebox{.4\linewidth}{!}{
+\begin{forest}
+  probability tree,
+  [, name=t0 
+        [\nicefrac{1}{2}
+                [\nicefrac{1}{2}][\nicefrac{1}{2}]
+        ]
+        [\nicefrac{1}{2}, name=t1 
+                [\nicefrac{2}{3}][\nicefrac{1}{3}, name=t2]
+        ]
+  ]
+\node (l1) at (n1) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\bar{\text{`A'}}$}] {};
+\node (l2) at (n2) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\text{`A'}$}] {};
+\node (l3) at (n3) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\bar{\text{`A'}}$}] {};
+\node (l4) at (n4) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$\text{`A'}$}] {};
+\draw (0,1) node {\footnotesize Chem.};
+\draw (0,-1) node {\footnotesize Stat.};
+\end{forest}
+}
+
+We want
+
+P(chem | A) = $\displaystyle\frac{P(\text{chem} \cap A)}{P(A)}$
+
+We know now that P(chem $\cap$ A) = ($\frac{1}{2}$)($\frac{1}{3}$).
+
+What's P(A)? It's $(\frac{1}{2})(\frac{1}{3}) + (\frac{1}{2})(\frac{1}{2})$.
+
+So, P(chem | A) = $\displaystyle\frac{\left(\frac{1}{2}\right)\left(\frac{1}{3}\right)}{\left(\frac{1}{2}\right)\left(\frac{1}{3}\right) + \left(\frac{1}{2}\right)\left(\frac{1}{2}\right)} = \frac{2}{5}$
+
+\end{addmargin}
+
+#Independent Events
+
+$P(B|A) = \displaystyle\frac{P(A \cap B)}{P(A)}$.
+
+If $P(B|A) = P(B)$, then events A and B are **independent**.
+
+If $P(B|A) = P(B)$, then $P(A \cap B) = P(A) * P(B)$.
+
+Conversely, if $P(A \cap B) = P(A) * P(B)$, then A and B are **independent** events.
+
+_Example 5._ $\hspace*{3mm}$ A$_1$: event that a card picked at random is a spade.
+
+\begin{addmargin}[22mm]{0mm}
+
+A$_2$: a card picked at random is a Q.
+
+Are A$_1$ and A$_2$ independent?
+
+$P(A_1) = 1/4, \quad P(A_2) = 1/13$
+
+$P(A_1 \cap A_2) = 1/52 = P(Q\spadesuit) = (1/4)(1/13$
+
+\vspace{3mm}
+In general if $A_1, A_2, A_3, ..., A_n$ are mutually independent events, then
+
+$P(A_1 \cap A_2 \cap A_3 \cap ... \cap A_n) = P(A_1)P(A_2)P(A_3) ... P(A_n)$
+\end{addmargin}
+
+_Example 6._ $\hspace*{3mm}$ P(n heads in n tosses of a fair coin) = $(\frac{1}{2})^n$
+
+_Birthday Problem:_ $\hspace*{3mm}$ What's the probability that a set of n people (n $\leq$ 365) will have n different birthdays?
+
+\begin{addmargin}[22mm]{0mm}
+P(all different)
+
+$= \displaystyle \left(\frac{365}{365}\right)\left(\frac{364}{365}\right)\left(\frac{363}{365}\right)...\left(\frac{365 - n + 1}{365^n}\right) = \left(\frac{365!}{(365-n)!(365^n)}\right)$
+
+1 - P(all different) = P(at least 2 have the same birthday)
+
+For n = 23 people \qquad 1 - P(different) > 1/2! (0.507)
+
+For n = 50 people \qquad 1 - P(different) = 0.97
+\end{addmargin}
+
+\vspace{3mm}
+_Stirling's Approximations to Factorials_
+
+$\hspace{20mm} n! \approx (\sqrt{2\pi n})n^ne^{-n}$
+
+\vspace{5mm}
+#Total Probability and Bayes' Theorem
+
+Problem:$\hspace{3mm}$ Urn: (2G, 3W) -- Draw 1
+\begin{addmargin}[22mm]{0mm}
+If G, Draw a card from an ordinary deck (n = 52).
+
+If W, Draw from only the picture cards (n = 16).
+
+Find P(K).
+\end{addmargin}
+
+**Draw tree diagram:**
+
+\begin{addmargin}[22mm]{0mm}
+\usecounter{forestalias}
+\forestset{
+  probability tree/.style={
+    for tree={
+      grow=0,
+      marble=black,
+      s sep+=2.5mm,
+      if n=1{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [above,font=\scriptsize, text=black] {##1}}{content()},
+        },
+      }{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [below,font=\scriptsize, text=black] {##1}}{content()},
+        },
+      },
+      before packing={
+        content={},
+        typeset node,
+      },
+    },
+    before drawing tree={
+      for tree={
+        if n children=0{
+          TeX={\stepcounter{forestalias}},
+          alias={n\theforestalias}
+        }{}
+      }
+    }
+  },
+  marble/.style={circle, minimum width=2.5pt, fill=black, draw=#1, inner sep=0pt},
+  make descendant marble/.style={
+    edge=#1,
+    delay n={int(level())}{
+      for descendants={
+        if n children=0{
+          append={[, grow=0, marble=#1, no edge, l+=-10mm]}
+        }{},
+      },
+    },
+  },
+}
+\resizebox{.9\linewidth}{!}{
+\begin{forest}
+  probability tree,
+  [, name=t0 
+        [
+                [\tiny P(K|W)][]
+        ]
+        [
+                [][\tiny P(K|G)]
+        ]
+  ]
+\node (l1) at (n1) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K'$}] {};
+\node (l2) at (n2) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K$}] {};
+\node (l3) at (n3) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K'$}] {};
+\node (l4) at (n4) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K$}] {};
+\draw (-.5,1) node {\scriptsize All cards P(K$\cap$G)};
+\draw (-.5,-1) node {\scriptsize Pictures P(K$\cap$W)};
+\draw [<->, line width = .2mm] (0,0.4) -- (1,1);
+\draw [<->, line width = .2mm] (0,-0.4) -- (1,-1);
+\draw (4,1) node {\tiny P(K) = 4/52 = 1/13};
+\draw (4,-1) node {\tiny P(K) = 1/4};
+\draw (1.1,.2) node {\tiny P(G) = 2/5};
+\draw (1.1,-.2) node {\tiny P(W) = 3/5};
+\draw (.6,.55) node {\tiny G};
+\draw (.6,-.55) node {\tiny W};
+\end{forest}
+}
+
+\vspace{3mm}
+K: King
+
+K$'$: no King
+
+P(G) = 2/5,\quad P(W) = 3/5
+
+$P(K|G) = \displaystyle\frac{P(G \cap K)}{P(G)} = \frac{(2/5)(1/13)}{(2/5)} = 1/13$
+
+$P(K|W) = \displaystyle\frac{P(W \cap K)}{P(W)} = \frac{(3/5)(1/4)}{(3/5)} = 1/4$
+
+So, $P(K) = P(G \cap K) + P(W \cap K)$.
+
+These are the \textbf{two mutually exclusive ways} to get a King. Note that
+
+$P(G \cap K) = P(K|G) * P(G)$ and
+
+$P(W \cap K) = P(K|W) * P(W)$
+
+So, $P(K) = P(K|G) * P(G) + P(K|W) * P(W)$.
+
+This is called the \textbf{Total Probability}
+
+= (2/5)(1/13) + (3/5)(1/4) = $\frac{47}{260} \approx$ 0.181.
+
+P(K) is a \textbf{weighted average} of P(K|G) and P(K|W).
+
+\end{addmargin}
+\pagebreak
+
+**Theorem of Total Probability**
+
+Theorem 1-22. Let E$_1$ and E$_2$ be events. Then $E_1 = (E_1 \cap E_2) \cup (E_1 + E_2')$.
+
+&nbsp;
+
+\begin{figure}[!htb]
+\centering
+\resizebox{.4 \linewidth}{!}{
+\begin{tikzpicture}
+\draw [thick] (-1,0) circle (2cm);
+\draw [thick] (1,0) circle (2cm);
+\draw (-1.9,0.3) node {$x \in E_1$};
+\draw [line width = .3mm,->] (.7,-3) -- (0,0); 
+\draw (.7,-3.3) node {$x \in E_1 \cap E_2$};
+\draw (-1,2.3) node {$E_1$};
+\draw (1,2.3) node {$E_2$};
+\end{tikzpicture}
+}
+\end{figure}
+
+\begin{addmargin}[22mm]{0mm}
+
+\vspace{3mm}
+If $x \in E_1$, then $x \in (E_1 \cap E_2)$ or $x \in E_1$ and $x \notin E_2 \quad [x \in E'_2]$
+
+$\Rightarrow (E_1 \cap E_2)$ and $(E_1 \cap E'_2)$ are mutually exclusive.
+
+So, $P(E_1) = P(E_1 \cap E_2) + P(E_1 \cap E'_2)$
+
+From the definition of conditional probability,
+
+$P(E_1) = P(E_1|E_2)P(E_2) + P(E_1|E'_2)P(E'_2)$.
+
+Thus, P(E$_1$) is a weighted average of P(E$_1$|E$_2$) and P(E$_1$|E$'_2$).
+\end{addmargin}
+
+\vspace{2mm}
+Consider the same problem as before, but **in reverse**.
+
+\begin{addmargin}[22mm]{0mm}
+Urn: (2G, 3W) -- Draw 1
+
+If G, Draw a card from a fair deck.
+
+If W, Draw from only the picture cards.
+
+Suppose you only know a K was drawn, what's the probability a green ball was selected?
+
+This is a problem of `working backwards to \textbf{causes}.' You know the outcome, but what were the initial conditions?
+
+\vspace*{3mm}
+\usecounter{forestalias}
+\forestset{
+  probability tree/.style={
+    for tree={
+      grow=0,
+      marble=black,
+      s sep+=2.5mm,
+      if n=1{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [above,font=\scriptsize, text=black] {##1}}{content()},
+        },
+      }{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [below,font=\scriptsize, text=black] {##1}}{content()},
+        },
+      },
+      before packing={
+        content={},
+        typeset node,
+      },
+    },
+    before drawing tree={
+      for tree={
+        if n children=0{
+          TeX={\stepcounter{forestalias}},
+          alias={n\theforestalias}
+        }{}
+      }
+    }
+  },
+  marble/.style={circle, minimum width=2.5pt, fill=black, draw=#1, inner sep=0pt},
+  make descendant marble/.style={
+    edge=#1,
+    delay n={int(level())}{
+      for descendants={
+        if n children=0{
+          append={[, grow=0, marble=#1, no edge, l+=-10mm]}
+        }{},
+      },
+    },
+  },
+}
+\resizebox{.9\linewidth}{!}{
+\begin{forest}
+  probability tree,
+  [, name=t0 
+        [
+                [\tiny P(K|W)][]
+        ]
+        [
+                [][\tiny P(K|G)]
+        ]
+  ]
+\node (l1) at (n1) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K'$}] {};
+\node (l2) at (n2) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K$}] {};
+\node (l3) at (n3) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K'$}] {};
+\node (l4) at (n4) [label={[label distance=2.5mm, inner sep=0pt, , font=\scriptsize]right:$K$}] {};
+\draw (-.5,1) node {\scriptsize All cards P(K$\cap$G)};
+\draw (-.5,-1) node {\scriptsize Pictures P(K$\cap$W)};
+\draw [<->, line width = .2mm] (0,0.4) -- (1,1);
+\draw [<->, line width = .2mm] (0,-0.4) -- (1,-1);
+\draw (4,1) node {\tiny P(K) = 4/52 = 1/13};
+\draw (4,-1) node {\tiny P(K) = 1/4};
+\draw (1.1,.2) node {\tiny P(G) = 2/5};
+\draw (1.1,-.2) node {\tiny P(W) = 3/5};
+\draw (.6,.55) node {\tiny G};
+\draw (.6,-.55) node {\tiny W};
+\end{forest}
+}
+
+\vspace*{3mm}
+Earlier we were interested in P(K), now we want to know P(G|K).
+
+$P(G|K) = \displaystyle\frac{P(K \cap G)}{P(K)} = \frac{(1/13)(2/5)}{(2/5)(1/13)+(3/5)(1/4)} = 8/47$
+
+Note that $P(K \cap G) = P(K|G)*P(G)$, so
+
+$P(G|K) = \displaystyle\frac{P(K|G)*P(G)}{P(K)} = \frac{(1/13)(2/5)}{(2/5)(1/13)+(3/5)(1/4)} = 8/47$ as before.
+
+\end{addmargin}
+
+**Bayes' Theorem (Theorem 1-23)**
+
+$\hspace{22mm} P(E_2|E_1) = \displaystyle\frac{P(E_1 \cap E_2)}{P(E_2)} = \frac{P(E_2|E_1)\cdot P(E_1)}{P(E_2)}$
+
+$\hspace{22mm} = \displaystyle\frac{P(E_2|E_1)\cdot P(E_1)}{P(E_2|E_1)\cdot P(E_1) + P(E_2|E_1')\cdot P(E_1')}$
+
+\vspace*{3mm}
+Example:\hspace{3mm} 1/2% of the population has a disease, D.
+
+$\hspace{22mm}$ There's a test for D --
+
+$\hspace{22mm}$ **If you have D**, the test is 98% accurate (2% are missed, false negatives).
+
+$\hspace{22mm}$ If you don't have D (D$'$), the test has a 3% chance of indicating **you have D** (false positive).
+
+a) What's the probability a person picked at random will test positive?
+
+$\hspace{22mm}$ = $P(D)*P(+) + P(\bar{D})*P(+)$.
+
+**Draw a tree.**
+
+\begin{addmargin}[22mm]{0em}
+
+\usecounter{forestalias}
+\forestset{
+  probability tree/.style={
+    for tree={
+      grow=0,
+      marble=black,
+      s sep+=2.5mm,
+      if n=1{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [pos=0, below, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      }{
+        before typesetting nodes={
+          edge label/.wrap pgfmath arg={node [pos=0,above, font=\scriptsize, text=black] {##1}}{content()},
+        },
+      },
+      before packing={
+        content={},
+        typeset node,
+      },
+    },
+    before drawing tree={
+      for tree={
+        if n children=0{
+          TeX={\stepcounter{forestalias}},
+          alias={n\theforestalias}
+        }{}
+      }
+    }
+  },
+  marble/.style={circle, minimum width=2.5pt, fill=black, draw=#1, inner sep=0pt},
+  make descendant marble/.style={
+    edge=#1,
+    delay n={int(level())}{
+      for descendants={
+        if n children=0{
+          append={[, grow=0, marble=#1, no edge, l+=-10mm]}
+        }{},
+      },
+    },
+  },
+}
+\resizebox{.5\linewidth}{!}{
+\begin{forest}
+  probability tree,
+  [, name=t0 
+        [\tiny 0.995
+                [0.03][]
+        ]
+        [\tiny 0.005, name=t1 
+                [][\tiny 0.98, name=t2]
+        ]
+  ]
+\node (l1) at (n1) [label={[label distance=2.5mm, inner sep=0pt, , font=\tiny]right:+}] {};
+\node (l4) at (n4) [label={[label distance=2.5mm, inner sep=0pt, , font=\tiny]right:+}] {};
+\draw (0,.7) node {\tiny D};
+\draw (0,-.7) node {\tiny D$'$};
+\draw (1,-1.3) node {\tiny Test};
+\draw (1,1.3) node {\tiny Test};
+\end{forest}
+}
+
+\vspace*{3mm}
+
+Total probability of positive test
+
+= $P(D \cap +) + P(D' \cap +)$
+
+= $P(+|D) * P(D) + P(+|D') * P(D')$
+
+= (0.98)(0.005) + (0.995)(0.03)
+
+= \textbf{0.03475} = P(+) \textbf{total}.
+\end{addmargin}
+
+b) Suppose you have a positive test, what's the probability you have the disease?
+
+$\hspace{22mm} P(D|+) = \displaystyle\frac{P(D \cap +)}{P(+)} = \frac{(0.98)(0.005)}{0.3475} = 0.0141$
+
+$\hspace*{22mm}$ This may belie your intuition, but keep in mind **you were picked at random**, so you have 
+
+$\hspace*{22mm}$ a very low probability of having the disease.
+
+$\hspace*{22mm}$ Compare (0.98)(0.005) = 0.0047 with (0.995)(0.03) = 0.023  
+
+$\hspace*{22mm}$(about 6 times greater weight given to $P(+|D')*P(D')$.)
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

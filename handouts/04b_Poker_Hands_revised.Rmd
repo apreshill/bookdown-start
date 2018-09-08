@@ -1,0 +1,140 @@
+---
+title: "Probability Handout 4b:  Poker Hands"
+header-includes: 
+    \usepackage{graphicx}
+    \subtitle{MATH 530-630}
+output: 
+  pdf_document: 
+    toc: yes
+    toc_depth: 3
+    keep_tex: true
+    highlight: kate
+---
+
+###1. One Pair  
+
+Select from 13 possible values:  
+13  
+
+Select 2 from 4 of the given value:  
+13 $\displaystyle\binom {4}{2}$  
+
+Select 3 from the remaining 12 values:  
+13 $\displaystyle\binom{4}{2} \binom{12}{3}$  
+
+There are 4 possible suits for each of these three cards, $4^{3}$, so  
+P(1 pair) = $\displaystyle\frac {13 \displaystyle\binom{4}{2} \binom{12}{3} 4^{3}}{\displaystyle\binom{52}{5}}$ = 0.4226  
+
+###2. Two Pair  
+
+Select two from the 13 possible values:  
+$\displaystyle\binom{13}{2}$  
+
+Select two from **each** of the 4 above values:  
+$\displaystyle\binom{13}{2} \binom{4}{2} \binom{4}{2}$  
+
+For each of these there are 48 possible values for the 5th card. 
+Two of the unselected pair values must be subtracted to avoid three-of-a-kind, so there remain 48-4 = **44** possible cards for the 5th spot, so   
+P(2 pair) = $\displaystyle\frac {\displaystyle\binom{13}{2} \binom{4}{2} \binom{4}{2} .44}{\displaystyle\binom{52}{5}}$ = 0.0475  
+
+###3. Three-of-a-kind  
+
+Select from 13 possible values:  
+13  
+
+Select 3 from 4 of that value:  
+13 $\displaystyle\binom {4}{3}$  
+
+Select 2 more cards from 12 other values:  
+13 $\displaystyle\binom{4}{3} \binom{12}{2}$  
+
+There are 4 possible suits for each of these last two cards, $4^{2}$, so    
+P(three-of-a-kind) = $\displaystyle\frac {13 \displaystyle\binom{4}{3} \binom{12}{2} 4^{2}}{\displaystyle\binom{52}{5}}$ = 0.02113  
+
+###4. Straight  
+
+A straight may begin with 10 possible values (A-10):  
+10  
+
+For each card value in a straight, there are 4 possible suits, $4^{5}$:  
+(10)($4^{5}$)  
+
+But we don't want to count _straight flushes_ (there are 40 of them, see below), so  
+P(straight) = $\displaystyle\frac {\displaystyle10 \cdot 4^{5} -40}{\displaystyle\binom{52}{5}}$ = 0.00392  
+
+
+###5. Flush
+
+There are 13 possible values for the five cards:  
+$\displaystyle\binom{13}{5}$  
+
+For each there are 4 suits:  
+$\displaystyle\binom {13}{5}$ 4
+
+Subtract straight flushes, so      
+P(flush) = $\displaystyle\frac {\displaystyle\binom{13}{5} \cdot 4 - 40}{\displaystyle\binom{52}{5}}$ = 0.00198  
+
+###6. Full House  
+
+There are 13 possible values for the 3-of-a-kind:  
+13  
+
+Select 3 from the 4 of that value:  
+13 $\displaystyle\binom {4}{3}$  
+
+12 values are left for the pair:  
+13 $\displaystyle\binom {4}{3}$ 12  
+
+Select 2 from 4 of that value, so  
+P(full house) = $\displaystyle\frac {13 \displaystyle\binom{4}{3} 12 \binom{4}{2}}{\displaystyle\binom{52}{5}}$ = 0.0014  
+
+###7. Four-of-a-kind  
+
+Select one of 13 values:  
+13  
+
+There are 48 cards left for the 5th card so,  
+P(four-of-a-kind) = $\displaystyle\frac {13 \cdot 48}{\displaystyle\binom{52}{5}}$ = 0.00024  
+
+###8. Straight Flush  
+
+There are 10 possible straights:  
+10  
+
+Each could have four possible suits, 4, so  
+P(straight flush) = $\displaystyle\frac {10 \cdot 4}{\displaystyle\binom{52}{5}}$ = 0.0000154  
+
+###9. Royal Flush  
+
+There are only 4 (one for each suit), so  
+P(royal flush) = $\displaystyle\frac {4}{\displaystyle\binom{52}{5}}$ = 0.00000154
+
+###10. Bust
+[No card alike, but no straight, flush, or straight flush]
+
+There are 13 possible values from which 5 are drawn:  
+$\displaystyle\binom{13}{5}$
+
+Each of these values has 4 possible suits, 4$^5$:
+
+$\displaystyle\binom{13}{5} 4^5$
+
+Subtract straights:
+
+$\displaystyle\binom{13}{5} 4^5 - [10 \cdot 4^5 - 40]$
+
+Subtract flushes:
+
+$\displaystyle\binom{13}{5} 4^5 - [10 \cdot 4^5 - 40] - \left[\displaystyle\binom{13}{5}\cdot 4 - 40\right]$
+
+Subtract straight flushes, so
+
+P(bust) = $\displaystyle\frac{\displaystyle\binom{13}{5}4^5 - [10 \cdot 4^5 - 40] - \left[\displaystyle\binom{13}{5}\cdot 4 - 40\right] - 40}{\displaystyle\binom{52}{5}} = 0.501$
+
+So, you have about an even chance of getting *something* that counts in a five-card hand.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

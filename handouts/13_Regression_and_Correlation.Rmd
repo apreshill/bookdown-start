@@ -1,0 +1,430 @@
+---
+title: "Notes 13:  Regression and Correlation"
+header-includes:
+    \usepackage{graphicx, amsmath,multirow,tikz}
+    \usepackage[math]{cellspace}
+    \cellspacetoplimit 10pt
+    \cellspacebottomlimit 10pt
+    \subtitle{MATH 530-630}
+    \everymath{\displaystyle}
+output: pdf_document
+---
+
+In ANOVA, the independent variable is categorical or qualitative (or "dummy"), that is, treatments or correlations cannot be ordered. In **regression**, the values of the independent variable are both **quantitative and selected**. Such a variable is (strangely) called **fixed**. In correlation, the independent variable is a **random variable**. In both regression and correlation the dependent variable is a random variable. In either case we are interested in predicting from knowing X, i.e. we are interested in a function y = f(x). The problem in correlation is to estimate the **strength of relation** between the variables X and Y. The calculations for regression and correlation are essentially the same. In **multiple regression** or **correlation** there will be more than one class of independent variables.
+
+#Regression
+
+Let X be a **fixed variable** and Y a random variable so that Y is a **linear** function of X. Our model equivalent is
+
+$\qquad Y_i = \beta_0 + \beta_I X_i + \epsilon_i$
+
+where:
+
+Y$_i$ : i$^{\text{th}}$ observation of dependent variable Y.
+
+X$_i$ : i$^{\text{th}}$ **value** of the independent variable X.
+
+$\beta_0$ : Y intercept parameter.
+
+$\beta_i$ : slope of regression line.
+
+$\epsilon_i$ : normally distributed error in Y$_i$, i.e., the deviations of Y$_i$ from **predicted** value $\hat{Y}_i$ based on the regression line
+
+$\hat{Y} = \beta_0 + \beta_1 X_1 + \epsilon_i$ is a random variable so the E($\epsilon_I$) = 0 and $\sigma_{\epsilon_i}^2 = \sigma_e^2$, that is, the Var($\epsilon_i$) is equal for all i.
+
+Here's the arrangement:
+
+\begin{figure}[!htb]
+\centering
+\resizebox{0.8\linewidth}{!}{
+\begin{tikzpicture}
+  \draw (0,0) -- (5,0) node[below] {$X$};
+  \draw (0,0) -- (0,3.7) node[left] {$Y$};
+  \draw (-0.5,1.5) node {$\beta_0$};
+  \draw[scale=0.5,domain=-0.5:10,smooth,variable=\x] plot ({\x},{1/3*\x + 2.5});
+  \draw plot[smooth, tension=1] coordinates {(1.2,2.5) (1.2,2) (1.4,1.6) (1.2,1.2) (1.2,.7)};
+  \draw (1,2.5) -- (1,0.7);
+  \draw (0.5,1.6) -- (2,1.6);
+  \draw plot[smooth, tension=1] coordinates {(2.7,3) (2.7,2.5) (2.9,2.1) (2.7,1.7) (2.7,1.2)};
+  \draw (2.5,3) -- (2.5,1.2);
+  \draw (2,2.1) -- (3.5,2.1);
+  \draw plot[smooth, tension=1] coordinates {(4.2,3.5) (4.2,3) (4.4,2.6) (4.2,2.2) (4.2,1.7)};
+  \draw (4,3.5) -- (4,1.7);
+  \draw (3.5,2.6) -- (5,2.6);
+  \fill (1,1.6) circle (0.1) node {};
+  \fill (2.5,2.1) circle (0.1) node {};
+  \fill (4,2.6) circle (0.1) node {};
+  \draw [<-] (1.1,1.5) -- (1.5,1) node[below right] {$\mu_{y|x_1}$};
+  \draw [<-] (2.6,2) -- (3,1.5) node[below right] {$\mu_{y|x_i}$};
+  \draw [<-] (4.1,2.5) -- (4.5,2) node[below right] {$\mu_{y|x_n}$};
+  \draw (1,0.2) -- (1,-0.2) node[below] {$x_1$};
+  \draw (2.5,0.2) -- (2.5,-0.2) node[below] {$x_i$};
+  \draw (4,0.2) -- (4,-0.2) node[below] {$x_n$};
+  \draw (1.75,-0.4) node {...};
+  \draw (3.25,-0.4) node {...};
+  \draw (8,1.5) node {$\mu_{y|x_i}$: mean of Y given $x_i$};
+  \draw (7.75,0.75) node {$\mu_{y|x_i} = \beta_0 + \beta_1 X_i = \hat{Y}_i$};
+\end{tikzpicture}
+}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\resizebox{0.8\linewidth}{!}{
+\begin{tikzpicture}
+  \draw (0,0) -- (5,0) node[below] {$X$};
+  \draw (0,0) -- (0,3.7) node[left] {$Y$};
+  \draw[scale=0.5,domain=-0.5:10,smooth,variable=\x] plot ({\x},{1/3*\x + 2.5});
+  \draw (2.5,0.2) -- (2.5,-0.2) node[below] {$x_i$};
+  \draw (8,1.5) node {$\epsilon_i = Y_i - \hat{Y}_i$};
+  \fill (0.5,1.417) circle (0.1) node {};
+  \fill (0.5,0.717) circle (0.1) node {};
+  \draw (0.5,1.417) -- (0.5,0.717);
+  \fill (1.5,1.75) circle (0.1) node {};
+  \fill (1.5,2.45) circle (0.1) node {};
+  \draw (1.5,1.75) -- (1.5,2.45);
+  \fill (2.5,2.083) circle (0.1) node {};
+  \fill (2.5,2.783) circle (0.1) node {};
+  \draw (2.5,2.083) -- (2.5,2.783);
+  \fill (3.5,2.417) circle (0.1) node {};
+  \fill (3.5,1.717) circle (0.1) node {};
+  \draw (3.5,2.417) -- (3.5,1.717);
+  \fill (4.5,2.75) circle (0.1) node {};
+  \fill (4.5,3.45) circle (0.1) node {};
+  \draw (4.5,2.75) -- (4.5,3.45);
+  \draw (3, 3.5) node {$Y_i - \hat{Y}_i$};
+  \draw (3, 2.7) node {$\epsilon_i$};
+\end{tikzpicture}
+}
+\end{figure}
+
+\vspace{0.5in}
+
+Our problem is to find the line $\hat{Y}$. Our approach is the **method of least squares**. We want to minimize $\displaystyle\sum\limits_{i=1}^n \epsilon_i^2 = \displaystyle\sum\limits_{i=1}^n (Y_i - \hat{Y}_i)^2$.
+
+Now $\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$
+
+$\hat{\beta}_0$, $\hat{\beta}_1$ are unbiased **estimates** of the population parameters $\beta_0$ and $\beta_1$.
+
+Our task is to find $\hat{\beta}_0$ and $\hat{\beta}_1$ so as to **minimize** $\displaystyle\sum \epsilon_i^2$. $\hat{\beta}_0$ and $\hat{\beta}_1$ are assumed independent so we simply take partial derivatives with respect to each of these and set them to zero. Let $\sum\epsilon_i^2 = L$,
+
+then $\frac{\partial L}{\partial\hat{\beta}_0} = -2\bigg[\sum Y_i - n\hat{\beta}_0 - \hat{\beta}_1 \sum X_i \bigg] = 0$
+
+and
+
+$\frac{\partial L}{\partial \hat{\beta}_1} = -2\bigg[\sum X_i Y_i - \hat{\beta}_0 \sum X_i - \hat{\beta}_1 \sum X_i^2 \bigg] = 0$
+
+This gives $\beta_0 = \frac{1}{n}\bigg[\sum Y_i - \hat{\beta}_1 \sum X_i \bigg] = \bar{Y} - \hat{\beta}_1 \bar{X}$
+
+Substituting this in $\bigg(\frac{\partial L}{\partial \hat{\beta}_1} \bigg)$ we can find $\hat{\beta}_1$
+
+$\qquad \hat{\beta}_1 = \frac{\sum X_i Y_i - \frac{\left(\sum X_i \right)\left(\sum Y_i \right)}{n}}{\sum X_i^2 - \frac{\left(\sum X_i\right)^2}{n}}$
+
+$\qquad = \frac{n\sum X_i Y_i - \sum (X_i) \sum (Y_i)}{n\sum X_i^2 - \left(\sum X_i \right)^2}$
+
+If we divide both numerator and denominator by n -- 1, we have **unbiased** estimates of the population **covariance** and **variance** and thus $\beta_0$ and $\beta_1$.
+
+$\qquad \hat{\beta}_1 = \frac{\frac{n\sum X_i Y_i - \left(\sum X_i\right)\left(\sum Y_i\right)}{n-1}}{\frac{n\sum X_i^2 - \left(\sum X_i \right)^2}{n-1}} = \frac{\text{est Cov.}(X \cdot Y)}{\text{est }\sigma_x^2}$.
+
+&nbsp;
+
+Note on **Covariance**
+
+Recall that Var(x) = E[X -- E(X)]$^2$
+
+$\qquad \qquad \qquad \qquad$ = E(X$^2$) -- [E(X)]$^2$
+
+The **covariance** of X and Y is
+
+Cov(X $\cdot$ Y) = E{[X -- E(X)] $\cdot$ [Y -- E(Y)]}
+
+$\qquad \qquad \quad$ = E(X $\cdot$ Y) -- E(X) $\cdot$ E(Y)
+
+If X and Y are independent,
+
+$\qquad$ E(X $\cdot$ Y) = E(X) $\cdot$ E(Y) so Cov(X $\cdot$ Y) = 0. Basically, Cov(X $\cdot$ Y) is the average of the product of the deviations of each score X$_I$ and Y$_I$ from their respective means,
+
+$\qquad \frac{\sum(X_i - \bar{X})(Y_i - \bar{Y})}{n}$
+
+$\qquad \frac{\text{est Cov}(X \cdot Y)}{\text{est }\sigma_x^2} = \frac{S_{xy}}{S_x^2}$
+
+In Hays and elsewhere, the expression for $\hat{\beta}_1$ is divided by n instead of (n--1) because the sample sizes are usually large enough, so we use the "big S".
+
+$\qquad \frac{\text{est Cov}(X \cdot Y)}{\text{est }\sigma_x^2} = \frac{S_{xy}}{S_x^2} = \frac{SP_{xy}\big/n}{SS_x\big/n}$
+
+(`SP' means "sum of products".) So, we now have
+
+$\qquad \hat{\beta}_0 = \bar{Y} - \hat{\beta}_1\bar{X} = \hat{Y}_i - \hat{\beta}_1 X_i \text{ for }\textbf{each}\text{ score }X_i$.
+
+$\qquad \bar{Y} = \hat{\beta}_0 + \hat{\beta}_1 \bar{X} = (\hat{Y}_i - \hat{\beta}_1 X_i) + \hat{\beta}_1 \bar{X}$
+
+So $\hat{Y}_i$ can be found for each X$_i$ by
+
+$\qquad \hat{Y}_i = \bar{Y} + \hat{\beta}_1 X_i - \hat{\beta}_1 \bar{X} = \bar{Y} + \hat{\beta}_1 (X_i - \bar{X})$
+
+$\qquad$ \boxed{\hat{Y}_i = \bar{Y} + \hat{\beta}_1 (X_i - \bar{X})} $\longleftarrow$ THE LINE
+
+Example, Hays p. 604-607
+
+N = 91
+
+Steps:
+
+1) Find $\bar{X} = \frac{\sum X_i}{n} = \frac{381.5}{91} = 4.19$
+
+2) Find $\bar{Y} = \frac{\sum Y_i}{n} = \frac{2169}{91} = 23.84$
+
+3) Find SS$_x$ = $\sum X_i^2 - \frac{\left(\sum X_i\right)^2}{n} = (X^2 + 3.5^2 + ... + 3.5^2) - \frac{(381.5)^2}{91} = 275.51$
+
+4) Find SP$_{\text{xy}}$ = $\sum X_iY_i - \frac{\left(\sum X_i\right)\left(\sum Y_i\right)}{n} =$
+
+$\qquad [(X)(36) + (3.5)(19) + ... + (3.5)(23)] - \frac{(381.5)(2169)}{91} = 1487.71$
+
+&nbsp;
+
+$\qquad$ So $\hat{\beta}_1 = \frac{SP_{xy}}{SS_x} = \frac{1489.71}{275.51} = 5.40 = \frac{SS_{xy}}{S_x^2}$
+
+$\qquad \hat{Y}_i = \bar{Y} + \hat{\beta}_i (X_i - \bar{X}) \qquad \qquad \qquad$ [In Hays $Y'_i = \hat{Y}_i$ and $\hat{\beta}_i = b_{y|x}$]
+
+$\qquad \hat{Y}_i = 1.214 + 5.40X_i$
+
+#Standard Error of the Estimate
+
+For the sample an estimate of the error $\epsilon_i$ is $e_i = \hat{Y}_i - Y_i$. The **variance of that estimate** is $S^2_{y\cdot x} = \frac{\sum(\hat{Y}_i - Y_i)^2}{n}$.
+
+$\sqrt{S^2_{y\cdot x}} = S_{y\cdot x}$ is called the standard error of the estimate. We will return to this concept when we consider the Pearson Product Moment Correlation.
+
+###ANOVA and Regression
+
+As expected, ANOVA and Regression are intimately related. In fact, ANOVA is a subcategory of regression. Regression can be formulated in terms of partition of sums of squares to test hypotheses about $\beta_0 \beta_1$.
+
+Here's the set-up:
+
+\begin{table}[!htb]
+\begin{tabular}{c|c}
+X     & Y     \\ \hline
+X$_1$ & Y$_1$ \\
+X$_2$ & Y$_2$ \\
+.     & .     \\
+.     & .     \\
+.     & .     \\
+X$_n$ & Y$_n$
+\end{tabular}
+\end{table}
+
+$SS_x = \sum(X_i - \bar{X})^2 = \sum X_i^2 - \left(\frac{\sum X_i}{n}\right)^2$
+
+This is a measure of the variation of the X$_i$'s.
+
+$SS_y = \sum(Y_i - \bar{Y})^2 = \sum Y_i^2 - \frac{\big(\sum Y_i\big)^2}{n}$
+
+This is a measure of the variation of the Y$_i$'s.
+
+$SS_{xy} = \sum (X_i - \bar{X})(Y_i - \bar{Y}) = \sum X_iY_i - \frac{\big(\sum X_i\big)\big(\sum Y_i \big)}{n}$
+
+This is a measure of the covariation of X$_i$ and Y$_i$.
+
+Our line of interest is
+
+$\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$
+
+where $\hat{\beta}_0 = \bar{Y} - \hat{\beta}_1\bar{X}$ and $\hat{\beta}_1 = \frac{SP_{xy}}{SS_x}$
+
+and $e_i = Y_i - \hat{Y}_i$
+
+So $\hat{Y}_i = (\bar{Y} - \hat{\beta}_1 \bar{X}) + \hat{\beta}_1 X_i$ and then
+
+$\hat{Y}_i - \bar{Y} = \hat{\beta}_1 (X_i - \bar{X})$
+
+$\sum(\hat{Y}_i - \bar{Y}) = \hat{\beta}_1\sum (X_i - \bar{X})$ so
+
+$\sum \hat{Y}_i = n\bar{Y}$ or $\bar{Y} = \frac{\sum Y_i}{n}$ as expected.
+
+Now, if
+
+$\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$, what is SS$_{\hat{Y}_i}$? This must be a measure of the degree to which Y depends on X. As we will see SS$_{\hat{Y}_i}$ corresponds to SS$_{\text{Between}}$ in ANOVA. From now on to correspond with convention, we will drop the i's from the SS's.
+
+$SS_{\hat{Y}} = \hat{\beta}_1^2 SS_x$
+
+[Remember Var(ax+b) a$^2$Var(x)]
+
+$SS_{\hat{Y}} = \hat{\beta}_1^2 SS_x = \frac{(SP_{xy})^2}{(SS_x)^2}(SS_x) = \hat{\beta}_1 SP_{xy}$
+
+Now, it is the case that if X and Y are random variables, **not necessarily independent**, then Var(X -- Y) = VarX + VarY - 2Cov(X$\cdot$Y) (Hays, Appendix B).
+
+So,
+
+$SS_{(Y - \bar{Y})} = SS_Y + SS_{\hat{Y}} - 2SP_{Y\hat{Y}}$
+
+This is a measure of error, residual or within variation.
+
+$SP_{Y\hat{Y}} = \sum Y_i \hat{Y}_i - \frac{\big(\sum Y_i\big)\big(\sum \hat{Y}_i\big)}{n}$
+
+$= \sum Y_i \hat{Y}_i - \frac{\big(\sum Y_i\big)\big(n\bar{Y}\big)}{n}$
+
+$= \sum Y_i \hat{Y}_i - \frac{\big(\sum Y_i\big)^2}{n}$
+
+Now $\hat{Y}_i = \bar{Y} + \hat{\beta}_1(X_i - \bar{X}) \qquad$ (The line)
+
+So -- 
+
+$SP_{Y\hat{Y}} = \sum Y_i [\bar{Y} + \hat{\beta}_1(X_i - \bar{X})] - \frac{\big(\sum Y_i \big)^2}{n}$
+
+$= \bar{Y} \sum Y_i + \hat{\beta}_1 \sum X_i Y_i - \hat{\beta}_1 \bar{X} \sum Y_i - \bar{Y} \sum Y_i$
+
+$= \hat{\beta}_1\bigg[\sum X_i Y_i - \frac{\big(\sum X_i \big)\big(\sum Y_i \big)}{n}\bigg]$
+
+$= \hat{\beta}_1 SP_{XY} = SS_{\hat{Y}}$
+
+So, at last,
+$SS_{\hat{Y}} = SP_{Y\hat{Y}}$
+
+Now we have
+
+$SS_{(Y - \bar{Y})} = SS_Y + SS_{\hat{Y}} - 2SP_{Y\hat{Y}}$
+
+$\qquad = SS_Y + SS_{\hat{Y}} - 2SS_{\hat{Y}}$
+
+$\qquad = SS_Y - SS_{\hat{Y}}$
+
+Or
+
+$SS_Y = SS_{(Y - \hat{Y})} + SS_{\hat{Y}}$
+
+This is the partition of the sum of squares or variance so that
+
+SS$_Y$:  Total sum of squares for Y
+
+SS$_{(Y - \hat{Y})}$:  Within, error of residual sum of squares.
+
+SS$_{\hat{Y}}$:  Between or regression sum of squares, i.e. the degree to which Y depends on X.
+
+We are now ready to test the hypotheses that $H_0 : \hat{\beta}_1 = 0$ against $\hat{\beta}_1 \neq 0$
+
+\pagebreak
+
+Here's our ANOVA Table
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{Sc|ScScScSc}
+Source     & SS                                      & df                           & MS                                                    & F                                      \\ \hline
+Regression & \multicolumn{1}{c|}{SS$_{\hat{Y}}$}     & \multicolumn{1}{c|}{1}       & \multicolumn{1}{c|}{$\frac{SS_{\hat{Y}}}{1}$}         & \multicolumn{1}{c|}{\multirow{2}{*}{}} \\ \cline{1-4}
+Residual   & \multicolumn{1}{c|}{SS$_{Y - \hat{Y}}$} & \multicolumn{1}{c|}{$n - 2$} & \multicolumn{1}{c|}{$\frac{SS_{Y - \hat{Y}}}{n - 2}$} & \multicolumn{1}{c|}{}                  \\ \hline
+\end{tabular}
+\end{table}
+
+
+We know there is a total df = n -- 1, so the df for SS$_{Y - \hat{Y}}$ is (N -- 2).
+
+We can now summarize the components of this table in the following way
+
+$\underset{\text{Total}}{SS_Y} = \underset{\text{Residual}}{SS_{Y - \hat{Y}}} + \underset{\text{Regression}}{SS_{\hat{Y}}}$
+
+OR
+
+$SS_{Y - \hat{Y}} = SS_Y - SS_{\hat{Y}}$
+
+$SS_y = \sum Y_i^2 - \frac{\left(\sum Y_i\right)^2}{n}$
+
+$SS_x = \sum X_i - \frac{\left(\sum X_i\right)^2}{n}$
+
+$SP_{xy} = \sum X_i Y_i - \frac{\left(\sum X_i\right)\left(\sum Y_i\right)}{n}$
+
+$\hat{\beta}_1 = \frac{SP_{xy}}{SS_x} \qquad \qquad \qquad SS_{\hat{Y}} = \hat{\beta}_1^2 \cdot SS_x$
+
+$SS_{Y - \hat{Y}} = SS_{\hat{Y}} - \hat{\beta}_1^2 \cdot SS_x$
+
+$F = \frac{MS_{\hat{Y}}}{MS_{Y - \hat{Y}}} = \frac{(\hat{\beta}_1^2 \cdot SS_x)\big/ 1}{(SS_Y - SS_{\hat{Y}})\big/ (n - 2)}$
+
+#Coefficients of Determination and Correlation
+
+Least squares minimizes $SS_{Y - \hat{Y}}$, so then maximizes $SS_{\hat{Y}}$. If $SS_Y = SS_{\hat{Y}}$, "error" is zero -- all the points would lie on the line.
+
+If $SS_Y = SS_{Y - \hat{Y}}$, $\hat{\beta}_1 = 0$, $Y_i = \bar{Y}$, then for all values of $X$, one predicts $\bar{Y}$. The ratio of $SS_{\hat{Y}}$ to the total $SS_Y$ should be a useful index of "goodness of fit".
+
+\[ \frac{SS_{\hat{Y}}}{SS_Y} = \hat{\beta}_1^2 \frac{SS_x}{SS_Y} = \frac{(SP_{xy})^2}{(SS_x)^2} \cdot \frac{(SS_x)}{(SS_Y)} = \frac{(SP_{xy})}{(SS_x)(SS_Y)} = r^2
+\]
+
+r$^2$ = The proportion of Y variance explained by X variance -- called the **coefficient of determination**.
+
+$k^2 = 1 - r^2$ is called the coefficient of non-determination.
+
+\[ \sqrt{r^2} = r = \frac{SP_{xy}}{\sqrt{(SS_x)(SS_y)}} = \frac{\sum X_i Y_i - \frac{1}{n}\left(\sum X_i \right)\left(\sum Y_i\right)}{\sqrt{\left[\sum X_i^2 - \frac{1}{n}\left(\sum X_i\right)^2\right]\left[\sum Y_1^2 - \frac{1}{n}\left(\sum Y_i\right)^2\right]}}
+\]
+
+The population correlation is thus
+
+$\rho = \frac{Cov(X_iY)}{\sigma_x \sigma_Y}$.
+
+R is called the Pearson Product Moment Correlation is is the basis for a number of other forms of correlation.
+
+#Statistical Tests about Correlation
+
+The population parameters are
+
+$\rho = \frac{Cov(X_i Y)}{\sigma_x \sigma_y}$ and $\beta_1 = \frac{Cov(X_1 Y)}{\sigma_x^2}$
+
+so $\beta_1 = \rho\left(\frac{\sigma_Y}{\sigma_X}\right)$
+
+Consider H$_0$:  $\rho$ = 0; H$_1$:  $\rho \neq 0$.
+
+To test this hypothesis we need to know the sampling distribution of r when $\rho$ = 0. The estimated standard error of r in this case is
+
+est. $\sigma_r = \frac{1 - r^2}{\sqrt{n-1}}$.
+
+If $n \geq 30$ or so, we can use the z statistic
+
+$z = \frac{r}{\text{est }\sigma_r} = \frac{r}{(1 - r^2)\bigg/\sqrt{n-1}} = \frac{r\sqrt{n-1}}{1 - r^2}$
+
+For smaller samples, we use the t-distribution
+
+$t_{n-2} = \sqrt{\frac{(n-2)r^2}{1 - r^2}} = r\sqrt{\frac{(n-2)}{1-r^2}}$
+
+Where does this come from? Remember the test of H$_0$:  $\beta_1 = 0$; H$_1$:  $\beta_1 \neq 0$.
+
+$F_{1,n-2} = \frac{MS_{\hat{Y}}}{MS_{Y - \hat{Y}}} = \frac{SS_{\hat{Y}}}{\frac{SS_Y - SS_{\hat{Y}}}{n-2}} = \frac{(n-2)SS_{\hat{Y}}}{SS_Y - SS_{\hat{Y}}}$ and $SS_{\hat{Y}} = (SS_Y)r^2$
+
+So, $F_{1,(n-2)} = \frac{(n-2)(SS_Y)r^2}{SS_Y - SS_Y r^2} = \frac{(n-2)r^2}{1-r^2} = t_{n-2}^2$ so $t_{n-2} = r\sqrt{\frac{(n-2)}{1-r^2}}$
+
+Note that H$_0$:  $\beta_1 = 0$ is equivalent to H$_0$:  $\rho = 0$.
+
+What about the case of H$_0$:  $\rho = \rho_0$; H$_1$:  $\rho \neq \rho_0$ where $\rho_0 \neq 0$? This calls for **Fisher's Z transformation**. (Don't confuse a z-score with Fisher's Z). When $\rho_0 \neq 0$, the sampling distribution of r is not symmetrical. A transform can produce a symmetrical, approximately normal distribution. This transform has a mean of zero and a standard deviation of
+
+$\sigma_{z_F} = \frac{1}{\sqrt{n-3}}$
+
+The transformation is
+
+$Z_F = \frac{1}{2} \text{ln}\left|\frac{r+1}{r-1}\right| = \text{tan} h^{-1} r$
+
+Recall, tan*h*  $Z_F = \frac{\text{sin}h Z_F}{\text{cos}h Z_F} = \frac{1/2(e^{Z_F} - e^{-Z_F})}{1/2(e^{Z_F} + e^{-Z_F})}$
+
+So r = tan*h*  $Z_F = \frac{e^{2Z_F} - 1}{e^{2Z_F} + 1}$
+
+Or $e^{2Z_F} = \frac{(r+1)}{r-1}$
+
+$2Z_F = \text{ln}\left|\frac{r+1}{r-1}\right|$ or
+
+$Z_F = \frac{1}{2}\text{ ln}\left|\frac{r+1}{r-1}\right|$.
+
+For $n \geq 10$, one can use the standard normal distribution
+
+$Z = \frac{Z_{F_r} - Z_{F\rho_0}}{\sqrt{1/(n-3)}}$
+
+Where $Z_{F\rho_0} = \frac{1}{2}\text{ln}\left|\frac{\rho_0 + 1}{\rho_0 - 1}\right|$
+
+To test H$_0$:  $\rho_1 - \rho_2 = 0$; H$_1$:  $\rho_1 - \rho_2 \neq 0$, that is, if two correlation coefficients are different we use
+
+$Z = \frac{Z_{F\rho_1} - Z_{F\rho_2}}{\sqrt{\left(\frac{1}{n_1 - 3}\right) + \left(\frac{1}{n_2 - 3}\right)}}$
+
+We can also determine a confidence interval for $\rho$:
+
+$Z_{F_r} - Z_{\psi/2} \sqrt{\frac{1}{(n-3)}} \leq Z_{F\rho} \leq Z_{F_r} + Z_{\psi/2} \sqrt{\frac{1}{(n-3)}}$
+
+Then transform the Z$_{F\rho}$ interval back to $\rho$.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

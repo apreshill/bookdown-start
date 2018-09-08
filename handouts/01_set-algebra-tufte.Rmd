@@ -1,0 +1,419 @@
+---
+title: "Chapter 1: Introduction to the Algebra of Sets"
+author: "Math 530-630"
+date: "Alison Presmanes Hill"
+header-includes: 
+    \usepackage{subcaption,tikz,amssymb} 
+    \usetikzlibrary{shapes,backgrounds}
+    \captionsetup{compatibility=false}
+    \renewcommand\plaintitle{Math 530-630, (1) Algebra of Sets}
+output: rmarkdown::tufte_handout
+fontsize: 11pt
+---
+
+
+> *"A set is a Many that allows itself to be thought of as a One." - Georg Cantor*
+
+
+\begin{marginfigure}
+\includegraphics[width=25mm]{111px-Georg_Cantor2.jpg}  
+\caption{Georg Cantor, whose work between 1974 and 1884 is the origin of set theory. (source: Wikipedia)}
+\end{marginfigure}
+
+
+#Sets
+
+A set is a collection of objects. The objects in a set can be anything. In probability theory, we call these objects *elements* or *numbers* or *outcomes* or *events*.  
+
+Sets usually denoted by capital letters, A, B, C, etc.   
+Elements of sets denoted by a, b, c, etc.
+ 
+$\hspace{10 mm}$ If _a_ belongs to A we write   
+
+$\hspace{20 mm} \textit{a} \in A$  
+
+$\hspace{10 mm}$ If _a_ does not belong to A we write  
+
+$\hspace{20 mm} \textit{a} \notin A$ 
+
+$\hspace{1 cc}$ _Example 1:_  V = {x | x is a vowel}  (read "|" as "such that")  
+ 
+$\hspace{29 mm}$ = {a, e, i, o, u}  
+$\vspace{1 mm}$  
+
+This set can be **rostered**, i.e. listed - A _finite_ set.  
+
+$\hspace{1 cc}$ _Example 2:_ D = {x | x are points on a die}  
+
+$\hspace{29 mm}$ = {1, 2, 3, 4, 5 , 6}  
+$\vspace{1 mm}$   
+
+This set also can be rostered.  
+These sets are **discrete**, **but not all discrete sets can be rostered**.  
+
+$\hspace{1 cc}$ _Example 3:_ P = {x | x is a prime number}  
+$\vspace{1 mm}$  
+
+This is a **denumerably infinite** set.  
+
+$\hspace{1 cc}$ _Example 4:_ T = {x | x is a triangle in the plane}  
+
+This is a nondenumerable, infinite set.  
+
+
+# Subsets
+
+If every element of A also belongs to B, we call A a subset of B.   
+
+This is denoted  
+
+$\hspace{1 cc} A \in B$  
+  
+If $A \in B$ and $B \in A$, then A = B. $[A \subseteq B]$  
+
+If $A \in B$ and $A \neq B$, then A is a **proper subset** of B. $[A \subset B]$   
+
+Every set is a subset of itself.  
+
+$\hspace{1 cc}$ _Example 1:_ Tossing a die where outcomes are even constitutes a subset of the set of possible outcomes.  
+
+$\hspace{2 in}$ $\left \{ 2, 4, 6 \right \} \subset \left \{ 1, 2, 3, 4, 5, 6 \right \}$.  
+$\vspace{1 mm}$  
+
+All sets are subsets of some particular set called the **Universal Set (_U_)**. This is also called in probability theory the **Sample Space (_S_)**, the set of all possible simple events or outcomes of an experiment.  
+
+$\hspace{1 cc}$ _Example 2:_  The set of all possible outcomes for the toss of a die is  
+
+$\hspace{2 in}$ S = {1, 2, 3, 4, 5, 6}  
+$\vspace{1 mm}$  
+
+A set having no elements is called the null or empty set, denoted $\varnothing$.  
+
+#Venn Diagrams
+
+[British mathematician John Venn, 1834-1923; though Euler had a similar idea much earlier.]  
+
+\begin{marginfigure}
+\includegraphics[width=20mm]{75px-Venn-stainedglass-gonville-caius.jpg}  
+\caption{Stained glass window at Gonville and Caius College, Cambridge, commemorating Venn and the Venn diagram (source: Wikipedia)}
+\end{marginfigure}
+
+Venn Diagrams provide geometric intuition about relations among sets, but they do **not** represent or substitute for formal proofs. Moreover, they are not practical when the number of sets exceeds three or so.  
+$\vspace{1 mm}$ 
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.55\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (-.5,0) circle (1cm);
+\draw (2,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (-.5,0) node {$A$};
+\draw (2,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure}
+
+#Set Operations
+
+## 1. Union  
+
+The union of sets A and B, denoted $A \cup B$, consists of all elements belonging to A **or** B [or both A and B].  
+
+$\hspace{1.5 in} x \in  A\cup V \Rightarrow  x\in A$  **or** $x \in B$  **or** $x\in$ both A and B.  
+
+\marginnote{Read "$\Rightarrow$" as "implies".}   
+
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$A \cup B$};
+\fill[CornflowerBlue] (0,0) circle (1cm);
+\fill[Red] (1.5,0) circle (1cm);
+\begin{scope} % start of clip scope
+\clip (0,0) circle (1cm);
+\fill[Purple] (1.5,0) circle (1cm);
+\end{scope} % end of clip scope
+\draw (0,0) circle (1cm);
+\draw (1.5,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (0,0) node {$A$};
+\draw (1.5,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$A \cup B$};
+\fill[CornflowerBlue] (-.5,0) circle (1cm);
+\fill[Red] (2,0) circle (1cm);
+\draw (-.5,0) circle (1cm);
+\draw (2,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (-.5,0) node {$A$};
+\draw (2,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure}
+
+$\hspace{1.25 in} A \cup B$ $\hspace{2.75 in}A \cup B$
+$\vspace{1 mm}$  
+
+
+
+##2. Intersection  
+
+The set of all elements belonging to **both** A **and** B, denoted by $A \cap B$ (or sometimes AB).  
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$A \cap B$};
+\begin{scope} % start of clip scope
+\clip (0,0) circle (1cm);
+\fill[CornflowerBlue] (1.5,0) circle (1cm);
+\end{scope} % end of clip scope
+\draw (0,0) circle (1cm);
+\draw (1.5,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (0,0) node {$A$};
+\draw (1.5,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure} 
+
+$\hspace{.25 in} x \in A \cap B \Rightarrow x \in A$ **and** $x \in B$  
+$\vspace{1 mm}$  
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$A \cup B = \o$};
+\draw (-.5,0) circle (1cm);
+\draw (2,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (-.5,0) node {$A$};
+\draw (2,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure} 
+
+$\hspace{.25in} A \cup B = \o$ [Sets are mutually exclusive]   
+
+$\hspace{.25 in}$ If $x \in A$, $x \notin B$ and vice versa.  
+$\vspace{1 mm}$  
+
+\pagebreak
+
+## 3. Difference  
+
+The set of elements in A that **do not** belong to B is called the difference of A and B and denoted A -- B (sometimes A/B).  
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\begin{scope}
+\clip (-2,-2) rectangle (2,2)
+      (1.5,0) circle (1);
+\fill [gray] (0,0) circle (1);
+\end{scope}
+\draw (0,0) circle (1cm);
+\draw (1.5,0) circle (1cm);
+\draw (3.1,1.1) node {$U$};
+\draw (0,0) node {$A$};
+\draw (1.5,0) node {$B$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure} 
+
+$\hspace{.25in} x \in A - B \Rightarrow$
+$\hspace{.25in} x \in A$ and $x \notin B$  
+$\vspace{1 mm}$ 
+
+## 4. Complement  
+
+If $B \subset A$, then A -- B is calld the complement of B relative to A, denoted 
+
+${B}'_{A}\left [ \textup{or }  \bar{B} _{A}   \textup{ or }  - B_{A} \right ]$  
+
+If A=U, U-B is called simply the complement of B denoted 
+
+${B}'\left [ \textup{or }  \bar{B}    \textup{ or }  \sim B\right ]$  
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$A - B$};
+\fill [gray] (1,0) circle (1cm);
+\draw (1,0) circle (1cm);
+\fill [white] (1.3,-.1) circle (.5cm);
+\draw (1.3,-.1) circle (.5cm);
+\draw (3.1,1.1) node {$U$};
+\draw (.4,.2) node {$A$};
+\draw (1.3,-.1) node {\small $B$};
+\draw[thick, ->] (-.5,-.7) -- (.3,-.4);
+\draw (-.8,-.7) node {$B'_A$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\fill[gray] (-2,-1.5) rectangle (3.5,1.5);
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,-1.3) node {$U - B$};
+\draw (3.1,1.1) node {$U$};
+\fill [white] (1,0) circle (1cm);
+\draw (1,0) circle (1cm);
+\draw (1,0) node {$B$};
+\draw (-.8,-.7) node {$B'$};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure}
+
+$\vspace{1 in}$ 
+
+$\pagebreak$ 
+
+#Some Theorems Involving Sets  
+
+You should be able to **prove** the following:  
+
+_Theorem 1-1._$\hspace{10 mm}$ If $A \subset B$ and $B \subset C$, then $A \subset C$.  
+
+$\hspace{32 mm} x \in A \Rightarrow x \in B \Rightarrow x \in C$.  
+
+$\hspace{32 mm}$ Then $x \in A \Rightarrow x \in C$.  
+$\vspace{1 mm}$  
+
+_Theorem 1-2._$\hspace{10 mm} A \cup B = B \cup A$. 
+^[Commutative law for unions] 
+$\vspace{1 mm}$  
+
+_Theorem 1-3._$\hspace{10 mm} A\cup ( B \cup C ) = (A \cup B) \cup C = A \cup B \cup C$. 
+^[Associative law for unions] 
+$\vspace{1 mm}$  
+
+_Theorem 1-4._ $\hspace{10 mm} A \cap B = B \cap A$.  
+^[Commutative law for intersections] 
+$\vspace{1 mm}$  
+
+_Theorem 1-5._$\hspace{10 mm} A\cap ( B \cap C ) = (A \cap B) \cap C = A \cap B \cap C$.  
+^[Associative law for intersections]
+$\vspace{1 mm}$  
+
+_Theorem 1-6._ $\hspace{10 mm} A \cap(B \cup C) = (A \cap B) \cup (A \cap C)$.
+^[First distributive law]
+$\vspace{1 mm}$  
+
+_Theorem 1-7._ $\hspace{10 mm} A \cup(B \cap C) = (A \cup B) \cap (A \cup C)$. 
+^[Second distributive law]
+
+\marginnote{Note: In 1-6 and 1-7 "$\cup$" and "$\cap$" are exchanged - "Principle of Duality"}
+
+_Theorem 1-8._ $\hspace{10 mm} A - B = A \cap {B}'$.  
+$\vspace{1 mm}$  
+
+_Theorem 1-9._ $\hspace{10 mm}$ If $A \subset B$, then ${B}' \subset {A}'$.  
+$\vspace{1 mm}$  
+
+_Theorem 1-10._ $\hspace{10 mm} A \cup \o = A$. $A \cap \o = \o$.  
+$\vspace{1 mm}$  
+
+_Theorem 1-11._ $\hspace{10 mm} A \cup U = U$. $A \cap U = A$.  
+$\vspace{1 mm}$  
+
+_Theorem 1-12a._ $\hspace{10 mm} {(A \cup B)}' = {A}' \cap {B}'$.
+^[DeMorgan's First Law]
+$\vspace{1 mm}$  
+
+_Theorem 1-12b._$\hspace{10 mm} {(A \cap B)}' = {A}' \cup {B}'$.
+^[DeMorgan's Second Law]
+$\vspace{1 mm}$  
+
+_Theorem 1-13._ $\hspace{10 mm} A = (A \cap B) \cup (A \cap {B}')$.
+$\vspace{1 mm}$  
+
+
+$\pagebreak$  
+
+**Principle of Duality:** Any true relation remains true if we replace '$\cup$' by '$\cap$', '$\cap$' by '$\cup$', sets by their complements and if we reverse inclusion symbols '$\subset$' and '$\supset$'.  
+
+Consider the following sets: 
+
+$\hspace{10 mm}$ U = {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4}  
+
+$\hspace{10 mm}$ A = {$-\sqrt{2}$, $\pi$, 0}  
+
+$\hspace{10 mm}$ B = {5, 1/2, $-\sqrt{2}$, -4}  
+
+$\hspace{10 mm}$ C = {1/2, -4}  
+
+
+Use these sets to illustrate Theorems 2-13.  
+
+a) $A \cup B$ = {$1/2, 0, \pi, 5, -\sqrt{2}, -4$} = $B \cup A$.  
+
+b) $A \cup (B \cup C) = (A \cup B) \cup C = A \cup B \cup C$ = {$1/2, 0, \pi, 5, -\sqrt{2}, -4$}.  
+
+c) $A \cap B$ = {$-\sqrt{2}$} = $B \cap A$.  
+
+d) $A \cap (B \cup C)$ = $A \cap$ ({1/2, -4}) = {$-\sqrt{2}, \pi, 0$} $\cap$ {1/2, -4} = $\o$  
+
+e) $A \cap (B \cap C)$ = {$-\sqrt{2}, \pi, 0$} $\cap$ {$5, 1/2, -\sqrt{2}, -4$} = $(A \cap B) \cup (A \cap C)$ = {$-\sqrt{2}$} $\cup \o$ = {$-\sqrt{2}$}.  
+
+f) $A \cup (B \cap C)$ = {$-\sqrt{2}, \pi$, 0} $\cup$ {1/2,-4} = {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4}.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= $(A \cup B) \cap (A \cup C)$ = {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4} $\cap$ {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4} = {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4}.  
+
+g) $B - A = B \cap {A}'$  
+{$5, 1/2, -\sqrt{2}, -4$} - {$-\sqrt{2}, \pi$, 0} = {5, 1/2, -4} = {$5, 1/2, -\sqrt{2}, -4$} $\cap$ {5, 1/2, -4}.  
+
+h) $C \subset B$  
+{1/2, -4} $\subset$ {$5, 1/2, -\sqrt{2}, -4$}.  
+${C}'$ = {$0, \pi, 5, -\sqrt{2}$}.  
+${B}'$ = {0, $\pi$} $\Rightarrow {B}' \subset {A}'$.  
+
+i) $A \cup U$ = {1/2, 0, $\pi$, 5, $-\sqrt{2}$, -4}.  
+
+j) $(A \cup {B})'$ = $\o$. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${A}' \cap {B}'$ = {5, 1/2, -4} $\cap$ {$\pi$, 0} = $\o$.  
+
+k) $(A \cap B)'$ = {1/2, 0, $\pi$, 5, -4}.  
+ ${A}' \cup {B}'$ = {5, 1/2, -4} $\cup$ {$\pi$, 0} = {1/2, 0, $\pi$, 5, -4}.  
+
+l) (A $\cap$ B) $\cup$ (A $\cap {B}'$) = {1/2} $\cup$ {$-\sqrt{2}, \pi, 0$} $\cap$ {$\pi$, 0} = {$-\sqrt{2}, \pi$, 0} = A.
+
+
+\vfill
+------------------------------------------------
+
+\includegraphics[width=10mm]{cc.png}  
+
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were written by Alison Presmanes Hill and Katina Papadakis, adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

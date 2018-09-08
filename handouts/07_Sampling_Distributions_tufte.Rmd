@@ -1,0 +1,194 @@
+---
+title: "Sampling & Sampling Distributions"
+author: "Math 530-630, Note Set #7"
+header-includes:
+    \usepackage{amsmath,graphicx}
+    \date{}
+    \renewcommand\plaintitle{Math 530-630, (7) Sampling Distributions}
+output: rmarkdown::tufte_handout
+---
+
+
+A **population** is the sample space, i.e. the entire set of events from which a **sample** can be drawn. Measures on a population, e.g. the mean $\mu$ and the variance $\sigma ^2$ are called **population parameters** or "true" values of the population.  
+
+&nbsp;  
+  
+The term "statistic" is a **measure** from a population and could be any function defined on the sample. The key question here is: What do sample statistics tell us about the population from which the sample is drawn [called the "parent population"]? We clearly need to know the relations between population parameters and sample statistics, i.e., how population properties determine properties of sample statistics.  
+
+&nbsp;  
+  
+A sample usually consists of more than one observation:  Let's say our sample is N observations. We calculate a statistic on this sample (e.g. the mean $\bar{x}$), then likewise for another sample of N observations (let's say sampling **with replacement**) until we exhaust **all possible samples** from the population. All the calculated means, $\bar{x}_i$, will yield a theoretical distribution of this sampling statistic called the **sampling distribution**. This distribution will, in general, not be the same as the distribution of the percent population but will have some specifiable relation to the population parameter. This analysis is based on the assumption of drawing a **random sample**. This means that each possible sample of size N has exactly the same probability of being included as any other such samples.
+
+&nbsp;  
+  
+Now, let's consider the sampling distribution of the mean. Samples of N cases are drawn independently (with replacement) and at random from some population and each observation assigned a score $x_I$. The $i^{th}$ sample mean $\bar{X}_i = \displaystyle\frac{\sum\limits^{N}_{i=1} x_{i}}{N}$ is calculated. Sample after sample is drawn so that we generate a **distribution of sample means**. Suppose for clarity, we draw so many samples and calculate so many means, $\bar{X}_{i}s$ that we can consider the distribution to be continuous, and (for simplicity) it looks like this:  
+
+&nbsp;  
+  
+```{r, echo=FALSE, fig.height= 2.5, fig.width= 4.5, fig.align="center"}
+library(ggplot2)
+norm <- ggplot(data.frame(x = c(-4, 4)), aes(x)) + stat_function(fun = dnorm) + 
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.4)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = -2.2, y = 0, xend = -2.2, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2.2, y = 0, xend = 2.2, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(bar(x))", parse= TRUE, size = 4, family="serif")  + 
+  annotate('text',x = 0, y = -0.02, label = "E(bar(x))",parse = TRUE, size = 4, family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma[m]", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma[m]", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 3.9, y = 0.02, label = "bar(x)[i]", parse = TRUE, size = 4, family="serif")
+```  
+
+
+What can we say about the values $E(\bar{x})$ and $\sigma_{m}$ and their relation to the parent distribution? This is the problem of determining properties of statistics as **estimators of population parameters**. The general approach is called the **Method of Maximum Likelihood**.  
+
+&nbsp;  
+
+Consider the following simple situation: 
+
+An urn contains 3 balls which may be either red or white, but we don't know how many of each. we draw two at random **without replacement** and get two red balls. What would be a good estimate of the number of red balls in the urn?  
+
+We know it must either be two or three. If n = 2 reds in this case, P(2 red) $= (2/3) \cdot (1/2) = 1/3$. If n = 3 reds is the case P(2 red) = 1.  
+
+&nbsp;  
+
+The idea behind maximum likelihood is that we pick n = 3 red because this estimate **maximizes the probability of obtaining the observed sample**. That is, a statistic is a maximum likelihood estimator if it maximizes the likelihood of the sample result. Good estimators  should also be **unbiased, consistent,** and **efficient**.  
+
+&nbsp;  
+
+**Unbiased**: If a sample statistic G is an estimator of some population parameter $\theta$, we call the estimator **unbiased** if  
+$\hspace*{1in} E(G) = \theta$ over all samples.  
+
+_Example_: The sample mean $\bar{x}$ is an unbiased estimator of the population mean, $\mu$, but the sample variance, S$^2$ is **not** an unbiased estimator of $\sigma ^2$ - as we shall see.  
+
+&nbsp;  
+
+**Consistent**: As the sample size N increases, G should approach $\theta$.  
+
+&nbsp;  
+
+**Efficiency**: (Relative) The idea is to pick the unbiased estimator with the **smallest** sampling variance. If we have two estimators H and G, the efficency of G relative to H is
+
+$\hspace*{1in} \displaystyle\frac{\sigma _H ^2}{\sigma_G ^2}$  
+
+&nbsp;  
+
+Now, consider the sampling distribution of the **mean**, $\bar{X}$. Does $E(\bar{X}) = \mu$?  
+
+$\hspace*{1in} \bar{X} = \displaystyle\frac{\sum\limits_{1}^{N} x_i}{N}$  
+$\hspace*{1in} E(\bar{X}) = E \left(\displaystyle\frac{\sum\limits^{N} x_i}{N}\right) = \displaystyle\frac{1}{N} \sum\limits_{i}^{N} E(X_i) = \displaystyle\frac{1}{N}\sum\limits_{1}^{N} \mu = \displaystyle\frac{N\mu}{N} = \mu \qquad \qquad$ yes.  
+
+A given sample mean $\bar{X}_i$ is thus an unbiased estimator of the population mean, $\mu$.  
+
+The variance of the distribution of sample means, $\bar{x}$, will, in general, be **smaller** than the population variance $\sigma ^2$. In fact, 
+
+$\hspace*{1in} \sigma_{\mu}^2 = \displaystyle\frac{\sigma^2}{N} \hspace{10mm}$ N: sample size.  
+
+_Proof_: 
+
+$\hspace*{.5in}\bar{x} = \displaystyle\frac{\sum x_i}{N}$  
+$\hspace*{.5in} \sigma_{\mu}^2 = \text{Var}(\bar{x}) = \text{Var}\left(\displaystyle\frac{\sum\limits^{N} x_i }{N} \right ) = \displaystyle\frac{1}{N^2} \text{Var}\left(\sum\limits^N x_i \right ) = \displaystyle\frac{1}{N^2} \cdot \sum\limits^{N} \text{Var }x_i = \displaystyle\frac{N\sigma^2}{N^2} = \displaystyle\frac{\sigma^2}{N}$  
+
+$\hspace*{.5in}$ Q.E.D.  
+
+&nbsp;  
+
+Note that as $N \rightarrow$ population, $\sigma_m^2 \rightarrow 0$.  
+
+The standard deviation $\sigma_m$ is called the **standard error of the mean**.  
+$\hspace*{1in} \sigma_m = \displaystyle\frac{\sigma}{\sqrt{N}}$.  
+
+A z-score for the distribution of sample means is a random variable  
+
+$\hspace*{1in} z_m = \displaystyle\frac{\bar{X} - \mu}{\sigma_m} = \displaystyle\frac{\bar{X}-\mu}{\frac{\sigma}{\sqrt{N}}}$  
+
+$z_m$ is the number of standard deviations the sample mean $\bar{X}$ deviates from the population mean $\mu$. The larger $\left |  z_m \right |$ is, the less probable a give value $\bar{X_i}$ would be observed. This is a way of judging a sample mean against the population mean in probability terms.  
+
+#Sample Variance as an Estimator  
+
+We denote the sample variance by $S^2$, where $S^2 = \displaystyle\frac{\sum x_i^2}{N} - \left(\displaystyle\frac{\sum x_i}{N}\right)^2$. Now, evidently  
+
+$\hspace*{1in} E(S^2) = \sigma^2 - \sigma_m^2$ ^[Think of what happens as $N \rightarrow$ population.]
+
+$S^2$ is thus a **biased estimator**.  
+
+$\hspace*{1in} E(S^2) = \sigma^2 - \displaystyle\frac{\sigma^2}{N} = \left(\displaystyle\frac{N-1}{N}\right) \sigma^2$  
+
+The sample variance is **too small** by a factor of $\left(\displaystyle\frac{N}{N-1} \right)$. So, an **unbiased** estimate of the population variance $\sigma^2$ is:  
+
+$\hspace*{1in} S^2 = \left(\displaystyle\frac{N-1}{N}\right) S^2$  
+
+$\hspace*{1in}$ and $E(S^2) = \sigma^2$. $S^2$ is usually calculated by  
+
+$\hspace*{1in} S^2 = \displaystyle\frac{\displaystyle\sum\limits_{i=1}^N x_i^2 - N(\bar{x})^2}{(N-1)}$  
+
+The quantity $(N-1)$ is our introduction to the concept of **degrees of freedom**. Remember $S^2$ is also $\displaystyle\frac{\sum(x_i - \mu)^2}{N-1}$. But because $\sum\limits_{i=1}^N (x_i - \mu) = 0$, if we know $N - 1$ values, we know all the values, i.e., there are only $(N-1)$ **independent** quantities.  
+
+\pagebreak
+
+#Point and Interval Estimations  
+
+We know that $E(\bar{x}) = \mu, \text{Var}(\bar{x}) = \sigma^2/N = \sigma_m^2$  
+
+and $z_m = \displaystyle\frac{\bar{X} - \mu}{\sigma_m}$. If we draw a number of independent samples and calculated each $\bar{X_i}$, how likely is it that the "true" population mean $\mu$ is in the range of our sample means, $\bar{X_i}$? Suppose we only took **one** sample [typical] and calculated the mean $\bar{X}$ and its standard error $\sigma_m$. How can we "entrap" the population mean given this sample? How likely, for example, is it that the population mean falls within the range (interval) $(-\sigma_m, +\sigma_m)$? The process of probabilistic entrapment is known as a **confidence interval**. Here's a possible situation for a particular sampling distribution:  
+
+```{r, echo = FALSE, fig.margin = TRUE, fig.cap = "Sampling distribution of the sample mean"}
+library(ggplot2)
+library(grid)
+temp<-expression("How likely is it that"~mu~"lies in here?")
+norm <- ggplot(data.frame(x = c(-4, 4)), aes(x)) + stat_function(fun = dnorm) + 
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.4)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = -2.2, y = 0, xend = -2.2, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2.2, y = 0, xend = 2.2, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = -0.2, y = -0.09, xend = -0.7, yend = -0.01), arrow = arrow(length = unit(0.3, "cm"))) +
+  geom_segment(aes(x = 0.2, y = -0.09, xend = 0.7, yend = -0.01), arrow = arrow(length = unit(0.3, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(bar(x))", parse= TRUE, size = 4,family="serif")  + 
+  annotate('text',x = 0, y = -0.02, label = "bar(x)",parse = TRUE, size = 4,family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma[m]", parse = TRUE, size = 4,family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma[m]", parse = TRUE, size = 4,family="serif") + 
+  annotate("text", x = 3.9, y = 0.02, label = "-bar(x)[i]", parse = TRUE, size = 4,family="serif") + 
+  annotate("text", x = -0.3, y = -0.13, label = as.character(temp),parse=TRUE, size = 4,family="serif")
+```  
+
+A basic way we already know about is to use **Tchebychev's Inequality**.  
+
+\begin{marginfigure}
+$$P\left [ \left( \frac{X-\mu}{\sigma} \right) \geq k \right ] \leq \frac{1}{k^2}$$  
+\caption{Tchebychev's Inequality}
+\end{marginfigure}
+
+With respect to our sampling distribution this would be  
+
+\begin{align*}
+&P\left [ \left | \frac{\bar{X}-\mu}{\sigma_m} \right | \geq k \right ] \leq \frac{1}{k^2} \hspace{5mm} \text{ or} \\ 
+&P\left [ \left | z_m \right | \geq k \right ] \leq \frac{1}{k^2} \hspace{5mm} \text{ or}  \\
+&P\left [ \left | z_m \right | \leq k \right ] \geq \left(1- \frac{1}{k^2} \right )
+\end{align*}
+^[Note reversal of the inequality]
+
+Keep in mind here the definition of **absolute value**. If $\left | z_m \right | \leq k$, then $-k \leq z_m \leq k$.  In other words, $z_m$ is entrapped in the interval $(-k, k)$.  
+
+So, $p\left \{ -k \leq z_m \leq k \right \} \geq \left ( 1- \displaystyle\frac{1}{k^2} \right )$  
+
+Or $p\left \{ -k \leq \displaystyle\frac{\bar{x} - \mu}{\sigma_m} \leq k \right \} \geq \left ( 1- \displaystyle\frac{1}{k^2} \right )$  
+
+Or $p\left \{ (\bar{x} - k\sigma_m)\leq \mu \leq (\bar{x} + k\sigma_m) \right \} \geq \left ( 1- \displaystyle\frac{1}{k^2} \right )$  
+
+Thus, the probability is **at least** $\left ( 1- \displaystyle\frac{1}{k^2} \right )$ that $\mu$ will be found in the interval $\left(\bar{x} - k\sigma_m, \bar{x} + k\sigma_m \right)$.  
+
+The 'p' refers to the **sample** -- this is the probability of the **sample** containing $\mu$. Recall, this is a conservative (or crude) estimate because it makes no assumption about the parent distribution. If we know the actual population distriubtion, we can calculate confidence intervals "with confidence". The most powerful example of this is the normal distribution. We now need to consider it in detail.  
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

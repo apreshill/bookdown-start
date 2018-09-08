@@ -1,0 +1,421 @@
+---
+title: "Notes 9:  Hypothesis Testing"
+header-includes:
+    \usepackage{mathtools, graphicx, multirow}
+    \usepackage[normalem]{ulem}
+    \useunder{\uline}{\ul}{}
+    \subtitle{MATH 530-630}
+output: 
+    pdf_document
+---
+
+"How to decide how to decide."
+
+The issue is formulating methods for making judgments about populations (or probability functions) from sample statistics.
+
+We make formal hypotheses about the population and test these hypotheses by taking appropriate samples and making decisions based on probability theory using sample statistics. This is simply an extension of ideas already addressed, but perhaps less formally.
+
+For example:  Do I have a fair coin?
+
+H$_0$:  p = 1/2. Toss the coin 20 times and get 16 heads. How likely is this?
+
+p(#H $\geq$ 16) = p(T $\leq$ 4) =
+
+$\left(\displaystyle\frac{1}{2}\right)^{20}\left[\displaystyle\binom{20}{0} + \binom{20}{1} + \binom{20}{2} + \binom{20}{3} + \binom{20}{4}\right] = 0.006$
+
+If you had decided beforehand to reject H$_0$ if the simply probability was 0.05 or less ("the 0.05 level"), then you would judge that this coin was **unfair**. **But there is no guarantee** this is actually the case.
+
+When we find a confidence interval for a mean $\mu$ from a normal population with standard deviation $\sigma$, we take a sample size N and estimate $\mu$ from $\bar{x}$, the sample mean. How good is the estimate, $\bar{x}$? We now know how to address this question. Here's the situation for the 99% confidence interval.
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+temp<-expression("E"~(bar(x))~"="~mu)
+temp2 <- expression(atop("Sampling Distribution of"~bar(x)[I]~"'s",~abs(frac(bar(x)-mu,sigma[m])) <= z[.99]))
+temp3 <- expression("P("~mu~"somewhere in here) = 0.99")
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x<=2&x>=-2),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.2), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = 2.2, y = 0.25, xend = 0.2, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 1.5, y = -0.15, xend = 1, yend = 0.1), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.1, label = "0.99", size = 3, family="serif")  + 
+  annotate('text',x = 0, y = -0.04, label = as.character(temp), parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -2.5, y = -0.02, label = "bar(x) - z[.99] (sigma/sqrt(N))", parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 2.5, y = -0.02, label = "bar(x) + z[.99] (sigma/sqrt(N))", parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 2.3, y = 0.012, label = "0.005", size = 3, family="serif") +
+  annotate("text", x = -2.3, y = 0.012, label = "0.005", size = 3, family="serif") +
+  annotate("text", x = 2.7, y = 0.25, label = as.character(temp2), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -.17, label = as.character(temp3), parse=TRUE, size = 3, family="serif")
+``` 
+
+Or $p\left[\left(\bar{x} - \overset{z_c}{2.58\sigma_m}\right) \leq \mu \leq \left(\bar{x} + \overset{z_c}{2.58\sigma_m}\right)\right] = 0.99$
+
+Z$_{0.99}$ is an example of a z$_c$ or z -- "critical" value with c chosen as the "critical" probability, e.g. 0.99.
+
+If we hypothesized that the population mean was some value $\mu_0$ [H$_0: \mu = \mu_0$] and we know the population standard deviation $\sigma$, we can assign a probability that our sample mean $\bar{x}$ will lie close to the hypothesized value $\mu_0$, i.e., that
+
+$\left|\displaystyle\frac{\bar{x}-\mu}{\sigma_m}\right| \leq z_c$ [z$_c$ is sometimes denoted z$_{\alpha_i}$ where ($\alpha$ = 1 - c)]
+
+We will look more closely at this particular situation shortly, but first we need to treat the general problem of hypothesis testing.
+
+Some examples of hypotheses you will be encountering include the following:
+
+H$_0$: p = p$_0$ (binomial)   
+H$_0$: $\mu$ = $\mu_0$   
+H$_0$: $\mu_1 - \mu_2$ = 10   
+H$_0$: $\mu_1 = \mu_2 = \mu_3$, etc.   
+H$_0$: $\sigma_1^2 = \sigma_0^2$   
+H$_0$: $\sigma_1^2 / \sigma_2^2 = 1$   
+H$_0$: r$_{xy}$ > 0 (correlation coefficient)
+
+The tested hypothesis is called the null hypothesis, denoted H$_0$. H$_0$ is **assumed true** and tested against (explicitly or implicitly) H$_1$, called the alternative hypothesis. For example:
+
+\begin{align*}
+    \left. \begin{array}{l}
+        H_0: \mu = \mu_0 \\
+        H_1: \mu \neq \mu_0
+    \end{array}\right\} \text{Implicit test}
+\end{align*}
+
+\begin{align*}
+    \left. \begin{array}{l}
+        H_0: \mu = \mu_0 \\
+        H_1: \mu = \mu_1
+    \end{array}\right\} \text{Explicit test}
+\end{align*}
+
+To test a statistical hypothesis, the sampling distribution must be known or specified, for example, for $\bar{x}$ and s.
+
+#Procedure for Testing Statistical Hypotheses
+
+1. State H$_0$ and H$_1$ [These are about the **population**].
+
+2. What are our assumptions, e.g. the underlying distribution (normal, binomial, etc.), sample size appropriate, random sampling, sampling distributions, tests appropriate, etc.)?
+
+3. Specify appropriate sample statistical/distribution.
+
+4. Assign a **region of rejection**, i.e. a region where values of a sample statistics would be considered deviant if H$_0$ is actually true, but would be in accord with H$_1$. This assignment specifies the risk one is taking in incorrectly rejecting H$_0$, i.e. p(H$_1$|H$_0$) = $\alpha$.
+
+&nbsp;
+
+Here are two situations:
+
+H$_0$: $\mu = \mu_0$, H$_1$: $\mu \neq \mu_0$
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+temp <- expression(x[c]~"="~bar(x) - z[d] %.% sigma[m])
+temp2 <- expression(x[c]~"="~bar(x) + z[d] %.% sigma[m])
+temp3 <- expression(atop(H[0]~":"~mu~"is in here, i.e. belongs to","this distribution (population)."))
+temp4 <- expression(H[1]~":"~mu~"is in here.")
+temp5 <- expression(atop(mu~" belongs to this","distribution population."))
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) + stat_function(fun=dnorm, args=c(mean=-2, sd=0.9), linetype="dashed") + stat_function(fun=dnorm, args=c(mean=2, sd=0.9), linetype="dashed") +
+  geom_ribbon(data=subset(df,x>1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_ribbon(data=subset(df,x< -1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = -2, y = 0, xend = -2, yend = 0.5), linetype="dotted") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.5), linetype="dotted") +
+  geom_segment(aes(x = -1.5, y = 0, xend = -1.5, yend = 0.12),linetype="dashed") +
+  geom_segment(aes(x = 1.5, y = 0, xend = 1.5, yend = 0.12), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = -3.5, y = 0.3, xend = -2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 3.5, y = 0.3, xend = 2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = -2, y = -0.08, xend = -1.7, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 2, y = -0.08, xend = 1.7, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 0, y = -0.08, xend = -0.3, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0, y = -0.02, label = "mu[0]", parse=TRUE, size = 3, family="serif")  + 
+  annotate("text", x = -1.5, y = -0.02, label = "bar(x)[c]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -0.02, label = "bar(x)[c]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -1.2, y = -0.05, label = as.character(temp), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.2, y = -0.05, label = as.character(temp2), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 0, y = -0.15, label = as.character(temp3), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = -2, y = -0.1, label = as.character(temp4), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = 2, y = -0.1, label = as.character(temp4), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = -3.5, y = 0.35, label = as.character(temp5), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = 3.5, y = 0.35, label = as.character(temp5), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = -2, y = -0.02, label = "mu", parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 2, y = -0.02, label = "mu", parse=TRUE, size = 4, family="serif")
+``` 
+
+This represents a **two-tailed test**, i.e. $\mu_1$ might be greater or less than $\mu_0$. But, H$_1$ might have been H$_1$: $\mu_0 < \mu_1$.
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+temp <- expression(atop(H[0]~":"~mu[0]~"="~mu[1],"says"~mu[1]~"is in here."))
+temp2 <- expression(atop(H[1]~":"~mu[0] < mu[1],"says"~mu[1]~"is in here."))
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) + stat_function(fun=dnorm, args=c(mean=2, sd=0.9), linetype="dashed") +
+  geom_ribbon(data=subset(df,x>1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.5), linetype="dotted") +
+  geom_segment(aes(x = 1.5, y = 0, xend = 1.5, yend = 0.12), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = -2, y = 0.15, xend = -1.5, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 3, y = 0.35, xend = 2.5, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0, y = -0.02, label = "mu[0]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -0.02, label = "bar(x)[c]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 2, y = -0.02, label = "mu[1]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -2, y = 0.2, label = as.character(temp), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 3.5, y = 0.38, label = as.character(temp2), parse=TRUE, size = 3, family="serif")
+```
+
+This represents a **one-tailed test** (directional).
+
+5. An appropriate (random) sample (or samples) is taken. If the value of the test statistic, say $\bar{x}$, falls into the region of rejection, H$_0$ is said to be rejected in favor of H$_1$; if not, H$_0$ is not rejected. A result falling into the region of rejection is said to be **statistically significant**.
+
+Example (Hays)
+
+H$_0$: $\mu = 75$
+
+H$_1$: $\mu \neq 75$.
+
+This is a non-directional, or two-tailed test. Assume the population is normal with $\sigma$ = 10. Select a sample size N = 25.
+
+The sampling distribution of $\bar{x}$ is normal with $\sigma_m = 10/\sqrt{25} = 2$.
+
+&nbsp;
+
+Here's the situation with the possible distributions.
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+temp <- expression(x[c]~"="~bar(x) - z[d] %.% sigma[m])
+temp2 <- expression(x[c]~"="~bar(x) + z[d] %.% sigma[m])
+temp3 <- expression(atop(mu~"="~z %.% 5~"should be in here if"~H[0]~"is true, i.e.","if"~bar(x)~"is found here,"~H[0]~"is not rejected."))
+temp4 <- expression(H[0]~":"~mu~"is in here.")
+temp5 <- expression(H[1]~":"~mu~"is in here.")
+temp6 <- expression("E("~bar(x)~") ="~mu)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) + stat_function(fun=dnorm, args=c(mean=-2, sd=0.9), linetype="dashed") + stat_function(fun=dnorm, args=c(mean=2, sd=0.9), linetype="dashed") +
+  geom_ribbon(data=subset(df,x>1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_ribbon(data=subset(df,x< -1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = -2, y = 0, xend = -2, yend = 0.5), linetype="dotted") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.5), linetype="dotted") +
+  geom_segment(aes(x = -1.5, y = 0, xend = -1.5, yend = 0.12),linetype="dashed") +
+  geom_segment(aes(x = 1.5, y = 0, xend = 1.5, yend = 0.12), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = -3.5, y = 0.3, xend = -2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 3.5, y = 0.3, xend = 2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = -2, y = -0.08, xend = -1.7, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 2, y = -0.08, xend = 1.7, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = -0.2, y = -0.08, xend = -0.2, yend = 0.01), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 1, y = 0.45, xend = 0.5, yend = 0.3), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = -0.02, label = as.character(temp6), parse=TRUE, size = 3, family="serif")  + 
+  annotate("text", x = 1, y = 0.48, label = as.character(temp4), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -1, y = -0.02, label = as.character(temp), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 2.5, y = -0.02, label = as.character(temp2), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 0, y = -0.15, label = as.character(temp3), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = -2, y = -0.1, label = "region of rejection.", size = 3, family="serif") + 
+  annotate("text", x = 2, y = -0.1, label = "region of rejection.", size = 3, family="serif") + 
+  annotate("text", x = -3.5, y = 0.35, label = as.character(temp5), parse=TRUE, size = 3, family="serif") + 
+  annotate("text", x = 3.5, y = 0.35, label = as.character(temp5), parse=TRUE, size = 3, family="serif")
+``` 
+
+Select **significance level**, e.g. $\alpha = 0.05$.
+
+That is, p($\bar{x}$ is in the region of rejection | H$_0$ is true) $\leq$ 0.05.
+
+What, then, is z$_c$ (or z$_{\alpha}$)? For a two-tailed test, 2F(z$_c$) -- 1 = 0.95  $\qquad$ F(z$_c$) = .975.
+
+z$_c$ = 1.96.
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x>1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_ribbon(data=subset(df,x< -1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+norm + annotate("text", x = 3, y = 0.05, label = "0.025", size = 4, family="serif")  +
+  annotate("text", x = -3, y = 0.05, label = "0.025", size = 4, family="serif")
+```
+
+Given $\alpha = 0.05$, this means that, on average, 2.5% (0.025) of the sample $\bar{x}$'s would fall above $1.96\sigma_m$ and 2.5% of the $\bar{x}$'s below $1.96\sigma_m$. From the perspective of the distribution of z-scores we have the following situation:
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+temp <- expression(z[m]*"'s")
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x>1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_ribbon(data=subset(df,x< -1.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+norm + annotate("text", x = 3, y = 0.05, label = "0.025", size = 3, family="serif")  +
+  annotate("text", x = -3, y = 0.05, label = "0.025", size = 3, family="serif") +
+  annotate("text", x = 0.5, y = 0.1, label = "0.95", size = 3, family="serif") +
+  annotate("text", x = -1.5, y = -0.02, label = "-z[c]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -0.02, label = "z[c]", parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -1.5, y = -0.05, label = "-1.96", size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -0.05, label = "1.96", size = 3, family="serif") +
+  annotate("text", x = 0, y = -0.02, label = "0", size = 3, family="serif") +
+  annotate("text", x = 0, y = 0.46, label = as.character(temp), parse=TRUE, size = 3, family="serif")
+```
+
+Will $\left|z_m\right| = \left|\displaystyle\frac{\bar{x} - \mu}{\sigma_m}\right| \geq 1.96$? or $\leq 1.96$?
+
+We can get a confidence interval for $\bar{x}$ **assuming H$_0$ is true**. That is
+
+p($\mu - 1.96\sigma_m \leq \bar{x} \leq \mu - 1.96\sigma_m$) = 0.95 if H$_0$ is true.
+
+$\bar{x}_{\text{min}} = \mu - 1.96(\sigma_m) = 75 - 1.96(2) = 71.08$.
+
+$\bar{x}_{\text{max}} = \mu + 1.96(\sigma_m) = 75 + 1.96(2) = 78.92$.
+
+i.e. $71.08 \leq \bar{x} \leq 78.92$ **if H$_0$ is true**.
+
+71.08 and 78.92 are called the **critical values** of the sample means.
+
+We draw a sample and get $\bar{x} = 79$, so
+
+$z_m = \displaystyle\frac{79 - \mu}{\sigma_m} = \displaystyle\frac{79-75}{2} = 2 \geq 1.96$
+
+This is **significant** beyond the 0.05 level, i.e. less than 5% of samples would be this deviant **if** H$_0$ were true; thus, we reject H$_0$ at the 0.05 level of significance.
+
+##Decision Theory 
+
+(read Hays closely -- pp. 273-279)
+
+The decisions made under different conditions actually can be presented in a table like this:
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{llcc}
+ &  & \multicolumn{2}{c}{{\ul True Situation}} \\
+ & \multicolumn{1}{l|}{} & \multicolumn{1}{c|}{H$_0$} & \multicolumn{1}{c|}{H$_1$} \\ \cline{2-4} 
+\multirow{2}{*}{Decision to Accept} & \multicolumn{1}{l|}{H$_0$} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Correct/"hit"\\ \\ p = 1 -- $\alpha$\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Type II Error\\ \\ False Negative/"miss"\\ \\ p = $\beta$\end{tabular}} \\ \cline{2-4} 
+ & \multicolumn{1}{l|}{H$_1$} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Type I Error\\ \\ False Positive/"false alarm"\\ \\ p = $\alpha$\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Correct/"correct rejection"\\ \\ p = 1 -- $\beta$ (Power of a test)\end{tabular}} \\ \cline{2-4} 
+\end{tabular}
+\end{table}
+
+These various possibilities can be expressed as **conditional probabilities**.
+
+p(accept H$_0$|H$_0$ true) = $1 - \alpha$.
+
+p(accept H$_0$|H$_1$ true) = $\beta$ (Type II Error).
+
+p(accept H$_1$|H$_1$ true) = $1 - \beta$ (Power of a test).
+
+p(accept H$_1$|H$_0$ true) = $\alpha$ (Type I Error).
+
+
+#Factors Affecting Selection of Significance Level
+
+1. Risk of Type I vs. Type II Error
+
+**Other things being equal**, the smaller $\alpha$ chosen, the larger $\beta$ will be and **vice versa**. One must consider the differential consequences of each type of error. Consider this kind of question, for example, "Is this medication safe?"
+
+2. Power of a test or Type II Error Analysis. Normally $\beta$ is not specified (or even specifiable) unless H$_0$ is tested against a specific H=1, that is, there is an explicit alternative hypothesis. If so, $\beta$ can be determined, i.e., p(accept H$_0$|H$_1$ is true). The p(accept H$_1$|H$_1$ is true) = $1 - \beta$ is called the **power of a test**. This is the probability of a correct rejection or finding out H$_0$ is wrong.
+
+Example (Hays)
+
+$\hspace{5mm} H_0: \mu = 138; H_1: \mu = 142$
+
+$\hspace{5mm} \sigma=20,\quad N=100,\quad Q=0.05,\quad \sigma_m = 20/\sqrt{100} = 2$
+
+$\hspace{5mm}$ This is a **one-tailed test** with z$_c$ = 1.65.
+
+Here's the situation with the possible (normal) distributions:
+
+```{r, echo=FALSE,fig.width=7,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- seq(-4,4,0.0001)   
+y <- dnorm(x,-1.5,1)
+y2 <- dnorm(x,1.5,1)
+temp <- expression(atop("Distribution if",~H[0]~"is true."))
+temp2 <- expression(atop("Distribution if",~H[1]~"is true."))
+temp3 <- expression(beta~"(Type II Error)")
+temp4 <- expression(atop("N = 138",(H[0])))
+temp5 <- expression(atop(mu~"= 142",(H[1])))
+temp6 <- expression(alpha~"= 0.05 (Type I Error)")
+temp7 <- expression(bar(x)[c]~"= 141.3")
+df <- data.frame(x=x,y=y)
+df2 <- data.frame(x=x,y=y2)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm, args=c(mean=-1.5)) + stat_function(fun=dnorm, args=c(mean=1.5)) +
+  geom_ribbon(data=subset(df,x>0.5),aes(ymin=0,ymax=y), alpha=0.2) +
+  geom_ribbon(data=subset(df2,x<0.5),aes(ymin=0,ymax=y), alpha=0.4) +
+  geom_segment(aes(x = -1.5, y = 0, xend = -1.5, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = 1.5, y = 0, xend = 1.5, yend = 0.45), linetype="dotted") +
+  geom_segment(aes(x = -4, y = 0.04, xend = 4, yend = 0.04)) +
+  geom_segment(aes(x = -3, y = 0.35, xend = -2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = -3.5, y = 0.2, xend = -2.4, yend = 0.1), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 3, y = 0.35, xend = 2.4, yend = 0.2), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 3.5, y = 0.2, xend = 2.4, yend = 0.1), arrow = arrow(length = unit(0.2, "cm"))) + 
+  geom_segment(aes(x = 1.2, y = -0.11, xend = 0.7, yend = 0.02), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = -0.2, y = 0.4, xend = -0.2, yend = 0.015), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = -3.2, y = 0.37, label = "1 - alpha", parse=TRUE, size = 3, family="serif")  + 
+  annotate("text", x = -3.6, y = 0.26, label = as.character(temp), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 3.2, y = 0.37, label = "1 - beta (Power)", parse=TRUE, size = 3, family="serif")  + 
+  annotate("text", x = 3.6, y = 0.26, label = as.character(temp2), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -0.2, y = 0.42, label = as.character(temp3), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = -1.5, y = -0.04, label = as.character(temp4), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 0.25, y = -0.02, label = as.character(temp7), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.5, y = -0.04, label = as.character(temp5), parse=TRUE, size = 3, family="serif") +
+  annotate("text", x = 1.4, y = -0.13, label = as.character(temp6), parse=TRUE, size = 3, family="serif")
+```
+
+The critical value for $\mu = 138$, $\bar{x}_c$ is $\mu + 1.65\sigma_m = 138 + (1.65)(2) = 141.3$.
+
+If a sample with a mean of at least this value is drawn, H$_0$ is rejected.
+
+If $\mu = 142$ (H$_1$), $z_{\beta} = \displaystyle\frac{141.3 - 142}{2} = -0.35$.
+
+F(-0.35) = $\beta$ = 0.3632 [p(Type II error)]
+
+Power = 1 -- $\beta$ = 0.6368 = p (correct rejection)
+
+So, the power of a test is a function of
+
+1. H$_1$ (specification of alternative hypothesis; e.g. if $\mu_1 >> \mu_0$, $1 - \beta$ is large).
+
+2. $\alpha (\downarrow \alpha \Rightarrow \uparrow \beta)$ [p (Type II)]
+
+3. N ($\uparrow 1 - \beta$) [smaller $\sigma_m$]
+
+4. $\sigma^2 (\downarrow \alpha^2 \Rightarrow \uparrow 1 - \beta)$ [smaller $\sigma_m$]
+
+The last item implies the need for increased experimental **control**.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

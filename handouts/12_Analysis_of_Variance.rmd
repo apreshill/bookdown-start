@@ -1,0 +1,454 @@
+---
+title: 'Notes 12:  Analysis of Variance --  ANOVA'
+header-includes:
+    \usepackage{amsmath,graphicx,stackrel,longtable,multicol,multirow}
+    \usepackage[utf8]{inputenc}
+    \usepackage[english]{babel}
+    \subtitle{MATH 530-630}
+output: 
+    pdf_document:
+        fig_caption: true
+---
+
+Suppose you wish to compare **more than two treatment conditions**, i.e. go beyond the simple "control" vs. "experimental" design with two groups. For example, consider the following between-group design where the effect of a selected dose of *different* drugs (including placebo) on some behavior is tested.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{cccccccc}
+ & G$_1$ &  & G$_2$ &  & G$_3$ &  & G$_4$ \\
+ & {\bf Placebo} & {\bf \it } & {\bf Drug 1} & {\bf \it } & {\bf Drug 2} & {\bf \it } & {\bf Drug 3} \\
+ & S$_{11}$ &  & S$_{12}$ &  & S$_{13}$ &  & S$_{14}$ \\
+ & S$_{21}$ &  & S$_{22}$ &  & S$_{23}$ &  & S$_{24}$ \\
+ & S$_{31}$ &  & S$_{32}$ &  & S$_{33}$ &  & S$_{34}$ \\
+ & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} \\
+ & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} \\
+ & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} &  & \multicolumn{1}{c}{.} \\
+ & S$_{n1}$ &  & S$_{n2}$ &  & S$_{n3}$ &  & S$_{n4}$
+\end{tabular}
+\end{table}
+
+The S$_{\text{ij}}$ s are the **dependent** measures for the subjects, for example, S$_{23}$ is the measure for subject 2 in Group 3.
+
+You already know how to use a t-test to test hypotheses about a single mean or a pair of means. Why not simply use such a test to compare pair-wise the means of several groups? With 4 groups, we have six possible pairs, $\displaystyle \binom{4}{2}$, so we would have to do six tests. If we selected a significance level of, say $\alpha = 0.05$, this would apply to *each* of the six tests. What is the probability of making at least one Type I error? Using the binomial distribution we have
+
+p(no Type I errors) = $\displaystyle \binom{4}{0}(0.05)^0(0.95)^4 \approx 0.815$
+
+Thus, p(at least one Type I error) = $1 - 0.815 = 0.186$.
+
+This is almost *4 times* as likely as a single pair test. In general, if we make J tests, p(at least one Type I error) = $1 - (1 - \alpha)^J$. Moreover, tests of *all* differences among means cannot be independent of each other as we shall see later. To compensate for these problems, we could choose appropriately small $\alpha$'s, but then p(Type II error) would increase accordingly. So, what do we do?
+
+Let's begin with an example:  Consider the issue of whether the violent crime rate depends on the geographic region of the US. In other words, is it the case that
+
+\qquad CRIME RATE = f(geographic region)
+
+"CRIME RATE," the dependent variable is **metric**, i.e. values are determined that can range over the positive real numbers (within limits, of course). "Geographic region" is a **categorical** variable, i.e., simply nominal. ANOVA is generally concerned with the functional relation
+
+\qquad metric variable = f(categorical variable)
+
+If we have
+
+\qquad metric variable = f(metric variable)
+
+then we use the methods of **regression** we will cover later. ANOVA is thus a *subset* of regression methods.
+
+\pagebreak
+
+```{r, echo=FALSE}
+state <- c('Maine', 'New Hampshire', 'Vermont', 'Massachusetts', 'Rhode Island', 
+           'Connecticut', 'New York', 'New Jersey', 'Pennsylvania', 'Ohio', 'Indiana',
+           'Illinois','Michigan','Wisconsin','Minnesota','Iowa','Nebraska','Missouri',
+           'North Dakota','South Dakota','Kansas','Delaware','Maryland','Virginia',
+           'West Virginia','North Carolina','South Carolina','Georgia','Florida',
+           'Kentucky','Tennessee','Alabama','Mississippi','Arkansas','Louisiana',
+           'Oklahoma','Texas','Arizona','New Mexico','Wyoming','Colorado','Montana',
+           'Idaho','Utah','Nevada','Washington','Oregon','California')
+rate <- c(147,140,149,557,336,426,986,572,359,423,308,800,804,258,285,
+                         235,263,578,51,125,369,427,833,306,164,476,675,588,1036,334,
+                         540,558,274,395,758,436,659,658,726,293,524,157,222,267,719,
+                         437,550,920)
+region <- c('New England','New England','New England','New England','New England','New England',
+            'Mid-Atlantic','Mid-Atlantic','Mid-Atlantic','Midwest','Midwest','Midwest','Midwest',
+            'Midwest','Midwest','Midwest','Midwest','Midwest','Midwest','Midwest','Midwest',
+            'South','South','South','South','South','South','South','South','South','South',
+            'South','South','South','South','Southwest','Southwest','Southwest','Southwest',
+            'Rocky Mountains','Rocky Mountains','Rocky Mountains','Rocky Mountains',
+            'Rocky Mountains','Rocky Mountains','Pacific Coast','Pacific Coast','Pacific Coast')
+us_crimes86 <- data.frame(state,rate,region)
+reg_means <- aggregate(rate~region, data=us_crimes86, FUN=function(x) c(mean=mean(x)))
+```
+
+```{r, echo=FALSE, message = FALSE, include = TRUE, fig.cap="Scatterplot of crime rates with overall and region means"}
+with(us_crimes86, stripchart(rate ~ region, vertical = TRUE, add = FALSE,ylab = "Violent crime rate",cex.axis=0.9,pch=18))
+abline(h=mean(us_crimes86$rate))
+text(1,480,expression(bar(y)),pos=2,cex=.8)
+lines(1:7,reg_means$rate)
+mean_labs <- c(expression(bar(y)[1]),expression(bar(y)[2]),expression(bar(y)[3]),expression(bar(y)[4]),
+               expression(bar(y)[5]),expression(bar(y)[6]),expression(bar(y)[7]))
+text(1.15:7.15,reg_means$rate,labels=mean_labs)
+```
+
+
+Now, look at the scatterplot of the data. We see considerable variations in crime rate *between* regions and *within* regions. Can we say the indicated differences *among* regions are simply due to chance? One way of addressing this question is to look at the means for each region, but in ANOVA we use variances to test differences among means.
+
+Consider each state ("subject") and ask what factors contribute to the crime rate in that state. ANOVA is based on the notion that we can consider **just two factors** -- the region the state is in and everything else. What does this mean?
+
+
+Suppose all the states started with a crime rate of the same value (i.e., they all came from the same population). The best estimate of the overall crime rate would be the overall mean ("grand mean") of **all** states, $\bar{y}$.. . The two-dot notation is standard, meaning we have summed over both i and j; Hays uses simply $\bar{y}$.
+
+Now assume each state is influenced by being in a particular region. Thus each state is "switched" from the overall mean $\bar{y}$.. toward the mean of each region $\bar{y}._j$. The effect of a region variable could be measured by the *difference* between the region **mean** and the overall mean $\bar{y}._j - \bar{y}..$ . We can calculate the difference as a **sum of squares** $\sum\limits_j(\bar{y}._j - \bar{y}..)^2$. This value, *with some modification* is called the **between group sum of squares**. $\big(\text{Actually,} SS_{\text{Between}} = n\sum\limits_j(\bar{y}._j - \bar{y}..)^2.\big)$
+
+But, there is *within*-group variation produced by other unidentified factors. This variation is sometimes called **error** or **residual** variation. To estimate this we would use the differences between each state, $y_{ij}$, and its regional mean $\bar{y}._j$, i.e. $\displaystyle\sum\limits_j\sum\limits_i(y_{ij} - \bar{y}._j)^2 = SS_{\text{Within}}$. Now the crime rate in each state is affected by the region it's in *and* the residual variables, so that the difference between the crime rate for a particular state and the overall value is a measure of both residual and residual variation. A measure of the differences between the individual state observation and the overal mean is $\displaystyle \sum\limits_j\sum\limits_i(y_{ij} - \bar{y}..)^2$ and is called the **total sum of squares**, SS$_T$. The ratio of $\displaystyle \frac{^{SS_B}\big/_{df_B}}{^{SS_W}\big/_{df_W}}$ is a ratio of variances that is distributed as F$_{v_1,v_2}$, providing the test of
+
+$H_0: \mu_1 = \mu_2 = ...\mu_j =$ etc.
+
+###Formal Scheme for One-Way ANOVA -- The General Linear Model.
+
+Here is the layout for a one-way ANOVA:
+
+\begin{center}
+Treatment A (j = 1, 2, 3,..., p levels)
+\end{center}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{ccccccccc}
+Level 1 (a$_1$)                                          &  & Level 2 (a$_2$)                                          &  & ..... &  & Level j (a$_j$)                                          &  & Level p (a$_p$)                                          \\
+x$_{11}$                                                 &  & x$_{12}$                                                 &  & .     &  & x$_{1j}$                                                 &  & x$_{1p}$                                                 \\
+x$_{21}$                                                 &  & x$_{22}$                                                 &  & .     &  & x$_{2j}$                                                 &  & x$_{2p}$                                                 \\
+.                                                        &  & .                                                        &  & .     &  & .                                                        &  & .                                                        \\
+.                                                        &  & .                                                        &  & .     &  & .                                                        &  & .                                                        \\
+.                                                        &  & .                                                        &  & .     &  & x$_{ij}$                                                 &  & .                                                        \\
+x$_{n1}$                                                 &  & x$_{n2}$                                                 &  & .     &  & x$_{nj}$                                                 &  & x$_{np}$                                                 \\ \cline{1-1} \cline{3-3} \cline{7-7} \cline{9-9} 
+$\mu_1 = \displaystyle \frac{\displaystyle\sum\limits_i^n x_{ii}}{n}$ &  & $\mu_2 = \displaystyle \frac{\displaystyle\sum\limits_i^n x_{i2}}{n}$ &  &       &  & $\mu_j = \displaystyle \frac{\displaystyle\sum\limits_i^n x_{ij}}{n}$ &  & $\mu_p = \displaystyle \frac{\displaystyle\sum\limits_i^n x_{ip}}{n}$
+\end{tabular}
+\end{table}
+
+[Let's consider the case of *equal* n's in each treatment level; this is an algebraic nicety.] What factors determine each score x$_{ij}$? They include the following:
+
+1. the level of treatment (over independent variable)
+2. characteristics of subject or unit
+3. chance fluctuations
+4. other unknown environmental or uncontrolled conditions.
+
+These factors are expressed in the **linear model for the population**:
+
+$X_{ij} = \mu + \alpha_j + \epsilon_{ij} \qquad$ where
+
+$\mu$:  Grand mean $\left(\sum\limits_j^p\ ^{\mu_j}\big/_p\right)$. This is the average value around which the treatment means vary. If the various treatments resulted in no differential effects, $\mu$ would be the best estimate of a score, x$_{ij}$. Think of it as a benchmark or standard to evaluate treatment effects. If treatment effects were zero, then
+
+$X_{ij} = \mu + \epsilon_{ij}$.  [The "reduced" model]
+
+$\alpha_j$:  This is the treatment effect for **population** j. $\alpha_j = \mu_j - \mu$, the deviation of the j\textsuperscript{th} treatment mean from the grand mean. Note that $\mu + \alpha_j = \mu + (\mu_j - \mu) = \mu_j$, the treatment j population mean.
+
+$\epsilon_{ij}$:  "error" or "residual" associated with a particular subject or unit reflecting variation unique to the subject as well as other chance fluctuations and uncontrolled conditions. 
+
+$\epsilon_{ij} = x_{ij} - \mu - \alpha_j = x_{ij} - (\mu + \alpha_j) = (x_{ij} - \mu_j)$; that is, what's left over after treatment effects are accounted for. Note that
+
+$\epsilon_{ij} = x_{ij} - \mu - (\mu_j - \mu) = x_{ij} - \mu_j$
+
+That is, $\epsilon_{ij}$ is measured as the deviation of a score from the treatment mean.
+
+So, $\mu$, $\alpha_j$, and $\epsilon_{ij}$ are **population parameters** estimated from sample data. Our null hypothesis is $H_0: \mu_1 = \mu_2 = ... = \mu_p$. This is equivalent to $\alpha_1 = \alpha_2 = ... = \alpha_p = 0$. If all $\mu_j$'s are equal, $\mu_j = \mu$ so $\alpha_j = \mu_j - \mu = 0$.
+
+The linear model $x_{ij} = \mu + \alpha_j + \epsilon_{ij}$ is **estimated** by
+
+$x_{ij} = \underbrace{\bar{x} ..}_{\text{Grand Mean}} + \underbrace{(\bar{x}_i - \bar{x} ..)}_{\text{Deviation of treatment}\atop\text{means from Grand Mean.}} + \underbrace{(\bar{x}_{ij} - \bar{x} .)}_{\text{Deviation of score from}\atop\text{treatment mean.}}$
+
+NOTE:  The notation ` . ' indicates summation over index replaced by .. For example,
+
+$\bar{x}.. = \displaystyle\frac{\displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n x_{ij}}{np}$ and $\bar{x}._j = \displaystyle\frac{\displaystyle\sum\limits_{i=1}^n x_{ij}}{n}$
+
+We could write our statistical model as
+
+$(x_{ij} - \bar{x}..) = (\bar{x}._j - \bar{x}..) + (\bar{x}_{ij} - \bar{x}._j)$
+
+Note that this "equation" is simply $x_{ij} = x_{ij}$. What we are doing here is **partitioning** the score in a useful way. The sums of these deviations from the means is always zero, so we have to consider the sums of **squared deviations** and partition them.
+
+The total variation among scores is:
+
+$\qquad \text{SS}_T = \displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n (x_{ij} - \bar{x}..)^2$. This is called the total sum of squares, SS$_T$.
+
+This is a **composite** so that
+
+$\qquad \text{SS}_T = \underbrace{\text{SS}_{\text{Between}}}_{\text{(Treatment + error)}} +  \underbrace{\text{SS}_{\text{Within}}}_{\text{(Error)}}$
+
+or
+
+$\qquad \text{SS}_T = \displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n (x_{ij} - \bar{x}..)^2 = n\displaystyle\sum\limits_{j=1}^p(\bar{x}._j - \bar{x}..)^2 + \sum\limits_{j=1}^p \sum\limits_{i=1}^n (x_{ij} - \bar{x}._j)^2$
+
+**Proof:**
+
+\begin{align*}
+&(x_{ij} - \bar{x}..) = (\bar{x}._j - \bar{x}..) + (x_{ij} - \bar{x}._j) \\
+&(x_{ij} - \bar{x}..)^2 = \big[(\bar{x}._j - \bar{x}..) + (x_{ij} - \bar{x}._j)\big]^2 = (x_{ij} - \bar{x}..)^2 + 2(\bar{x}._j - x..)(x_{ij} - \bar{x}._j) + (x_{ij} - \bar{x}._j)^2
+\end{align*}
+
+Take sums:
+
+\begin{align*}
+&\qquad \sum\limits_{j=1}^p \sum\limits_{i=1}^n (x_{ij} - \bar{x}..)^2 = \sum\limits_{j=1}^p \left[ \sum\limits_{i=1}^n(\bar{x}._j - \bar{x}..)^2\right] \\
+&\qquad + 2\sum\limits_{j=1}^p \sum_{i=1}^n (\bar{x}._j - x..)(x_{ij} - \bar{x}._j) \\
+&\qquad + \sum\limits_{j=1}^p \sum\limits_{i=1}^n (x_{ij} - \bar{x}._j)^2 &
+\end{align*}
+
+\begin{align*}
+&\qquad \sum\limits_{i=1}^n (\bar{x}._j - \bar{x}..)^2 = n(\bar{x}._j - \bar{x}..)^2\text{, so} \\
+&\qquad \sum\limits_{j=1}^p \left[\sum(\bar{x}._j - \bar{x}..)^2\right] = n\sum\limits_{j=1}^p (\bar{x}._j - \bar{x}..)^2 &
+\end{align*}
+
+Now,
+
+\begin{align*}
+&\qquad 2\sum\limits_{j=1}^p \sum\limits_{i=1}^n (\bar{x}._j - \bar{x}..)(x_{ij} - \bar{x}._j) = \\
+&\qquad 2\sum\limits_{j=1}^p \left[\sum\limits_{i=1}^n(\bar{x}._j - \bar{x}..)(x_{ij} - \bar{x}._j)\right] = \\
+&\qquad 2\sum\limits_{j=1}^p\left[(\bar{x}._j - \bar{x}..)(x_{1j} - \bar{x}._j) + (\bar{x}._j - \bar{x}..)(x_{2j} - \bar{x}._j) + (\bar{x}._j - \bar{x}..)(x_{3j} - \bar{x}._j)\right. \\
+&\qquad + ... + (\bar{x}._j - \bar{x}..)(x_{ij} - \bar{x}._j) + ... + (\bar{x}._j - \bar{x}..)(x_{nj} - \bar{x}._j)\left.\right] = \\
+&\qquad 2\sum\limits_{j=1}^p \left[(\bar{x}._j - \bar{x}..) \sum\limits_{i=1}^n(x_{ij} - \bar{x}._j)\right]. &
+\end{align*}
+
+These are sums of deviations of scores from their means, so they are zero. Thus, we are left with
+
+$\displaystyle \qquad \sum\limits_{j=1}^p \sum\limits_{i=1}^n(x_{ij} - \bar{x}..)^2 = n\sum_{j=1}^p(\bar{x}._j - \bar{x}..)^2 + \sum\limits_{j=1}^p \sum\limits_{i=1}^n(x_{ij} - \bar{x}._j)^2$
+
+Q.E.D.
+
+**Degrees of Freedom**.  These are the number of observations whose values can be assigned arbitrarily. For example,
+
+For $\text{SS}_{\text{Between}} = n\displaystyle\sum\limits_{j=1}^p(\bar{x}._j - \bar{x}..)^2$ and remember $\bar{x}.. = \displaystyle\frac{\displaystyle\sum\limits_{j=1}^p\bar{x}._j}{p}$, so given $\bar{x}..$ there should be p - 1 degrees of freedom (see below).
+
+**Mean squares**:  These are unbiased estimates of **variance**, and are the SS's divided by their degrees of freedom.
+
+\begin{align*}
+&\qquad \text{MS}_T = \frac{\displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n(x_{ij} - \bar{x}..)^2}{np - 1} \qquad \text{[Total Variance]} \\
+&\qquad \text{MS}_B = \frac{n\displaystyle\sum\limits_{j=1}^p(\bar{x}._j - x ..)^2}{(p - 1)} \qquad \text{[Variation among subjects who have been treated differently]} \\
+&\qquad \text{MS}_w = \frac{\displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n(x_{ij} - \bar{x}._j)^2}{p(n - 1)} \qquad \text{[Variation among subjects who have been treated alike].}&
+\end{align*}
+
+If we know (p - 1)$\bar{x}._j$'s, we know the p$^{\text{th}}$ one so SS$_B$ df = (p - 1).
+
+For SS$_{\text{within}} = \displaystyle\sum\limits_{j=1}^p \sum\limits_{i=1}^n(x_{ij} - \bar{x}._j)^2$, given a treatment mean $\bar{x}._j$ there are n - 1 df for the $\bar{x}._j$'s in the treatment. But there are p $\bar{x}._j$'s, so these are p(n - 1) df in all for SS$_w$. If all nj's are not equal, SS$_w$ = N - p where
+
+$N = \displaystyle\sum\limits_{j=1}^pn_j = \text{total number of scores}$.
+
+For SS$_{\text{Total}}$: df = (p - 1) + p(n - 1) = np - 1 = N - 1, as expected.
+
+A ratio of variance estimates is distributed as $F_{v_1v_2}$
+
+$\displaystyle\frac{\text{MS}_B}{\text{MS}_w} = F_{v_1v_2} \qquad v_1 = (p - 1), v_2 = p(n - 1)$
+
+An $F_{v_1v_2} > 1$ by an appropriate amount indicates a significant treatment effect, so that H$_0$ would be rejected at some level of significance.
+
+\begingroup\centering
+
+##Comparison Among Means
+\endgroup
+
+Simply demonstrating a significant F with an ANOVA is rarely informative by itself. Carefully developed experimental designs using ANOVA involve specific hypotheses about treatment effects to be expected, derived, for example, from theoretical considerations.
+
+Also, it is possible that after a significant F is found, one might "go fishing" to see what relations may exist among treatment means. Whether one theorizes *a priori* (or planned) comparisons or one looks to see afterward what might be specific treatment effects (*post hoc* comparisons) tests are available. We will concentrate on *a priori* comparisons.
+
+What, exactly, *is* a comparison among treatment means? It is a **linear** combination of means. Hypotheses about comparisons then take the form
+
+$\Psi = c_1\mu_1 + c_2\mu_2 +...+c_p\mu_p = \sum\limits_{j=1}^pc_j\mu_j$
+
+with the restriction that not all c$_j$'s are 0 and that $\displaystyle\sum\limits_{j=1}^pc_j = 0$.
+
+(See Hays, pp. 438 - 439).
+
+**Examples**
+
+\begin{align*}
+&\qquad H_0: \frac{\mu_1+\mu_2}{2} = \mu_3 \\
+&\qquad \text{or} \quad \mu_1 + \mu_2 - 2\mu_3 = 0 \qquad 1+1-2=0 \\
+&\qquad H_0: \frac{\mu_1+\mu_2+\mu_3}{3} = \frac{\mu_4+\mu_5}{2} \\
+&\qquad \text{or} \quad 2\mu_1 + 2\mu_2 + 2\mu_3 - 3\mu_4 - 3\mu_5 = 0 \qquad 2+2+2-3-3=0 &
+\end{align*}
+
+$\Psi$ is a combination of random variables and is thus a random variable (see Hays, Appendix C). If each of the $\mu_j$'s are from a normal distribution (or the sample size is large), $\Psi$ is normally distributed as well.
+
+If $\Psi = \displaystyle\sum\limits_{j=1}^p c_j\mu_j$, the **sample** estimate of $\Psi$ is denoted $\hat{\Psi}$ so
+
+$E(\hat{\Psi}) = E\bigg(\displaystyle\sum\limits_{j=1}^p c_j\bar{x}_j\bigg) = \Psi$
+
+Now Var($\Psi$) = $(\sigma_{\psi})^2 = \displaystyle\sum\limits_j^p c_j^2\sigma_{\mu_j}^2$
+
+So
+
+Est Var($\Psi$) = Var($\hat{\Psi}$) = $\displaystyle\sum c_j^2\sigma_{\bar{x}_j}^2$ where $\sigma_{\bar{x}_j}^2$ is the variance of the sampling distribution of the **means** $\bar{x}_j$.
+
+In ANOVA we **assume** the treatment variances are **equal**, i.e., $\sigma_1^2 = \sigma_2^2 =...\sigma_j^2 =...=\sigma_p^2 = \sigma^2$. With respect to the treatment **means**, we are interested in the variance of the distribution of treatment means, so
+
+$\sigma_{\bar{x}_j} = \displaystyle\frac{\sigma_j^2}{n} = \displaystyle\frac{\sigma^2}{n}$  (assume *here* that the n's are the *same* for each treatment).
+
+So $\sigma_{\hat{\Psi}}^2 = \displaystyle\frac{\sigma^2}{n}\displaystyle\sum\limits_j^p c_j^2$
+
+To actually calculate $\sigma_{\hat{\psi}}^2$, we need to use the **sample** data, so we need a **pooled** estimate of $\sigma^2$. Again, given that all the treatment groups have the same number of subjects (units), we have
+
+$\hat{\sigma}_{\text{pooled}}^2 = \displaystyle\frac{\displaystyle\sum_j^p (n-1)\cdot s_j^2}{p(n-1)}$
+
+[If this looks strange, review pp. 219-220, Hays. For **two** treatments 
+
+$\text{est.} \sigma_{\text{pooled}}^2 = \displaystyle\frac{(n-1)s_1^2 + (n-1)s_2^2}{(n-1) + (n-1)} = \displaystyle\frac{(n-1)(s_1^2 + s_2^2)}{2(n-1)}$. Extend this to the above.]
+
+$\hat{\sigma}_{\text{pooled}}^2 = \displaystyle\frac{(n-1)\displaystyle\sum s_j^2}{p(n-1)} = \displaystyle\frac{\displaystyle\sum s_j^2}{p}$
+
+If you look carefully at this expression, you may see it as something close to the **within group sum of squares** in ANOVA. If you go through the algebra, from the computational formula for $s_j^2$ (see Hays and handout) you get
+
+$\qquad \hat{\sigma}_{\text{pooled}}^2 = \displaystyle\frac{\text{SS}_W}{p(n-1)} = \text{MS}_W \qquad [p(n-1) df]$
+
+Finally, for $\sigma_{\hat{\Psi}}^2 = \displaystyle\frac{\hat{\sigma}_{\text{pooled}}^2}{n} \displaystyle\sum\limits_j^p c_j^2$
+
+We have $\sigma_{\hat{\Psi}}^2 = \displaystyle\frac{\text{MS}_W}{n} \cdot \displaystyle\sum\limits_j^p c_j^2$
+
+Typically our hypothesis about a comparison is $\Psi = 0$, so our test of the comparison is based on $\hat{\Psi}$ and on $\sigma_{\hat{\Psi}}^2$, in other words, a **t-test**.
+
+$t_{p(n-1)} = \displaystyle\frac{\hat{\Psi}}{\sqrt{\displaystyle\frac{MS_W}{n}\displaystyle\sum\limits_j^p c_j^2}}$
+
+Remember, $t_{p(n-1)}^2 = F_{1,p(n-1)}$, so
+
+$F_{1,p(n-1)} = \displaystyle\frac{\hat{\Psi}^2}{MS_W\left(\displaystyle\frac{1}{n}\right)\displaystyle\sum c_j^2}$
+
+This is a ratio of **variances** that can be expressed as
+
+$F_{1,p(n-1)} = \displaystyle\frac{MS_{\hat{\Psi}}}{MS_W} \qquad \text{where } MS_{\hat{\Psi}} = \displaystyle\frac{\hat{\Psi}^2}{\displaystyle\frac{1}{n}\displaystyle\sum c_j^2}$
+
+**Orthogonal Comparisons**
+
+Two comparisons
+
+$\Psi_1 = c_{11}\mu_1 + c_{12}\mu_2 +...+c_{1p}\mu_p = \displaystyle\sum\limits_j^p c_{1j}\mu_j$
+
+and
+
+$\Psi_1 = c_{21}\mu_1 + c_{22}\mu_2 +...+c_{2p}\mu_p = \displaystyle\sum\limits_j^p c_{2j}\mu_j$
+
+are **orthogonal** if
+
+$\displaystyle\sum\limits_j^p c_{1j}c_{2j} = 0$.
+
+"Orthogonal" is related to the notion of "perpendicular". The same relation applies to the scalar or dot product of vectors $\vec{a} \cdot \vec{b} = 0$ if $\vec{a}$ and $\vec{b}$ are perpendicular. We might be interested in making several distinct tests of mutually orthogonal tests.
+
+For p treatments, the maximum number is p - 1. The significance is that each test will be **statistically independent of the others** in the set. Thus the $\alpha$'s are unaffected with orthogonal tests. *A priori* orthogonal comparison tests are the most powerful of the comparison procedures.
+
+**Example** (Stan's Handout)
+
+\begin{equation*}\arraycolsep=20.0pt
+\begin{array}{cccc}
+\mu_1 & \mu_2 & \mu_3 & \mu_4 \\
+3 & -1 & -1 & -1 \\
+0 & 2 & -1 & -1 \\
+0 & 0 & 1 & -1
+\end{array} \qquad \text{or} \qquad
+\begin{array}{ccccccc}
+\mu_1 & \mu_2 &  \mu_3 & \mu_4 \\
+1 & 1 & -1 & -1 \\
+1 & -1 & 0 & 0 \\
+0 & 0 & -1 & -1
+\end{array}
+\end{equation*}
+
+Example 11.6 Hays
+
+\begin{table}[htb]
+\setlength{\tabcolsep}{1cm}
+\centering
+\begin{tabular}{cccc}
+\multicolumn{4}{c}{Group Means} \\ \hline
+1      & 2      & 3      & 4    \\ \hline
+17     & 24     & 27     & 16    
+\end{tabular}
+\end{table}
+\qquad \qquad n = 6 \qquad \qquad MS$_W$ = 5.6 \qquad \qquad 20 df
+
+\begin{align*}
+&\qquad H_{0_1} \qquad \mu_1 = \frac{\mu_2 + \mu_3 + \mu_4}{3} \text{ or } 3\mu_1 - \mu_2 - \mu_3 - \mu_4 = 0 \\
+&\qquad H_{0_2} \qquad \mu_2 = \frac{\mu_3 + \mu_4}{2} \text{ or } 0\mu_1 - 2\mu_2 - \mu_3 - \mu_4 = 0 \\
+&\qquad H_{0_3} \qquad \mu_3 = \mu_4 \text{ or } 3\mu_1 - 0\mu_2 + \mu_3 - \mu_4 = 0 \\
+&\qquad H_{0_4} \qquad \frac{\mu_1 + \mu_2}{2} = \frac{\mu_3 + \mu_4}{2} \text{ or } 2\mu_1 + 2\mu_2 - \mu_3 - \mu_4 = 0 &
+\end{align*}
+
+Which of these are orthogonal?
+
+\begin{align*}
+&*\sum\limits_j (c_{1j} \cdot c_{2j}) = (3)(0) + (-1)(2) + (-1)(-4) + (-1)(-1) = 0 \\
+&\sum (c_{1j}c_{4j}) = (3)(1) + (-1)(1) + (-1)(-1) + (-1)(-1) = 4 \\
+&\hat{\Psi}_1 = (3)(17) + (-1)(24) + (-1)(27) + (-1)(16) = -16 \\
+&\sigma_{\hat{\Psi}_1}^2 = \frac{5.6}{6} [3^2 + (-1)^2 + (-1)^2 + (-1)^2] = 11.2 \\
+&t_{20} = \frac{-16}{\sqrt{11.2}} = -4.78 \qquad p<0.01 &
+\end{align*}
+
+Also, $t_{20}^2 = 22.85 = F_{1,20}$
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.
+
+\pagebreak
+
+\begin{table}[ht]
+\setlength{\tabcolsep}{1cm}
+\centering
+\caption{Violent crimes in the contiguous 48 states in 1986}
+\begin{tabular}{lrl}
+  \hline
+{\it State} & \begin{tabular}[x]{@{}c@{}}{\it Crime rate per}\\{\it 100,000 population}\end{tabular} & {\it Region} \\ 
+  \hline
+Maine & 147 & \multirow{6}{*}{New England} \\ 
+New Hampshire & 140 \\ 
+Vermont & 149 \\ 
+Massachusetts & 557 \\ 
+Rhode Island & 336 \\ 
+Connecticut & 426 \\ 
+\hline
+New York & 986 & \multirow{3}{*}{Mid-Atlantic} \\ 
+New Jersey & 572 \\ 
+Pennsylvania & 359 \\ 
+\hline
+Ohio & 423 & \multirow{12}{*}{Midwest}\\ 
+Indiana & 308 \\ 
+Illinois & 800 \\ 
+Michigan & 804 \\ 
+Wisconsin & 258 \\ 
+Minnesota & 285 \\ 
+Iowa & 235 \\ 
+Nebraska & 263 \\ 
+Missouri & 578 \\ 
+North Dakota & 51 \\ 
+South Dakota & 125 \\ 
+Kansas & 369 \\ 
+\hline
+Delaware & 427 & \multirow{14}{*}{South} \\ 
+Maryland & 833 \\ 
+Virginia & 306 \\ 
+West Virginia & 164 \\ 
+North Carolina & 476 \\ 
+South Carolina & 675 \\ 
+Georgia & 588 \\ 
+Florida & 1036 \\ 
+Kentucky & 334 \\ 
+Tennessee & 540 \\ 
+Alabama & 558 \\ 
+Mississippi & 274 \\ 
+Arkansas & 395 \\ 
+Louisiana & 758 \\ 
+\hline
+Oklahoma & 436 & \multirow{4}{*}{Southwest}\\ 
+Texas & 659 \\ 
+Arizona & 658 \\ 
+New Mexico & 726 \\ 
+\hline
+Wyoming & 293 & \multirow{6}{*}{Rocky Mountains} \\ 
+Colorado & 524 \\ 
+Montana & 157 \\ 
+Idaho & 222 \\ 
+Utah & 267 \\ 
+Nevada & 719 \\ 
+\hline
+Washington & 437 & \multirow{3}{*}{Pacific Coast} \\ 
+Oregon & 550 \\ 
+California & 920 \\ 
+   \hline
+\end{tabular}
+\end{table}

@@ -1,0 +1,574 @@
+---
+title: "Notes 5:  The Binomial Theorem and Bernoulli Trials"
+author: "Math 530-630"
+header-includes:
+    \usepackage{tikz,amsmath,graphicx}
+    \date{}
+    \renewcommand\plaintitle{Math 530-630, Binomial Distribution}
+output: rmarkdown::tufte_handout
+fontsize: 11pt
+---
+
+##Binomial Theorem
+(Due to Newton)  
+
+$$(p + q)^{n} = \binom{n}{0} p^{n} + \binom{n}{1} p^{n-1} q^{1} + \binom{n}{2} p^{n-2} q^{2} + ... + \binom{n}{n-1} pq^{n-1} + \binom{n}{n} q^{n}$$  
+$$ = \sum_{r=0}^{n} \binom{n}{r} p^{r} q^{n-r} = \sum_{r=0}^{n} \binom{n}{r} p^{r} q^{n-r}$$  
+
+The numbers $\displaystyle\binom{n}{r}$ are called the **binomial coefficients**, that is, $\displaystyle\binom{n}{r}$ is the coefficient of $p^{n-r} q^{r}$ in the expansion of $(p + q) ^{n}$.  
+$\vspace{1 mm}$  
+
+For example, what is the 6th term of $(p + q)^{10}$?  
+
+$\hspace{1 in}$ For the Nth term, set r = N -- 1, so it is  
+
+$\hspace{1 in} \displaystyle\binom{10}{5} p^{5} q ^{5} = \displaystyle\frac{10!}{5! 5!} p^{5} q^{5} = 252 p^{5} q ^{5}$  
+$\vspace{1 mm}$  
+
+In full,
+
+\begin{align*}
+(p + q)^{10} &= p^{10} + 10p^{9}q + 45p^{8}q^{2} + 120p^{7}q^{3} &\\
+&+ 210p^{6}q^{4} + 252p^{5}q^{5} + 210p^{4}q^{6} &\\
+&+ 120p^{3}q^{7} + 45p^{2}q^{8} + 10p q^{9} + q^{10}. &
+\end{align*}
+
+Notice the **symmetry** in these coefficients. That is a product of the relation  
+
+$\hspace{1in} \displaystyle\binom{n}{r} = \displaystyle\binom{n}{n-r}$  
+
+Examine the first few cases of $(p + q)^{n}$  
+
+$\hspace{1 in} (p + q)^{0} = 1$  
+
+$\hspace{1 in} (p + q)^{1} = 1p + 1q$  
+
+$\hspace{1 in} (p + q)^{2} = 1p + 2pq+ 1q$  
+
+$\hspace{1 in} (p + q)^{3} = 1p + 3p^{2}q+ + 3pq^{2} + q^{3}$  
+
+$\hspace{1 in}$ etc.  
+
+We can arrange these coefficients in a triangle known as **Pascal's Triangle**.  
+
+\makeatletter
+\newcommand\binomialCoefficient[2]{%
+    % Store values 
+    \c@pgf@counta=#1% n
+    \c@pgf@countb=#2% k
+    %
+    % Take advantage of symmetry if k > n - k
+    \c@pgf@countc=\c@pgf@counta%
+    \advance\c@pgf@countc by-\c@pgf@countb%
+    \ifnum\c@pgf@countb>\c@pgf@countc%
+        \c@pgf@countb=\c@pgf@countc%
+    \fi%
+    %
+    % Recursively compute the coefficients
+    \c@pgf@countc=1% will hold the result
+    \c@pgf@countd=0% counter
+    \pgfmathloop% c -> c*(n-i)/(i+1) for i=0,...,k-1
+        \ifnum\c@pgf@countd<\c@pgf@countb%
+        \multiply\c@pgf@countc by\c@pgf@counta%
+        \advance\c@pgf@counta by-1%
+        \advance\c@pgf@countd by1%
+        \divide\c@pgf@countc by\c@pgf@countd%
+    \repeatpgfmathloop%
+    \the\c@pgf@countc%
+}
+\makeatother
+
+\begin{figure}[!htb]
+\centering
+\resizebox{.5 \linewidth}{!}{
+\begin{tikzpicture}
+\foreach \n in {0,...,5} {
+  \node at (5,-\n) {$(p+q)^\n$};
+  \foreach \k in {0,...,\n} {
+    \node at (\k-\n/2,-\n) {$\binomialCoefficient{\n}{\k}$};
+  }
+}
+\draw[densely dotted] (-1,-2.8) -- (2,-2.8);
+\draw[densely dotted] (-1,-2.8) -- (0.5,-5.6);
+\draw[densely dotted] (0.5,-5.6) -- (2,-2.8);
+\draw[densely dotted] (-0.6,-3.5) -- (1.6,-3.5);
+\draw[densely dotted] (0,-2.8) -- (1,-4.67);
+\draw[densely dotted] (1,-2.8) -- (0,-4.67);
+\node at (-0.5,-5.6) {etc.};
+\node at (5,-5.6) {etc.};
+\end{tikzpicture}
+}
+\end{figure}
+
+Note that the coefficient '6' is the sum of the adjacent coefficients just above, '3' and '3'.  
+Likewise, 4 = 3 + 1, etc., so we have triangles within triangles. Note also that the sum of the coefficients of $(p + q)^n = 2^n$.  
+
+This relation among coefficients is expressed by the identity
+
+$\hspace*{20mm} \displaystyle\binom{n}{r} = \displaystyle\binom{n-1}{r-1} + \binom{n-1}{r}$ $\hspace*{20mm} n > r$, $r \leq n - 1$. $\hspace*{20mm} \text{PROVE THIS!}$  
+
+_Example_ $\hspace*{5mm} \displaystyle\binom{4}{2} = \displaystyle\binom{3}{1} + \binom{3}{2}$ $\hspace*{30mm} 6 = 3+3$.  
+
+##Binomial Experiments (Bernoulli Trials)   
+
+&nbsp;  
+
+Two possible outcomes: $\hspace*{10mm}$ "success" $\hspace*{5mm}$ or $\hspace*{5mm}$ "failure"  
+$\hspace*{53mm}$ "heads" $\hspace*{5mm}$ or $\hspace*{5mm}$ "tails"  
+$\hspace*{53mm}$ "same" $\hspace*{6mm}$ or $\hspace*{5mm}$ "different"  
+$\hspace*{59mm}$ 1 $\hspace*{10mm}$ or $\hspace*{10mm}$ 0  
+$\hspace*{43mm}$ "better than" $\hspace*{5mm}$ or $\hspace*{5mm}$ "worse than"  
+$\hspace*{73mm}$ etc.  
+
+Call $P(\text{success}) = p \hspace{1mm}$  
+$\hspace{5mm} P (\text{failure}) = q \qquad \text{ so, } p + q = 1 \qquad \text{ or } \hspace{1mm} q = 1 - p$  
+
+Treat the case where successive trials are **independent**.  
+What is the probability in $n$ trials there will be exactly $r$ successes (or $n-r$ failures)?  
+One such sequence (unlikely) might look like this:  
+$$\frac{p \cdot p \cdot p \cdot p ...}{r} \hspace{1mm} \text{and} \hspace{1mm} \frac{q \cdot q \cdot q \cdot q ...}{n-r}$$
+$$ = p^r q^{n-r}$$  
+
+Of course, successes and failures could occur in **any order**. The number of ways of arranging $n$ things taken $r$ at a time is $\displaystyle\binom{n}{r}$ so  
+$$p(\text{exactly r successes}) = \binom{n}{r} p^r q^{n-r} \hspace{10mm} \text{[Theorem 28]}$$  
+
+_Example_ $\hspace*{5mm}$ What is the probability of exactly two heads in 10 tosses of a fair coin?  
+
+$\hspace*{20mm} P = 1/2 \qquad q = 1/2 \qquad n=10 \qquad r = 2$  
+
+$\hspace*{20mm} P(2) = \displaystyle\binom{10}{2} p^2q^8 = \displaystyle\binom{10}{2} \left(\frac{1}{2}\right)^{10} = 45/1024$  
+
+&nbsp;  
+
+_Example_ $\hspace*{5mm}$ a) In a car dealership P(new car breaks down) = 3/10.  
+$\hspace*{20mm}$ In a shipment of 10 cars, what is the P(8 work, 2 breakdown)?  
+
+$\hspace*{20mm}$ P(works) = 7/10 = p  
+$\hspace*{20mm}$ P(breaksdown) = 3/10 = q  
+$\hspace*{20mm}$ n = 10  
+
+$\hspace*{20mm} P(8,2) = \displaystyle\binom{10}{8} p^8q^2 = \displaystyle\binom{10}{8} \left(\displaystyle\frac{7}{10}\right)^{8} \left(\displaystyle\frac{3}{10}\right)^{2} = 0.233$  
+
+&nbsp;  
+
+$\hspace*{20mm}$ b) What is the probability that **only** the first **two** need repair?  
+$\hspace*{25mm}$ This is a **particular order**, so  
+
+$\hspace*{20mm} P(\text{first two}) = \left(\displaystyle\frac{3}{10}\right)^{2} \left(\displaystyle\frac{7}{10}\right)^{8} = 5.2 \times 10^{-3}$  
+
+&nbsp;  
+
+$\hspace*{20mm}$ c) What is the probability that **at most** 3 cars will need repair?  
+
+$\hspace*{20mm} P(\leq 3) = P(0) + P(1) + P(2) + P(3)$  
+
+$\hspace*{35mm} = \displaystyle\binom{10}{10} p^{10}q^0 + \binom{10}{9} p^9q^1 + \binom{10}{8} p^8q^2 + \binom{10}{7} p^7q^3$  
+
+$\hspace*{20mm}$ or,  
+
+\begin{equation*}
+1\left(\frac{7}{10}\right)^{10} + 10\left(\frac{7}{10}\right)^9\left(\frac{3}{10}\right) + 45\left(\frac{7}{10}\right)^8 \left(\frac{3}{10}\right)^2 + 120\left(\frac{7}{10}\right)^7\left(\frac{3}{10}\right)^3 = 0.65
+\end{equation*}
+
+$\hspace*{20mm}$ Note the binomial coefficients of $(p + q)^{10}$ (first 4).  
+
+\pagebreak
+
+#Random Variables and Probability Distributions  
+
+##Random Variable  
+
+Assign a number to each point of a single space. We then have a **function** defined on the single space. This function is called a **random variable** (or stochastic variable). A better name would be a random, stochastic, or probability function.  
+
+We have seen many examples already.  
+$\hspace*{1in}$ Toss coin twice $\hspace*{5mm}$ S = {HH, HT, TH, TT}  
+
+$\hspace*{1in}$ Let X = # header, so X could take on the following values:  
+
+
++---------------+--------+--------+--------+--------+
+| Sample Point  |   HH   |   HT   |   TH   |   TT   |
++===============+========+========+========+========+
+|   X           |    2   |    1   |    1   |    0   |
++---------------+--------+--------+--------+--------+
+
+We could define virtually an infinite number of other random variables on this sample space, e.g.  
+x = (#H$)^{2}$ or H -- T, etc.  
+
+A random variable that can take on at most a countable number of values is called a **discrete random variable**, otherwise it is a nondiscrete, or continuous random variable. We have discussed this previously, but we are now ready to expand our horizons into **distribution functions**.  
+
+##Discrete Distributions  
+
+Let X be a discrete random variable taking the values x$_1$, x$_2$, x$_3$, ..., x$_k$ arranged in increasing order of magnitude. Suppose these values occur with probabilities
+
+$\hspace*{1in} P(X = X_{k}) = f(X_{k}) \hspace{5mm} k = 1, 2, 3,...$  
+
+This defines a **probability function** or **probability distribution** given by  
+$\hspace*{1in} P(X = x) = f(x)$  
+
+$\hspace*{1in} \text{With the properties: } \left\{\begin{matrix}
+f(x) \geq 0\\  
+\displaystyle\sum\limits_{\text{all }x}^{ } f(x) = 1
+\end{matrix}\right.$  
+
+We have already been considering the Binomial Distribution characterized by the # of successes in a set of Bernoulli trials. This # of successes has the distribution
+
+$\hspace*{1in} P(X = r) = \displaystyle\binom{n}{r} p^{r} q^{n-r} = f(r)$
+
+$\hspace*{1in}$ [Sometimes P(X = r) is written P(X = r; n, p) or simply P(n, p).  
+$\hspace*{1in}$ Another notation is B(n, p)]  
+
+$\hspace*{1in}$ P = P(success) and q = P(failure) and p = 1 -- q.  
+
+For $n$ Bernoulli trials, the probability of **all** the possibilities = $1 = \displaystyle\sum\limits_{r = 0}^{n} \displaystyle\binom{n}{r} p^{r} q^{n-r} = (p + q)^{n}$
+
+
+For the flip of a fair coin twice, we can represent the function P(# heads) as  
+
++---------------+--------+--------+--------+--------+
+|    # heads    |    r   |    0   |    1   |    2   |
++===============+========+========+========+========+
+|               |  f(r)  |   1/4  |   1/2  |   1/4  |
++---------------+--------+--------+--------+--------+
+
+$\hspace*{1in}$ i.e. the points [r, f(r)]
+
+$\hspace*{1in}$ Note the total possibilities = 1  
+
+$\hspace*{.5in}$ If p = q = 1/2
+
+\begin{align*}
+&\sum\limits_{r=0}^{n} \binom{n}{r} p^{r}q^{n-r} = \sum_{r=0}^{n}\binom{n}{r}\binom{1}{2}^{r}\left( \frac{1}{2}\right)^{n-r} \\
+&= \sum\limits_{r=0}^{n}\binom{n}{r}\left(\frac{1}{2}\right)^{n} \\
+&= \left(\frac{1}{2}\right)^{n}\sum\limits_{r=0}^{n}\binom{n}{r} = \left(\frac{1}{2}\right)^{n}\left[ \binom{n}{0} + \binom{n}{1} + ... + \binom{n}{n}\right]  
+\end{align*}
+
+The binomial coefficients are the **frequencies** of say, heads, tails, and combinations of heads and tails and the constant term $(1/2)^{n}$ multiplied by these frequencies gives the **probabilities** of each combination of heads and tails in a series of trials. This is no more than an expression of the classic definition of probability,   
+$$P(E) = \frac{\text{Number of events favorable to E}}{\text{Total possible events}}$$
+
+So, for example,  
+
+\begin{align*}
+&n = 2 \hspace*{5mm} &\left(\frac{1}{2} + \frac{1}{2} \right)^{2} &= \frac{1}{4} \left(\overset{\text{HH}}{1} + \overset{\text{HT,TH}}{2} + \overset{\text{TT}}{1}\right ) = \frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1 \\
+&n = 3 \hspace*{5mm} &\left(\frac{1}{2} + \frac{1}{2}\right)^{3} &= \frac{1}{8} \left(\overset{\text{HHH}}{1} + \overset{\text{HHT}}{3} + \overset{\text{HTT}}{3} + \overset{\text{TTT}}{1}\right ) = \frac{1}{8} + \frac{3}{8} + \frac{3}{8} + \frac{1}{8} = 1 \\
+&n = 4 \hspace*{5mm} &\left(\frac{1}{2} + \frac{1}{2} \right)^{4} &= \frac{1}{16} \left(\overset{\text{HHHH}}{1} + \overset{\text{HHHT}}{4} + \overset{\text{HHTT}}{6} + \overset{\text{HTTT}}{4} + \overset{\text{TTTT}}{1}\right ) = \frac{1}{16} + \frac{4}{16} + \frac{6}{16} + \frac{4}{16} + \frac{1}{16} = 1
+\end{align*}
+
+Here's a graphic representation of this last one.  
+This "bar chart" is called a **mass function**. The sum of the ordinates = 1.  
+
+```{r, echo=FALSE,fig.height=3,fig.width=4,fig.align="center"}
+library(ggplot2)
+dat <- data.frame(x=0:4,y=c(1,4,6,4,1))
+h <- ggplot(dat,aes(x=x,xend=x,y=0,yend=y)) + geom_segment()+
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text=element_text(family="serif",color="black",size=12)) +
+    scale_y_discrete(breaks=0:6,labels=c("","1/16","","","4/16","","6/16"))
+h
+``` 
+
+This discrete distribution can also be represented  
+
+```{r, echo=FALSE,fig.height=3,fig.width=4,fig.align="center"}
+library(ggplot2)
+d <- c(0,1,1,1,1,2,2,2,2,2,2,3,3,3,3,4)
+dat <- data.frame(filler=factor(rep("A", each=16)),vals=d)
+h <- ggplot(dat, aes(x=factor(vals))) + geom_histogram(binwidth=1,color="black",fill="gray")+
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text=element_text(family="serif",color="black",size=12)) +
+    scale_x_discrete(breaks = 0:4, labels=c("0","1","2", "3","4")) +
+    scale_y_discrete(breaks=0:6,labels=c("","1/16","","","4/16","","6/16"))
+h
+```
+
+by a histogram with total area = 1
+
+$\hspace{5mm}$ (1/16)1 + (4/16)1 + (6/16)1 + (4/16)1 + (1/16)1 = 1.
+
+$\hspace{5mm}$ The bar is centered on the # successes.
+
+$\hspace{5mm}$ The range is $\pm 1/2$ so that, e.g. X = r = 1 lies between 1/2 and 1 1/2 [Think of the random   
+$\hspace{5mm}$ variable as being continuous].
+
+Now consider P ($\leq$ r heads) $\qquad$ r = 0, 1, 2, 3, 4
+
+P(r = 0) = 1/16
+
+P(r $\leq$ 1) = 1/16 + 4/16 = 5/16
+
+P(r $\leq$ 2) = 1/16 + 4/16 + 6/16 = 11/16
+
+P(r $\leq$ 3) = 1/16 + 4/16 + 6/16 + 4/16 = 15/16
+
+P(r $\leq$ 4) = 1/16 + 4/16 + 6/16 + 4/16 + 1/16 = 1
+
+These are **cumulative probabilities** and can be represented geographically either on a cumulative bar chart, called a **step function**,
+
+```{r, echo=FALSE,fig.height=3,fig.width=4,fig.align="center"}
+library(ggplot2)
+dat2 <- data.frame(x=0:4,y=c(1,5,11,15,16))
+h <- ggplot() + geom_step(data=dat2,mapping=aes(x=x,y=y)) +
+    geom_point(data=dat2, mapping=aes(x=x, y=y)) +
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text=element_text(family="serif",color="black",size=12)) +
+    scale_y_discrete(breaks=0:16,labels=c("","1/16","","","","5/16","","","","","","11/16","","","","15/16","1"))
+h
+```
+
+\begin{equation*}
+  F(r)=\begin{cases}
+    0 & -\infty < r < 0 \\
+    1/16 & 0 \leq r < 1 \\
+    5/16 & 1 \leq r < 2 \\
+    11/16 & 2 \leq r < 2 \\
+    15/16 & 3 \leq r < 4 \\
+    1 & 4 \leq r < \infty
+  \end{cases}
+\end{equation*}
+
+or as **area** in a histogram plot.
+
+```{r, echo=FALSE,fig.height=3,fig.width=4,fig.align="center"}
+library(ggplot2)
+library(grid)
+dat2 <- data.frame(x=0:5,y=c(0,1,5,11,15,16))
+d <- c(0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4)
+dat3 <- data.frame(filler=factor(rep("A", each=48)),vals=d)
+h <- ggplot() + geom_histogram(data=dat3, aes(x=factor(vals)),binwidth=1,color="black",fill="gray") +
+    geom_line(data=dat2,aes(x=x,y=y))+
+    geom_segment(aes(x=2,y=13,xend=3,yend=11),arrow=arrow(length = unit(0.2,"cm"))) +
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text=element_text(family="serif",color="black",size=12)) +
+    scale_y_discrete(breaks=0:16,labels=c("","1/16","","","","5/16","","","","","","11/16","","","","15/16","1"))
+h + annotate("text", x = 1.7, y = 14, label = "continuous approximation", family="serif",size=4)
+```
+
+F(r) defines a **cumulative distribution function** (sometimes called simply a distribution function). Then, $P(X \leq r) = F(r)$.
+
+For the Binomial Distribution this is $F(r) = \displaystyle\sum\limits_{k=0}^r \binom{n}{k} p^k q^{n-k}$ ...
+
+##Continuous Probability Distributions
+
+If X is a **continuous** random variable then P(X=x) = 0. Probabilities can only be defined as an **area**. For f(x) to be a continuous probability function,
+
+1. f(x) $\geq$ 0
+
+2. $\displaystyle\int_{-\infty}^{\infty} f(x)dx=1$
+
+These distributions are sometimes called **density functions** ("mass functions" apply to discrete distributions).
+
+Probabilities are determined by
+
+$\hspace{5mm} P(a<X,b) = \displaystyle\int_a^b f(x)dx$
+
+Example:  
+Find the constant C so that
+
+$f(x)=\begin{cases} cx^2 & 0 < x < 3 \\ 0 & \text{elsewhere is a density function}  \end{cases}$
+
+$\vspace{3mm}$
+
+We must have
+
+a) f(x) $\geq$ 0
+
+and
+
+b) $\displaystyle\int_{-\infty}^{\infty} f(x)dx = 1$
+
+$\vspace{3mm}$
+
+a) is clearly satisfied, so
+
+b) $\displaystyle\int_0^3 cx^2 dx = \left.\frac{cx^3}{3}\right|^3_0 = 9c$
+
+9c = 1, so c = 1/9 and $f(x) = \begin{cases} \displaystyle\frac{x^2}{9} & 0 \leq x \leq 3 \\ 0 & \text{elsewhere} \end{cases}$
+
+$P(0 < x < 2) = \displaystyle\int_0^2 \displaystyle\frac{x^2}{9}dx = \left.\displaystyle\frac{x^3}{27}\right|_0^2 = \displaystyle\frac{8}{27}$
+
+and
+
+$P(1 < x < 2) = \displaystyle\int_1^2 \displaystyle\frac{x^2}{9}dx = \left.\displaystyle\frac{x^3}{27}\right|_1^2 = \displaystyle\frac{7}{27}$
+
+etc.
+
+$\vspace{3mm}$
+
+The distribution function for the continuous case is
+
+F(x) = P(X $\leq$ x) = P($-\infty$ < X $\leq$ x)
+
+= $\displaystyle\int_{-\infty}^x$ f(u)du
+
+Note that this is a **function of x**.
+
+In the previous example
+
+\begin{align*}
+F(x) &= 0, &x < 0 \\
+&= \frac{x^3}{27} &0 \leq x < 3 \\
+&= 1 &x \geq 3
+\end{align*}
+
+From the calculus we know that if
+
+F(x) = $\displaystyle\int_{-\infty}^x$ f(u)du then $\displaystyle\frac{\text{dF(x)}}{\text{dx}}$ = f(x) $\quad$ (f(x) continuous on $(-\infty, x)$
+
+Thus, the derivative of the distribution function is the density function.
+
+$\displaystyle\frac{\text{d}}{\text{dx}}\int_{-\infty}^x$ f(u)du = f(x)
+
+If the density function looks like this:
+
+```{r, echo=FALSE,fig.height=3,fig.width=4,fig.align="center"}
+library(ggplot2)
+library(grid)
+x <- pretty(c(-4,4), 1000)  
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,1<x & x<1.5),aes(ymin=0,ymax=y),fill="gray66") +
+  geom_segment(aes(x = 1, y = 0, xend = 1, yend = 0.24), linetype="dashed") +
+  geom_segment(aes(x = 1.5, y = 0, xend = 1.5, yend = 0.125), linetype="dashed") +
+  geom_segment(aes(x= -4, y = 0, xend=4,yend=0)) +
+  geom_segment(aes(x=0,y=0,xend=0,yend=0.45)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+            panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+norm + annotate("text",x=-0.5,y=0.45,label="f(x)",family="serif",size=4) +
+    annotate("text",x=0,y=-0.02,label="0",family="serif",size=4) +
+    annotate("text",x=1,y=-0.02,label="a",family="serif",size=4) +
+    annotate("text",x=1.5,y=-0.02,label="b",family="serif",size=4) +
+    annotate("text",x=4,y=-0.02,label="x",family="serif",size=4)
+```
+
+$\hspace{5mm} P(a \leq x \leq b) = \displaystyle\int_a^b f(x)dx = F(b) - F(a)$
+
+Then the distribution function would look like this:
+
+```{r, echo=FALSE, fig.height=3}
+cumdistfunc <- qplot(rnorm(10000), stat = "ecdf", geom = "step") +
+    geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+    geom_segment(aes(x=0,y=0,xend=0,yend=1)) +
+    geom_segment(aes(x=0,y=0.84,xend=1,yend=0.84),linetype="dotted") +
+    geom_segment(aes(x=1,y=0.84,xend=1,yend=0),linetype="dotted") +
+    geom_segment(aes(x=0,y=0.935,xend=1.5,yend=0.935), linetype="dotted") +
+    geom_segment(aes(x=1.5,y=0.935,xend=1.5,yend=0),linetype="dotted") +
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+cumdistfunc + annotate("text",x=-0.1,y=1,label="1",family="serif",size=4) +
+    annotate("text",x=0.3,y=0.98,label="F(x)",family="serif",size=4) +
+    annotate("text",x=-0.3,y=0.935,label="F(b)",family="serif",size=4) +
+    annotate("text",x=-0.3,y=0.84,label="F(a)",family="serif",size=4) +
+    annotate("text",x=1,y=-0.04,label="a",family="serif",size=4) +
+    annotate("text",x=1.5,y=-0.04,label="b",family="serif",size=4) +
+    annotate("text",x=4,y=-0.04,label="x",family="serif",size=4) +
+    annotate("text",x=0,y=-0.04,label="0",family="serif",size=4)
+```
+
+
+\pagebreak
+
+\begin{center}
+\underline{Algebra of Expectations (Hayes, 1988)}
+\end{center}
+
+Definitions:$\qquad E(X) = \displaystyle\sum\limits_x xp(x) \qquad$ discrete case
+
+$\hspace{20mm} E(X) = \displaystyle\int_{-\infty}^{\infty} xf(x) dx \qquad$ continuous case
+
+**Rule 1:** If *a* is a constant, then $E(a) = a$
+
+**Rule 2:** If *a* is a constant and *X* a random variable with expectation *E(X)*, then
+
+$\qquad \qquad E(aX) = aE(X)$
+
+**Rule 3:** If *a* is a constant and *X* a random variable with expectation *E(X)*, then
+
+$\qquad \qquad E(X + a) = E(X) + a$
+
+**Rule 4:** If *X* and *Y* are both random variables with expectations *E(X)* and *E(Y)*, respectively, then
+
+$\qquad \qquad E(X + Y) = E(X) + E(Y)$
+
+**Rule 5:** The sum of a finite number of random variables has as expectation the sum of their individual expectations:
+
+$\qquad \qquad E(X_1 + X_2 + X_3) = E(X_1) + E(X_2) + E(X_3)$, etc.
+
+$\qquad \qquad E\left(\displaystyle\sum\limits_{i=1}^n X_i\right) = \displaystyle\sum\limits_{i=1}^n E(X_i)$
+
+**Rule 6:** If *X* and *Y* are independently distributed, $E(XY) = E(X)E(Y)$
+
+**Rule 7:** If $E(XY) \neq E(X)E(Y)$, then *X* and *Y* are not independent
+
+**Rule 8:** If *X* and *Y* are independent, then for any functions *g* and *h*
+
+$\qquad \qquad E[g(X)h(Y)] = E[g(X)]E[h(Y)]$
+
+**Variance**
+
+$\qquad \qquad var(X) = E[X - E(X)]^2 = E(X^2) - [E(X)]^2$
+
+**Covariance**
+
+$\qquad \qquad cov(X,Y) = E[(X - E(X))(Y - E(Y))] = E(XY) - E(X)E(Y)$
+
+**Correlation**
+
+$\qquad \qquad \rho(X,Y) = \displaystyle\frac{cov(X,Y)}{\sqrt{var(X)}\sqrt{var(Y)}}$
+
+**Rule 9:** $var(aX) = a^2var(X)$
+
+**Rule 10:** $var(X + a) = var(X)$
+
+**Rule 11:** $E(XYZ) = E(X)E(Y)E(Z)$ *iff* *X*, *Y* and *Z* are independent
+
+\pagebreak
+
+\begin{center}
+\underline{Summation Algebra (Hayes, 1988)}
+\end{center}
+
+Definitions:$\qquad \displaystyle\sum\limits_{i=1}^n X_i \equiv X_1 + X_2 + ... + X_n$
+
+$\hspace{26mm} \displaystyle\sum\limits_{i=1}^n \sum\limits_{j=1}^m X_{ij} \equiv X_{11} + X_{12} + ... + X_{nm - 1} + X_{nm}$
+
+**Rule 1:** $\hspace{10mm}\displaystyle\sum\limits_{i=1}^n aX_i = aX_1 + aX_2 + ... + aX_n = a(X_1 + X_2 + ... + X_n) = a\sum\limits_{i=1}^n X_i$
+
+**Rule 2:** $\hspace{10mm}\displaystyle\sum\limits_{i=1}^n a = na = a + a + ... + a \qquad$ (*n* times).
+
+**Rule 3:** $\hspace{10mm}$ Put parentheses around individual terms within a summation to indicate that   
+
+$\hspace{26mm}$ operations within the parentheses are to be done first, e.g.,
+
+$\hspace{26mm} \displaystyle\sum\limits_{i=1}^n (X_i - Y_i)^2 = (X_1 - Y_1)^2 + (X_2 - Y_2)^2 + ... + (X_n - Y_n)^2$
+
+**Rule 4:** $\hspace{10mm}\displaystyle\sum\limits_{i=1}^n (X_i + Y_i) = \displaystyle\sum\limits_{i=1}^n X_i + \sum\limits_{i=1}^n Y_i$
+
+$\hspace{26mm} \displaystyle\sum\limits_{i=1}^n (X_i - Y_i) = \sum\limits_{i=1}^n X_i - \sum\limits_{i=1}^n Y_i$
+
+$\hspace{26mm}$ (Distribute summations across plus or minus signs when no other operation is 
+
+$\hspace{26mm}$ applied to the expression within parentheses.)
+
+**Rule 5:**  $\hspace{10mm}\displaystyle\sum\limits_{i=1}^n X_iY_i = X_1Y_1 + X_2Y_2 + ... + X_nY_n \neq \left(\sum\limits_{i=1}^n X_i\right)\left(\sum\limits_{i=1}^n Y_i\right)$
+
+$\hspace{26mm} \displaystyle\sum\limits_{i=1}^n aX_iY_i = a\displaystyle\sum\limits_{i=1}^n X_iY_i$
+
+**Rule 6:** $\hspace{10mm}$ *a* and *b* are constants.
+
+$\hspace{26mm} \displaystyle\sum\limits_{i=1}^n (aX_i + bY_i) = a\displaystyle\sum\limits_{i=1}^n X_i + b\sum\limits_{i=1}^n Y_i$
+
+**Rule 7:** $\hspace{10mm} \displaystyle\sum\limits_{j=1}^J \sum\limits_{i=1}^n X_jY_{ij} = \displaystyle\sum\limits_{j=1}^J X_j\left(\sum\limits_{i=1}^n Y_{ij}\right)$
+
+Given $\qquad \bar{X} \equiv \frac{1}{n}\displaystyle\sum\limits_{i=1}^n X_i, \quad \sum\limits_{i=1}^n X_i = n\bar{X}$
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.
+
+
+
+
+

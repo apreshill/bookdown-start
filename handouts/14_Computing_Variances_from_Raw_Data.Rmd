@@ -1,0 +1,284 @@
+---
+title: 'Notes 14:  Computing Variances from Raw Data'
+header-includes:
+    \subtitle{MATH 530-630}
+    \everymath{\displaystyle}
+    \usepackage{graphicx,amsmath}
+output: pdf_document
+---
+
+There is an identity you must know. It relates to the computation of variances, the t-test and to the analysis of variance:
+
+$\qquad \sum\limits_{i=1}^N (X_i - \bar{X})^2 = \sum\limits_{i=1}^N X_i^2 - \frac{\left(\sum\limits_{i=1}^N X_i\right)^2}{N}$
+
+In other words, the sum of squared deviations from the sample mean is equal to the sum of the squares of the scores minus the square of the sum of the scores divided by N. Hays and other statistics texts often express the variance of a variable as
+
+$\qquad s^2 = \frac{\sum\limits_{i=1}^N (X_i - \bar{X})^2}{N-1}$.
+
+But this is a poor formula with which to compute a sample variance because it suggests that you first have to compute the sample mean, then subtract the sample mean from each score, and then get the sum of the squares of the resulting differences, which is a lot of work, with many opportunities for mistakes. The way you should compute the sample variance (or the sum of squared deviations from the sample mean) is by means of the above identity:
+
+$\qquad s^2 = \frac{\sum\limits_{i=1}^n X_i^2 - \left(\sum\limits_{i=1}^N X_i \right)^2 \big/ N}{N-1}$
+
+The two sample t-test should be similarly computed as
+
+$\qquad t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\cfrac{\sum\limits_{i=1}^{N_1} X_{i1}^2 - \cfrac{\left(\sum\limits_{i=1}^{N_1} X_{i1}\right)^2}{N_1} + \sum\limits_{i=1}^{N_2} X_{i2}^2 - \cfrac{\left(\sum\limits_{i=1}^{N_2} X_{i2}\right)^2}{N_2}}{N_1 + N_2 - 2}\left(\cfrac{N_1 + N_2}{N_1 N_2}\right)}}$
+
+$\qquad = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\cfrac{(N_1 - 1) s_1^2 + (N_2 - 1) s_2^2}{N_1 + N_2 - 2} \left(\cfrac{N_1 + N_2}{N_1 N_2}\right)}}$
+
+where $s_1^2$ and $s_2^2$ are the unbiased estimates of the sample variance in samples 1 and 2 respectively.
+
+\pagebreak
+
+#Chi Square and the Distribution of the Sample Variance
+
+###The Chi-Square Distribution
+
+Let X be a normally distributed variable with a mean of $\mu$ and a variance of $\sigma^2$. A "unit normal deviate" Z having a mean of zero and a variance of unity may be obtained from X by the transformation $Z = \frac{X - \mu}{\sigma}$. (To verify the last statement, take the expected value of this expression to get the mean and apply the formula for variance in terms of expected values). If we square the random variable Z we obtain a new random variable with a new distribution, which we will define as
+
+$\qquad \chi_1^2 = Z^2$
+
+We will call this a chi square distributed random variable with one degree of freedom. Note that because it is based on squaring Z its values are always positive. Furthermore its expected value equals one:
+
+Note that:
+
+$\qquad$ var(Z) = E(Z$^2$) -- [E(Z)]$^2$ = 1
+
+because this is a unit normal deviate with a mean of zero and variance of unity.
+
+Furthermore because E(Z) = 0 (means equals zero)
+
+$\qquad$ E(Z$^2$) = 1
+
+Now, let us define
+
+$\qquad \chi_2^2 = Z_1^2 + Z_2^2$
+
+as the sum of two **independently** distributed squared unit normal deviates. We call this chi square with two degrees of freedom. In general,
+
+$\qquad \chi_k^2 = Z_1^2 + Z_2^2 + ... + Z_k^2$.
+
+Note that because chi square is the sum of squared unit normal deviates, the sum of two chi square variables is itself another chi square variable with degrees of freedom equal to the sum of the degrees of freedom of the respective original chi square variates.
+
+$\qquad \chi_{k+m}^2 = \chi_k^2 + \chi_m^2$
+
+Furthermore E($\chi_k^2$) = k because this is equivalent to
+
+$\qquad$ E($\chi_k^2$) = E(Z$_1^2$) + E(Z$_2^2$) + ... + E(Z$_k^2$) = 1 + 1 + ... + 1 = $k$.
+
+The variance of $\chi_k^2$ is $2k$.
+
+Now, any sum of $k$ squared, standard normal deviates is also distributed as chi square:
+
+$\qquad \chi_k^2 = \frac{(X_1 - \mu)^2}{\sigma_1^2} + \frac{(X_2 - \mu)^2}{\sigma_2^2} + ... + \frac{(X_k - \mu)^2}{\sigma_k^2} = \sum\limits_{i=1}^k \frac{(X_i - \mu)^2}{\sigma_i^2}$
+
+Furthermore, the random variable $\frac{\chi_k^2}{k}$ has a mean of 1 and a variance of 2/k. As $k \rightarrow \infty$  $\frac{\chi_k^2}{k}$ approaches the normal distribution with a mean of 1 and a variance of 0 by an application of the central limit theorem to the fact that chi square is a sum of squared unit deviates.
+
+###The Distribution of the Unbiased Estimate of the Variance of a Variable Having a Normal Distribution.
+
+Let X be a normally distributed variable with mean $\mu$ and variance $\sigma^2$. If N independently and identically distributed observations of the variable X are obtained, the unbiased estimate of $\sigma^2$ is given by
+
+$\qquad s^2 = \frac{\sum\limits_{i=1}^N (X_i - \bar{X})^2}{N-1}$
+
+Multiplying both sides above by (N -- 1)/$\sigma^2$ we obtain
+
+$\qquad \frac{(N-1)s^2}{\sigma^2} = \frac{\sum\limits_{i=1}^N (X_i - \bar{X})^2}{\sigma^2}$
+
+Concentrating on the right-hand expression, add and subtract $\mu$ from each term within the parentheses and rearrange to obtain
+
+$\qquad \frac{(N-1)s^2}{\sigma^2} = \frac{\sum\limits_{i=1}^N \left[(X_i - \mu) - (\bar{X} - \mu)\right]^2}{\sigma^2} = \frac{\sum_{i=1}^N \left[(X_i - \mu)^2 - 2(\bar{X} - \mu)(X_i - \mu) + (\bar{X} - \mu)^2\right]}{\sigma^2}$
+
+Carrying the summation sign inside the brackets on the right and rearranging terms results in
+
+\begin{flalign*}
+\frac{(N-1)s^2}{\sigma^2} &= \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} + \frac{\sum\limits_{i=1}^N (\bar{X} - \mu)^2}{\sigma^2} - 2\frac{(\bar{X} - \mu)\sum\limits_{i=1}^N (X_i - \mu)}{\sigma^2} \\
+&= \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} + \frac{N(\bar{X} - \mu)^2}{\sigma^2} - 2\frac{(\bar{X} - \mu)\sum\limits_{i=1}^N (X_i - N\mu)}{\sigma^2} &
+\end{flalign*}
+
+Or because $N\bar{X} = \sum\limits_{i=1}^N X_i$, we may substitute for that summation in the rightmost term to obtain
+
+\begin{flalign*}
+\frac{(N-1)s^2}{\sigma^2} &= \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} + \frac{N(\bar{X} - \mu)^2}{\sigma^2} - 2\frac{(\bar{X} - \mu)(N\bar{X} - N\mu)}{\sigma^2} \\
+&= \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} + \frac{N(\bar{X} - \mu)^2}{\sigma^2} - 2\frac{N(\bar{X} - \mu)(\bar{X} - \mu)}{\sigma^2} \\
+&= \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} - \frac{N(\bar{X} - \mu)^2}{\sigma^2}. &
+\end{flalign*}
+
+We are now in a position to show that
+
+$\qquad \frac{(N-1)s^2}{\sigma^2} = \frac{\sum\limits_{i=1}^N (X_i - \bar{X})^2}{\sigma^2} = \chi_{N-1}^2$.
+
+Note that $Z_i^2 = \frac{(X_i - \mu)^2}{\sigma_i^2}$. But also note that $Z^2 = \frac{N(X_i - \bar{X})^2}{\sigma_i^2}$ because this is the square of a Z score formed from a sample mean $\bar{X}$, the mean $\mu$ of the sampling distribution of the sample mean and the standard deviation $\sigma\big/\sqrt{N}$ of the sampling distribution of the sample mean, with $\bar{X}$ normally distributed because X is normally distributed. Hence
+
+$\qquad \frac{(N-1)s^2}{\sigma^2} = \frac{\sum\limits_{i=1}^N (X_i - \mu)^2}{\sigma^2} - \frac{N(\bar{X} - \mu)^2}{\sigma^2} = \chi_N^2 - \chi_1^2 = \chi_{N-1}^2$
+
+\pagebreak
+
+#Testing Hypotheses About a Single Population Variance
+
+Suppose we wish to test the hypothesis that in a normally distributed population that the variance is some specific value $\sigma_0^2$ :
+
+$\qquad$ H$_0$:  $\sigma^2 = \sigma_0^2$
+
+The alternative hypothesis would be
+
+$\qquad$ H$_1$:  $\sigma^2 \neq \sigma_0^2$.
+
+We will use the statistic
+
+$\qquad \chi_{n-1}^2 = \frac{(n-1)s^2}{\sigma_0^2}$
+
+where $s^2$ is the unbiased sample estimate of the population variance. Assumptions that must be met to use this statistic are that the variable measured has a normal distribution, and each observation is independently but identically distributed as the others.
+
+**Example:**  According to national norms the variance of an I.Q. test is 225. In a random sample from an upper class neighborhood the estimated mean I.Q. for a sample of 81 high school students was 110 and the estimated standard deviation was 12.5. Is this indication that the variance in this neighborhood is different from what it is in the national population? We will use a .05 level of significance.
+
+To test this hypothesis we will use the chi-square statistic
+
+$\qquad \chi_{n-1}^2 = \frac{(n-1)s^2}{\sigma_0^2}$
+
+or
+
+$\qquad \chi_{80}^2 = \frac{80(156.250)}{225} = 55.556$
+
+To determine if this represents a significant deviation from the hypothesized value, we need to find the critical values of $\chi_{80;.975}^2$ and $\chi_{80;.025}^2$ which cut off the lower and upper tails respectively of the chi square distribution for 80 degrees of freedom for a .05 level of significance. The probability value on the indicated chi square represents the probability of getting a value for chi square equal to or greater than this value.
+
+Thus the critical values are 57.1532 and 106.629. We will accept the null hypothesis only if a value for our computed chi square statistic falls wtihin the interval between these two values and will reject the null hypothesis otherwise.
+
+In the present example, the observed value of 55.556 for this statistic is **less** than the lower critical value of 57.1532. Thus we **reject** the null hypothesis that the variance in this neighborhood is the same as in the national population.
+
+###Problems:
+
+1.  It is believed that a measure of test anxiety for a freshman class at a major university is normally distributed in the population. According to national norms developed at other universities, the variance of this test is 121. A random sample of 101 freshmen at University X has a sample estimate of the variance of 169. Test the hypothesis that this sample comes from a population with a variance of 121 using the .01 level of significance. Show the steps to be followed in testing a statistical hypothesis in this case.
+
+2.  A developmental psychologist wishes to test the hypothesis that subjects over 65 years of age show a different variance on an I.Q. test than do people in the general population. In the general population the variance is 225. In a sample of 61 randomly selected subjects who are over 65 years of age the estimated variance was 324. Test the hypothesis that the population variance for subjects 65 years or older is equal to 225. Show the steps used in testing the hypothesis.
+
+###Confidence Interval Estimates of the Variance:
+
+To obtain a confidence interval estimate of the population variance is easy. Suppose we have *n* independent observations from a normal distribution and we want to obtain the 95% confidence limits for the population variance $\sigma^2$. We know that
+
+$\qquad p\left[\chi_{n - 1;.975}^2 \leq \frac{(n-1)s^2}{\sigma^2} \leq \chi_{n-1;.025}^2\right] = .95$
+
+or
+
+$\qquad p\left[\frac{(n-1)s^2}{\sigma^2} \leq \chi_{n-1;.025}^2\right] = .975$
+
+and
+
+$\qquad p\left[\chi_{n-1;.975}^2 \leq \frac{(n-1)s^2}{\sigma^2}\right] = .025$
+
+We may manipulate these inequalities by multiplying terms within the brackets by $\sigma^2$ and dividing the terms by the respective chi-square value to obtain:
+
+$\qquad p\left[\frac{(n-1)s^2}{\chi_{n-1;.025}^2} \leq \sigma^2\right] = .975$
+
+and
+
+$\qquad p\left[\sigma^2 \leq \frac{(n-1)s^2}{\chi_{n-1;.975}^2}\right] = .025$
+
+These evidently then are the lower and upper confidence limits, respecitvely, that we seek so that
+
+$\qquad p\left[\frac{(n-1)s^2}{\chi_{n-1;.025}^2} \leq \sigma^2 \leq \frac{(n-1)s^2}{\chi_{n-1;.975}^2}\right] = 95$
+
+**Example:**  In a random sample of 61 observations from a normally distributed population, the sample variance $s^2 = 169$. What is a 95% level confidence interval estimate of the population variance?
+
+We first need to look up the critical values of chi square for 60 degrees of freedom:
+
+$\qquad \chi_{60;.025}^2 = 83.2976 \qquad \chi_{60;.975}^2 = 40.4817$
+
+Then
+
+$\qquad p\left[\frac{60(169)}{83.2976} \leq \sigma^2 \leq \frac{60(169)}{40.4817}\right] = 95$
+
+121.732 and 250.483 are the lower and upper confidence interval estimates for a 95% level confidence interval estimate of the population variance.
+
+**Problem:**
+
+3.  A random sample of 71 observations from a normally distributed population has a sample variance of 180. Find a 90% confidence interval estimate of the population variance.
+
+\pagebreak
+
+#Two-Sample Tests on the Equality of Population Variances
+
+From the expression $\chi_v^2 = \frac{vs^2}{\sigma^2}$ where *v* represents the degrees of freedom of a chi square distribution, $s^2$ a sample estimate of variance and $\sigma^2$ a population variance, we may write $\frac{\chi_v^2}{v} = \frac{s^2}{\sigma^2}$. Now, an F distributed random variable may be obtained from two chi-square distributed random variables by forming the ratio
+
+$\qquad F_{v_1,v_2} = \frac{\cfrac{\chi_{v_1}^2}{v_1}}{\cfrac{\chi_{v_2}^2}{v_2}}$
+
+Given such a formula, we may now take the previous results and substitute expressions involving the sample and population variance for expressions involving the chi-square variate divided by its degrees of freedom, so that we would have:
+
+$\qquad F_{v_1,v_2} = \frac{\cfrac{s_1^2}{\sigma_1^2}}{\cfrac{s_2^2}{\sigma_2^2}}$
+
+where $v_1 = (n_1 - 1)$ and $v_2 = (n_2 - 1)$.
+
+If we seek to test the hypothesis H$_0$:  $\sigma_1^2 = \sigma_2^2$, then the *F* statistic just displayed reduces to simply the ratio of the two sample variances, because then the two population variances in numerator and denominator of the *F* ratio are the same and thus cancel:
+
+$\qquad F_{v_1,v_2} = \frac{s_1^2}{s_2^2}$
+
+**Example:**  61 women had a sample estimate of their population variance of 181. Similarly 41 men had a sample estimate of their population variance of 265. The critical value of the F statistic at the upper tail of the F distribution is given by
+
+$\qquad F_{60,40;.025} = 1.80$
+
+The critical value for the lower tail must be obtained indirectly as follows:  Find the critical value at the **upper tail** for the F distribution with degrees of freedom reversed, i.e. $F_{v_2,v_1;.025}$. Then take the reciprocal of this value. This is the critical value at the lower tail. In this case
+
+$\qquad F_{40,60;.025} = 1.74$
+
+The reciprocal of 1.74 is .5747, and this is the critical value at the .05 level for a two-tail test at the lower tail.
+
+We compute our *F* ratio as 181/265 = .683. This is between the critical values of .5747 and 1.74, so we accept the hypothesis that the population variances are equal.
+
+**Problem:**
+
+4.  In a sample of 51 Georgia Tech students the variance on their SAT verbal scores is 6654. In a sample of 61 University of Georgia students the variance of their SAT scores is 9542. Test the hypothesis that their population variances are equal. Show multistep procedure. Show upper and lower critical values of the F distribution used in testing this hypothesis. Use the .05 level of significance and a two-tailed test. What assumptions must you make to perform this test? Are they reasonable given what you know about Georgia Tech and University of Georgia students?
+
+\pagebreak
+
+#Relations Among the Important Distributions
+
+If *X* has a normal distribution with a mean of $\mu$ and a variance of $\sigma^2$, then a variable *Z* having a unit normal distribution is obtained from *X* by the following transformation:
+
+$\qquad Z = \frac{X - \mu}{\sigma}$, E(Z) = 0, var(Z) = 1
+
+A chi-square distributed random variable with *k* degrees of freedom is obtained from *k* independently distributed unit normal deviates by squaring each and taking their sum:
+
+$\qquad \chi_k^2 = Z_1^2 + Z_2^2 + ... + Z_k^2$
+
+When the degrees of freedom *v* of a chi square distribution $\chi_v^2$ are greater than 30, the (approximate) probability of a given interval on the chi square variable may be obtained by transforming chi square values to unit normal deviates by the transformation
+
+$\qquad z = \frac{\chi_v^2 - v}{\sqrt{2v}}$.
+
+A variable $t_v$ having a *t*-distribution with *v* degrees of freedom, respectively is given by the ratio of two chi square variates, each divided by its degrees of freedom:
+
+$\qquad F_{v_1,v_2} = \frac{\cfrac{\chi_{v_1}^2}{v_1}}{\cfrac{\chi_{v_2}^2}{v_2}}$
+
+We now show how the $z^2$, the chi square, and $t^2$ distributions are all special cases of the *F* distribution:
+
+$\qquad z^2 = \frac{\cfrac{\chi_1^2}{v_1}}{\cfrac{\chi_{\infty}^2}{v_{\infty}}} = F_{1,\infty}$
+
+Note that $\frac{\chi_v^2}{v}$ has an expected value E$\left(\frac{\chi_v^2}{v}\right) = \frac{v}{v} = 1$ and a variance of
+
+$\qquad$ var$\left(\frac{\chi_{v_1}^2}{v_1}\right) = \frac{1}{v_1^2}$ var($\chi_{v_1}^2$) = $\frac{2v_1}{v^2} = \frac{2}{v}$.
+
+Thus
+
+$\qquad \underset{v \rightarrow \infty}{\text{prob lim}} \frac{\chi_v^2}{v} = 1$
+
+because as $v \rightarrow \infty \frac{\chi_v^2}{v}$ converges to a normally distributed variable with a mean of 1 and a variance of 0, meaning it has converged in probability to the single value 1 with probability 1. 
+
+Hence
+
+$\qquad z^2 = \frac{\cfrac{\chi_1^2}{1}}{1} = F_{1,\infty}$
+
+The square root yields the corresponding (positive) normal deviate.
+
+On the other hand
+
+$\qquad t_v^2 = \frac{z^2}{\cfrac{\chi_v^2}{v}} = \frac{\cfrac{\chi_1^2}{1}}{\cfrac{\chi_v^2}{v}} = F_{1,v}$.
+
+Finally,
+
+$\qquad \frac{\chi_v^2}{v} = \underset{v_2 \rightarrow \infty}{\text{plim}} \frac{\cfrac{\chi_v^2}{v}}{\cfrac{\chi_{v_2}^2}{v_2}} = \frac{\cfrac{\chi_v^2}{v}}{1} = F_{v,\infty}$
+
+And multiplying this result by the degrees of freedom gets the corresponding chi square. Thus if you are marooned on a desert island and need someone to airdrop a probability table to you, ask for the table of the F distribution, because it contains all the others you will need.
+
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

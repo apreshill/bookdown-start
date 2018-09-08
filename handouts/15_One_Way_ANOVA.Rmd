@@ -1,0 +1,345 @@
+---
+title: 'Notes 15:  One-Way ANOVA'
+header-includes:
+    \subtitle{MATH 530-630}
+    \everymath{\displaystyle}
+    \usepackage{graphicx, amsmath,multirow}
+output: pdf_document
+---
+
+**Model Equation:**
+
+$\qquad Y_{ij} = \mu + \alpha_i + \epsilon_{ij}$
+
+where
+
+$\qquad Y_{ij} \hspace{2mm}$ -- \hspace{2mm} *j*th observation in *i*th treatment group
+
+$\qquad \mu \hspace{5mm}$ -- \hspace{3mm} 'grand mean' of all treatment population means
+
+$\qquad \alpha_i \hspace{4mm}$ -- \hspace{3mm} effect of *i*th treatment
+
+$\qquad \epsilon_{ij} \hspace{3mm}$ -- \hspace{2mm} error of measurement in score $Y_{ij}$.
+
+We assume:
+
+$\qquad \epsilon_{ij}$ IND(0,$\sigma_{\epsilon}$), $i=1,...a;\quad j=1,...,n$
+
+$\qquad \sum\limits_{i=1}^a \alpha_i = 0, i = 1, ...,a$.
+
+Note:  '$\epsilon_{ij}$ IND(0,$\sigma^2$)' means $\epsilon_{ij}$ is "independently and normally distributed" with a mean E($\epsilon_{ij}$) = 0 and variance $\sigma_{\epsilon}$.
+
+Hence
+
+$\qquad \mu_i = E(Y_{ij}) = \mu + \alpha_i$
+
+and
+
+$\qquad \mu = \frac{1}{a}\sum\limits_{i=1}^a \mu_i = \frac{1}{a}\sum\limits_{i=1}^a (\mu + \alpha_i) = \frac{1}{a}\sum\limits_{i=1}^a \mu + \frac{1}{a}\sum\limits_{i=1}^a \alpha_i = \mu$
+
+&nbsp;
+
+**Estimates of Parameters:**
+
+$\qquad \hat{\mu}_i = \bar{Y}_{i.} = \frac{1}{n}\sum\limits_{j=1}^n Y_{ij} = \frac{1}{n}\sum\limits_{j=1}^n (\mu + \alpha_i + \epsilon_{ij}) = \mu + \alpha_i + \bar{\epsilon}_{i.}$
+
+$\qquad \hat{\mu} = \bar{Y}_{..} = \frac{1}{n\cdot a} \sum\limits_{i=1}^a \sum\limits_{j=1}^n Y_{ij} = \frac{1}{n\cdot a} \sum\limits_{i=1}^a \sum\limits_{j=1}^n (\mu + \alpha_i + \epsilon_{ij}) = \mu + \alpha_i + \bar{\epsilon}_{..}$
+
+$\qquad \hat{\alpha}_i = \mu_i - \mu = Y_{i.} - \bar{Y}_{..} = (\mu + \alpha_i + \bar{\epsilon}_{i.}) - (\mu + \bar{\epsilon}_{..}) = \alpha_i + \bar{\epsilon}_{i.} - \bar{\epsilon}_{..}$
+
+$\qquad \hat{\epsilon}_{ij} = Y_{ij} - \hat{\mu}_i = Y_{ij} - \bar{Y}_{i.} = (\mu + \alpha_i + \bar{\epsilon}_{ij}) - (\mu + \alpha_i + \bar{\epsilon}_{i.}) = \bar{\epsilon}_{ij} - \bar{\epsilon}_{i.}$
+
+&nbsp;
+
+**The partitioning of the total sums of squares:**
+
+Let:
+
+$\qquad Y_{ij} = \hat{\mu} + \hat{\alpha}_i + \hat{\epsilon}_{ij}$
+
+$\qquad = \bar{Y}_{..} + (\bar{Y}_{i.} - \bar{Y}_{..}) + (Y_{ij} - \bar{Y}_{i.})$
+
+or
+
+$\qquad Y_{ij} - \bar{Y}_{..} = (\bar{Y}_{i.} - \bar{Y}_{..}) + (Y_{ij} - \bar{Y}_{i.})$
+
+\begin{align*}
+\text{Total sums of squares } &= \sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{..})^2 = \sum\limits_{i=1}^a \sum\limits_{j=1}^n [(\bar{Y}_{i.} - \bar{Y}_{..}) + (Y_{ij} - \bar{Y}_{i.})]^2 \\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n [(\bar{Y}_{i.} - \bar{Y}_{..})^2 + 2(\bar{Y}_{i.} - \bar{Y}_{..})(Y_{ij} - \bar{Y}_{i.}) + (Y_{ij} - \bar{Y}_{i.})^2] \\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n (\bar{Y}_{i.} - \bar{Y}_{..})^2 + 2\sum\limits_{i=1}^a\sum\limits_{j=1}^n (\bar{Y}_{i.} - \bar{Y}_{..})(Y_{ij} - \bar{Y}_{i.}) + \sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.})^2 \\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n (\bar{Y}_{i.} - \bar{Y}_{..})^2 + 2\sum\limits_{i=1}^a (\bar{Y}_{i.} - \bar{Y}_{..})\sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.}) + \sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.})^2
+\end{align*}
+
+But the middle term in the previous expression vanishes because
+
+$\qquad \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.}) = 0$
+
+since the sum of deviations from the mean necessarily equals zero, because
+
+\begin{align*}
+\sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.}) &= \sum\limits_{j=1}^n Y_{ij} - \sum\limits_{j=1}^n \bar{Y}_{i.} = \sum\limits_{j=1}^n Y_{ij} - n\bar{Y}_{i.} = \sum\limits_{j=1}^n Y_{ij} - n\frac{1}{n} \sum\limits_{j=1}^n Y_{ij}\\
+&= \sum\limits_{j=1}^n Y_{ij} - \sum\limits_{j=1}^n Y_{ij} = 0.
+\end{align*}
+
+Hence, we can write
+
+\begin{align*}
+\sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{..})^2 &= n\sum\limits_{i=1}^a (\bar{Y}_{i.} - \bar{Y}_{..})^2 + \sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{i.})^2\\
+\substack{\text{Total Sum}\\ \text{of Squares}} &= \substack{\text{Sums of Squares   }\\ \text{Between Groups   }} + \substack{\text{   Sums of Squares}\\ \text{   Within Groups}}
+\end{align*}
+
+This is sometimes written in abbreviated form as
+
+$\qquad \text{SS}_{\text{Total}} = \text{SS}_{\text{Between}} + \text{SS}_{\text{Within}}$
+
+or
+
+$\qquad \text{SS}_{\text{T}} \qquad = \text{SS}_{\text{B}} \qquad + \text{SS}_{\text{W}}$
+
+
+**The Expected Value of the Sums of Squares**
+
+\begin{align*}
+E[\text{SS}_{\text{Between}}] &= E[n \sum\limits_{i=1}^a (\bar{Y}_{i.} - \bar{Y}_{..})^2]\\
+&= E\{n \sum\limits_{i=1}^a [\alpha_i + (\bar{\epsilon}_{i.} - \epsilon_{..})]^2\}\\
+&= E\{n \sum\limits_{i=1}^a [\alpha_i^2 + 2\alpha_i (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..}) + (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2]\}\\
+&= E\{n \sum\limits_{i=1}^a \alpha_i^2\} + 2E\{n \sum\limits_{i=1}^a \alpha_i(\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})\} + E\{n \sum\limits_{i=1}^a (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2\}
+\end{align*}
+
+The middle term in the above expression vanishes, i.e.,
+
+\begin{align*}
+2E\{n \sum\limits_{i=1}^a \alpha_i(\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})\} &= 2n\sum\limits_{i=1}^a \alpha_i E(\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})\\
+&= 2n\sum\limits_{i=1}^a \alpha_i (E\bar{\epsilon}_{i.} - E\bar{\epsilon}_{..})\\
+&= 2n\sum\limits_{i=1}^a \alpha_i (0-0) = 0.
+\end{align*}
+
+because the expected value of a sample mean (e.g. $\bar{\epsilon}_{i.}$ or $\bar{\epsilon}_{..}$) equals the expected value of any single observation on which the mean is based. In this case the expected value of an error random variable $\epsilon_{ij}$ is zero. (Review the theory of the sampling distribution of the sample mean).
+
+Hence,
+
+$\qquad E\{SS_{\text{Between}}\} = n\sum\limits_{i=1}^a \alpha_i^2 + E\{n\sum\limits_{i=1}^a (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2\}$
+
+But we can reduce the rightmost expression in the previous equation to the following:
+
+\begin{align*}
+E[n\sum\limits_{i=1}^a (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2] &= E[n\sum\limits_{i=1}^a (\bar{\epsilon}_{i.}^2 - 2\bar{\epsilon}_{i.}\bar{\epsilon}_{..} + \bar{\epsilon}_{..}^2)]\\
+&= E(n\sum\limits_{i=1}^a\bar{\epsilon}_{i.}^2) - E(2n\sum\limits_{i=1}^a\bar{\epsilon}_{i.}\bar{\epsilon}_{..}) + E(n\sum\limits_{i=1}^a\bar{\epsilon}_{..}^2)\\
+&= n\sum\limits_{i=1}^a E(\bar{\epsilon}_{i.}^2) - E(2n\sum\limits_{i=1}^a\bar{\epsilon}_{i.}\bar{\epsilon}_{..}) + naE(\bar{\epsilon}_{..}^2)
+\end{align*}
+
+The middle term of the previous expression becomes:
+
+\begin{align*}
+E(2n\sum\limits_{i=1}^a \bar{\epsilon}_{i.}\bar{\epsilon}_{..}) &= E(2n\bar{\epsilon}_{..}\sum\limits_{i=1}^a\bar{\epsilon}_{i.}) = E(2n\bar{\epsilon}_{..}\sum\limits_{i=1}^a \frac{1}{n}\sum\limits_{j=1}^n \epsilon_{ij})\\
+&= E(2\bar{\epsilon}_{..}\sum\limits_{i=1}^a\sum\limits_{j=1}^n \epsilon_{ij}) = E(2\bar{\epsilon}_{..}na\bar{\epsilon}_{..})\\
+&= 2naE(\bar{\epsilon}_{..}^2)
+\end{align*}
+
+Hence,
+
+\[
+E[n\sum\limits_{i=1}^a (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2] = n\sum\limits_{i=1}^a E(\bar{\epsilon}_{i.}^2) - naE(\bar{\epsilon}_{..}^2)
+\]
+
+But what are $E(\bar{\epsilon}_{i.}^2)$ and $E(\bar{\epsilon}_{..}^2)$ equal to, respectively? Note that from the definition for variance, $var(X) = E(X^2) - [E(X)]^2$,
+
+\begin{align*}
+&var(\bar{\epsilon}_{i.}) = E(\bar{\epsilon}_{i.}^2) - [E(\bar{\epsilon}_{i.})]^2 = E(\bar{\epsilon}_{i.}^2) - (0)^2 = E(\bar{\epsilon}_{i.}^2)\\
+&var(\bar{\epsilon}_{..}) = E(\bar{\epsilon}_{..}^2) - [E(\bar{\epsilon}_{..})]^2 = E(\bar{\epsilon}_{..}^2) - (0)^2 = E(\bar{\epsilon}_{..}^2)
+\end{align*}
+
+But since $var(\bar{\epsilon}_{i.})$ and $var(\bar{\epsilon}_{..})$ are each variances of sample means of some value,
+
+\begin{align*}
+&var(\bar{\epsilon}_{i.}) = \sigma_{\epsilon}^2 / n, i = 1,...,a \text{ (by homogeneity-of-error-variance assumptions)}\\
+&var(\bar{\epsilon}_{..}) = \sigma_{\epsilon}^2 / (na)
+\end{align*}
+
+because, in general, $var(\bar{X}) = \sigma^2(X)/n$, where n is sample size on which the mean is based.
+
+Therefore,
+
+$\qquad E[n\sum\limits_{i=1}^a (\bar{\epsilon}_{i.} - \bar{\epsilon}_{..})^2] = na\sigma_{\epsilon}^2 / n - na\sigma_{\epsilon}^2 / (na) = a\sigma_{\epsilon}^2 - \sigma_{\epsilon}^2 = (a-1)\sigma_{\epsilon}^2$
+
+Thus,
+
+$\qquad E(SS_{\text{Between}}) = n\sum\limits_{i=1}^a \alpha_i^2 + (a-1)\sigma_{\epsilon}^2$.
+
+\begin{align*}
+E(SS_{\text{Within}}) &= E[\sum\limits_{i=1}^a \sum\limits_{j=1}^n (Y_{ij} - \bar{Y}_{..})^2] = E[\sum\limits_{i=1}^a \sum\limits_{j=1}^n (\epsilon_{ij} - \bar{\epsilon}_{i.})^2]\\
+&= E[\sum\limits_{i=1}^a \sum\limits_{j=1}^n (\epsilon_{ij}^2 - 2\epsilon_{ij}\bar{\epsilon}_{i.} + \bar{\epsilon}_{i.}^2)]\\
+&= E[\sum\limits_{i=1}^a \sum\limits_{j=1}^n \epsilon_{ij}^2 - 2\sum\limits_{i=1}^a \sum\limits_{j=1}^n \epsilon_{ij}\bar{\epsilon}_{i.} + \sum\limits_{i=1}^a \sum\limits_{j=1}^n\bar{\epsilon}_{i.}^2]\\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n E(\epsilon_{ij}^2) - 2E(\sum\limits_{i=1}^a \bar{\epsilon}_{i.} \sum\limits_{j=1}^n \epsilon_{ij}) + E(\sum\limits_{i=1}^a n\bar{\epsilon}_{i.}^2)\\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n E(\epsilon_{ij}^2) - 2E(\sum\limits_{i=1}^a \bar{\epsilon}_{i.} n\bar{\epsilon}_{i.}) + E(\sum\limits_{i=1}^a n\bar{\epsilon}_{i.}^2)\\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n E(\epsilon_{ij}^2) - 2E(\sum\limits_{i=1}^a n\bar{\epsilon}_{i.}^2) + E(\sum\limits_{i=1}^a n\bar{\epsilon}_{i.}^2)\\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n E(\epsilon_{ij}^2) - E(\sum\limits_{i=1}^a n\bar{\epsilon}_{i.}^2)\\
+&= \sum\limits_{i=1}^a \sum\limits_{j=1}^n E(\epsilon_{ij}^2) - nE(\sum\limits_{i=1}^a \bar{\epsilon}_{i.}^2)
+\end{align*}
+
+Now, $var(\epsilon_{ij}) = E(\epsilon_{ij}^2) - [E(\epsilon_{ij})]^2 = E(\epsilon_{ij}^2) = \sigma_{\epsilon}^2$ for all $i=1,...,a; j=1,...,n$. 
+
+And $var(\bar{\epsilon}_{i.}) = E(\bar{\epsilon}_{i.}^2) - [E(\bar{\epsilon}_{i.})]^2 = E(\bar{\epsilon}_{i.}^2) = \sigma_{\epsilon}^2 / n, i=1,...,a$. [Note, remember the importance of assuming homogeneity of error variance]. Hence,
+
+$\qquad E(SS_{\text{Within}}) = an\sigma_{\epsilon}^2 - na\sigma_{\epsilon}^2 / n = a(n-1)\sigma_{\epsilon}^2$
+
+Let us define:
+
+$\qquad$ Mean Square Between $\equiv \frac{SS_{\text{Between}}}{a-1}$; $\qquad$ Mean Square Within $\equiv \frac{SS_{\text{Within}}}{a(n-1)}$.
+
+Then
+
+$\qquad E(MS_{\text{Between}}) = \frac{E(SS_{\text{Between}})}{a-1} = \frac{n\sum\limits_{i=1}^a \alpha_i^2}{a-1} + \sigma_{\epsilon}^2$.
+
+and
+
+$\qquad E(MS_{\text{Within}}) = \frac{E(SS_{\text{Within}})}{a(n-1)} = \frac{a(n-1)\sigma_{\epsilon}^2}{a(n-1)} = \sigma_{\epsilon}^2$.
+
+When the null hypothesis, $H_0: \alpha_1 = ... = \alpha_a = 0$, is true, $\sum\limits_{i=1}^a \alpha_i^2 = 0$, then MS$_{\text{Between}}$ and MS$_{\text{Within}}$ are both unbiased estimates of $\sigma_{\epsilon}^2$. But if a null hypothesis is not true, then $\sum\limits_{i=1}^a \alpha_i^2 > 0$ and E(MS$_B$) > E(MS$_W$). Hence a test of the null hypothesis revolves around a comparison of MS$_{\text{Between}}$ to MS$_{\text{Within}}$.
+
+\pagebreak
+
+\begin{center}
+ANOVA TABLE
+\end{center}
+
+\begin{table}[!htb]
+\centering
+{\renewcommand{\arraystretch}{2}
+\begin{tabular}{|lccccc|}
+\hline
+\multicolumn{1}{|c}{Source}                                                                  & SS                             & df                           & MS                                        & E(MS)                                                                                   & F                   \\ \hline
+\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}} Treatments (Between Groups) \end{tabular}} & \multicolumn{1}{c|}{$SS_B$} & \multicolumn{1}{c|}{$a - 1$} & \multicolumn{1}{c|}{$\frac{SS_B}{a - 1}$} & \multicolumn{1}{c|}{$\frac{\sum\limits_{j=1}^n \alpha_i^2}{a-1} + \sigma_{\epsilon}^2$} & $\frac{MS_B}{MS_W}$ \\ \hline
+\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}} \\ Error (Within Groups)\end{tabular}}       & \multicolumn{1}{c|}{$SS_W$}    & \multicolumn{1}{c|}{$N - a$} & \multicolumn{1}{c|}{$\frac{SS_W}{N - a}$} & \multicolumn{1}{l|}{$\sigma_{\epsilon}^2$}                                              &                     \\ \hline
+\end{tabular}}
+\end{table}
+
+$\qquad$ Note:  $N = \sum\limits_{i=1}^a n_i$
+
+**Convenient Computational Formulae:**
+
+$\qquad SS_B = \sum\limits_{i=1}^a \frac{\left(\sum\limits_{j=1}^{n_i} Y_{ij}\right)^2}{n_i} - \frac{\left(\sum\limits_{i=1}^a \sum\limits_{j=1}^{n_i} Y_{ij} \right)^2}{N}$
+
+$\qquad SS_W = \sum\limits_{i=1}^a\sum\limits_{j=1}^{n_i} Y_{ij}^2 - \sum\limits_{i=1}^a \frac{\left(\sum\limits_{j=1}^{n_i} Y_{ij}\right)^2}{n_i}$
+
+$\qquad SS_T = \sum\limits_{i=1}^a\sum\limits_{j=1}^{n_i} Y_{ij}^2 - \frac{\left(\sum\limits_{i=1}^a \sum\limits_{j=1}^{n_i} Y_{ij} \right)^2}{N}$
+
+Note:
+
+$\qquad SS_B = SS_{\text{Total}} - SS_W$
+
+$\qquad SS_W = SS_{\text{Total}} - SS_B$
+
+&nbsp;
+
+**Random Effects Model.**  We have just considered the case where the experimental treatments are regarded as **fixed** over any replications of the experiment, i.e. they would not change from replication to replication of the experiment. But an alternative situation to consider is that the levels of an experimental treatment are selected at random from a larger "universe" of treatment levels to which the researcher wishes to direct his/her inferences. In that case, each time the experiment is performed a different sample of levels of the experimental treatment variable will be selected. Examples are to select at random the dose of a drug, the concentration of a chemical (in industrial experiments), the pressure of a process, the order in which experimental stimuli are administered (from a much larger set of possible orders), the interval of reinforcement (from a much larger set of possible intervals), subject effects, if subjects are sampled at random. The aim is to infer in general what the effect would be in the larger universe of levels from which the sample of treatment intervals has been taken.
+
+**The Two-Way Random Effects Model**
+
+$Y_{ijk} = \mu + a_j + b_k + (ab)_{jk} + \epsilon_{ijk}$
+
+where
+
+$\mu$ -- grand mean
+
+$a_j$ -- random variable standing for the effect of the randomly selected *j*th treatment of factor A
+
+$b_k$ -- random variable standing for the effect of the randomly selected *k*th treatment of factor B
+
+$(\alpha\beta)_{jk}$ -- interaction effect **random variable** of the *j,k* treatment combination
+
+$\epsilon_{ijk}$ -- error of measurement
+
+&nbsp;
+
+We assume:
+
+1. The $a_j$ effects are normally distributed random variables with mean 0 and variance $\sigma_A^2$.
+
+2. The $b_j$ effects are normally distributed random variables with mean 0 and variance $\sigma_B^2$.
+
+3. The $(ab)_{jk}$ interaction effect is a normal random variable with mean 0 and variance $\sigma_{AB}^2$.
+
+4. The $\epsilon_{ijk}$ is a normally distributed random error variable with mean zero and common variance $\sigma_{\epsilon}^2$.
+
+5. The $a_j$, $b_j$, $(ab)_{jk}$ and $\epsilon_{ijk}$ are pairwise independently distributed.
+
+&nbsp;
+
+**Sums of Squares and Mean Squares**
+
+Nothing changes in the way we calculate the sums of squares and the mean squares from the data. What changes, however, are the expected values of the mean squares, and this in turn will have an effect on the way in which we conduct our significance tests. The expected values of the mean squares are given by
+
+\begin{table}[!htb]
+\centering
+{\renewcommand{\arraystretch}{2}
+\begin{tabular}{|l|c|c|}
+\hline
+\multicolumn{1}{|c|}{Source} & Mean Square                              & E(MS)                                                       \\ \hline
+Main effect A                & MS$_A$                                   & $\sigma_{\epsilon}^2 + Kn\sigma_A^2 + n\sigma_{AB}^2$       \\ \hline
+Main effect B                & MS$_B$                                   & $\sigma_{\epsilon}^2 + Jn\sigma_B^2 + n\sigma_{AB}^2$       \\ \hline
+Interaction A $\times$ B     & \multicolumn{1}{l|}{MS$_{A \times B}$}   & \multicolumn{1}{l|}{$\sigma_{\epsilon}^2 + n\sigma_{AB}^2$} \\ \hline
+Error                        & \multicolumn{1}{l|}{MS$_{\text{error}}$} & \multicolumn{1}{l|}{}                                       \\ \hline
+\end{tabular}}
+\end{table}
+
+The hypotheses tested in the random effects model are:
+
+1. $H_0: \sigma_A^2. = 0$
+
+2. $H_0: \sigma_B^2. = 0$
+
+3. $H_0: \sigma_{AB}^2. = 0$
+
+We can see by inspecting the above table that if the interaction effect has a nonzero variance, then the Mean Square Error is not the proper denominator term for an F-ratio to test the main effects. If you use the Mean Square Error in the denominator as we do in a Fixed Effects model to test the main effect, there may be no main effect, but we would still get a significant F statistic if an interaction variance is nonzero. We see also that if the interaction variance is nonzero, we should use the Mean Square A $\times$ B as the denominator of an F-ratio to test the main effect variance to see if it is zero or not.
+
+So the order of tests to perform in a random effects model is
+
+1. First test the interaction variance: $\quad F = \frac{MS_{AB}}{MS_{\text{Error}}}$
+
+2. If the interaction variance is significantly different from zero, then perform the following F-tests for the main effects: 
+
+$\qquad F = \frac{MS_A}{MS_{AB}}, F = \frac{MS_B}{MS_{AB}}$
+
+3. Otherwise, use the usual F-tests of the main effect mean squares against mean square error: 
+
+$\qquad F = \frac{MS_A}{MS_{\text{Error}}}, F = \frac{MS_B}{MS_{\text{Error}}}$
+
+More optimal would be to construct a new **pooled** MS Error to be used as the denominator for the above tests when the test of the interaction variance is nonsignificant:
+
+$\qquad$ pooled MS Error = $\frac{SS_{AB} + SS_{\text{Error}}}{(J-1)(K-1) + JK(n-1)}$. This is a **sufficient** estimator of the Mean Square Error that uses all information in the data to estimate the common population error variance.
+
+&nbsp;
+
+**Mixed Effects Models.**  In some studies only one of the main effects is a random variable representing sampling of levels from a population of levels; the other main effect is a fixed variable. Then the expected mean squares are given as
+
+A is fixed, B is random:
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{|l|c|l|}
+\hline
+\multicolumn{1}{|c|}{Source}                                          & Mean Square                              & \multicolumn{1}{c|}{E(MS)}                                                            \\ \hline
+\begin{tabular}[c]{@{}l@{}}Main effect A\\ Fixed\end{tabular}         & MS$_A$                                   & $\sigma_{\epsilon}^2 + n\sigma_{AB}^2 + \frac{nK\sum\limits_{j=1}^J \alpha_j^2}{J-1}$ \\ \hline
+\begin{tabular}[c]{@{}l@{}}Main effect B\\ Random effect\end{tabular} & MS$_B$                                   & $\sigma_{\epsilon}^2 + Jn\sigma_B^2$                                                  \\ \hline
+\begin{tabular}[c]{@{}l@{}}Interaction \\ A $\times$ B\end{tabular}   & \multicolumn{1}{l|}{MS$_{A \times B}$}   & $\sigma_{\epsilon}^2 + n\sigma_{AB}^2$                                                \\ \hline
+Error                                                                 & \multicolumn{1}{l|}{MS$_{\text{error}}$} & $\sigma_{\epsilon}^2$                                                                 \\ \hline
+\end{tabular}
+\end{table}
+
+Thus the F statistics we perform are a little different.
+
+The test of the A effect:  $F = \frac{MS_A}{MS_{AB}}$
+
+The test of the B effect:  $F = \frac{MS_B}{MS_{\text{Error}}}$
+
+The test of the AB interaction:  $F = \frac{MS_{AB}}{MS_{\text{Error}}}$
+
+A comparable adjustment is made if the B effect is fixed and A is random. In general you test the fixed effect against the MS interaction (if the test of the interaction is significant), while you test the main effect of the random effect variable and the interaction against the Mean Square Error.
+
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

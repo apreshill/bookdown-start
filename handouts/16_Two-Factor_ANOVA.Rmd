@@ -1,0 +1,684 @@
+---
+title: 'Notes 16:  Two-Factor ANOVA'
+header-includes:
+    \subtitle{MATH 530-630}
+    \everymath{\displaystyle}
+    \usepackage{graphicx, amsmath,multirow,float}
+    \restylefloat{figure}
+output: pdf_document
+---
+
+```{r setup, include = FALSE, cache = FALSE}
+library(knitr)
+knitr::opts_chunk$set(error = TRUE, comment = NA, warnings = FALSE, messages = FALSE, tidy = FALSE, echo = FALSE,dev="pdf")
+```
+
+```{r load_packages, include = FALSE}
+suppressWarnings(suppressMessages(library(plyr)))
+suppressWarnings(suppressMessages(library(dplyr)))
+suppressWarnings(suppressMessages(library(ggplot2)))
+```
+
+Two-Factor ANOVA involves two categorical independent variables rather than one. For example, the researcher may be interested in the effect of certain drugs (ADVIL, diazapine, ritalin) on the maze running performance of rats under different experimental conditions:  a highly stressful condition, a moderately stressful condition, and a low stressful condition. The two independent variables in this example are DRUG TREATMENT and STRESS. The dependent variable is the number of wrong turns made in running the maze.
+
+Twenty-seven rats that had all learned to run a complex maze with at most 10 wrong turns in three trials under stress-free conditions were assigned at random to the various treatment combinations of this experiment so that each treatment combination had three rats. In each condition a rat was administered a drug, then, after a time interval required to have the drug reach maximum effect, the rat was placed in the maze and the appropriate stress conditions (noises and shocks) were administered. The following data were obtained:
+
+\begin{table}[!htb]
+\begin{tabular}{|c|c|c|c|}
+\hline
+          & High Stress                                          & Moderate Stress                                      & Low Stress                                           \\ \hline
+Ibuprofen & \begin{tabular}[c]{@{}c@{}}43\\ 42\\ 38\end{tabular} & \begin{tabular}[c]{@{}c@{}}34\\ 32\\ 33\end{tabular} & \begin{tabular}[c]{@{}c@{}}15\\ 19\\ 23\end{tabular} \\ \hline
+Diazapine & \begin{tabular}[c]{@{}c@{}}38\\ 32\\ 29\end{tabular} & \begin{tabular}[c]{@{}c@{}}42\\ 44\\ 40\end{tabular} & \begin{tabular}[c]{@{}c@{}}23\\ 22\\ 28\end{tabular} \\ \hline
+Ritalin   & \begin{tabular}[c]{@{}c@{}}45\\ 47\\ 43\end{tabular} & \begin{tabular}[c]{@{}c@{}}25\\ 23\\ 22\end{tabular} & \begin{tabular}[c]{@{}c@{}}12\\ 9\\ 13\end{tabular}  \\ \hline
+\end{tabular}
+\end{table}
+
+Data in two-way tables like this are often indexed as if they are in a two-way matrix.
+
+**Model Equation.**  By $Y_{ijk}$ let us mean the *i*th score in the *j*th row and *k*th column of the table. The Model Equation for a score in a two-way ANOVA table is then given as
+
+$\qquad Y_{ijk} = \mu + \alpha_j + \beta_k + \gamma_{jk} + \epsilon_{ijk}$
+
+where
+
+$\mu$ -- grand mean
+
+$\alpha_j$ -- main effect of *j*th treatment of factor A
+
+$\beta_k$ -- main effect of *k*th treatment of factor B
+
+$\gamma_{jk}$ -- interaction effect of the *j,k* treatment combination
+
+$\epsilon_{ijk}$ -- error of measurement
+
+&nbsp;
+
+What is new in this model is the concept of an **interaction effect**. The effect of two treatments may not be simply additive when administered simultaneously. Rather they may have a **synergistic** effect unique in value for the treatment combination. For example, nitric acid and glycerin are two liquids, neither of which is explosive by itself. But combine them, and you have a substance, nitroglycerin, which is extremely explosive. Nitric acid and glycerin **ineract** to form a high explosive. Thus in many situations the combined effect of two experimental treatments may yield a combined effect that is more (or less) than the sum of their two separate effects. When such interaction effects are present, we cannot predict the results from knowledge of the separate treatment effects alone. We need to know the specific combination of treatments and how that combination yields a distinct effect of its own.
+
+The following graph plots the mean error for different drugs at each level of stress. While generally it appears that fewer errors occur with less stress, this trend is not uniform for each drug.
+
+```{r,fig.align="center"}
+library(dplyr)
+drug <- c("Ibuprofen","Ibuprofen","Ibuprofen","Ibuprofen","Ibuprofen","Ibuprofen","Ibuprofen","Ibuprofen",
+          "Ibuprofen","Diazapine","Diazapine","Diazapine","Diazapine","Diazapine","Diazapine","Diazapine",
+          "Diazapine","Diazapine","Ritalin","Ritalin","Ritalin","Ritalin","Ritalin","Ritalin","Ritalin","Ritalin","Ritalin")
+stress <- c("high","high","high","moderate","moderate","moderate","low","low","low","high","high","high","moderate","moderate",
+            "moderate","low","low","low","high","high","high","moderate","moderate","moderate","low","low","low")
+errors <- c(43,42,38,34,32,33,15,19,23,38,32,29,42,44,40,23,22,28,45,47,43,25,23,22,12,9,13)
+drugs <- data.frame(drug,stress,errors)
+drugs2 <- summarize(group_by(drugs,drug,stress),errors=mean(errors))
+drugs2$stress = factor(drugs2$stress,levels(drugs2$stress)[c(1,3,2)])
+interaction.plot(drugs2$stress,drugs2$drug,drugs2$errors,legend=F,xlab="Stress Condition",ylab="Mean Number of Errors", ylim=c(0,50))
+text(x=c(3,3,3), y=c(28,22,14), labels=c('Drug 1','Drug 2','Drug 3'))
+```
+
+Although performance is poorer generally with Drug 1, it is not uniformly so. At high levels of stress (level 1) performance under Drug 1 is somewhat better than for Drug 2 or Drug 3. When you see crossed lines in plots of the means of the dependent variable at a level of one factor against the levels of the other factor, you have prima facie evidence for an interaction effect present. But crossed lines is not the sole condition indicating interaction. If the profiles are not parallel so that the distance between means at different levels of the factor at the base of the graph is not the same, that is sufficient to establish the existence of an interaction.
+
+To illustrate the distinction between main effects and interaction effects, consider a case with two levels of the first factor (A) and three for the second (B). Plots of the means of the dependent variable at levels of the first independent variable (A) against the levels of the second (B) could be as shown:
+
+```{r,fig.align="center",fig.height=3}
+par(mfrow=c(1,2))
+ind_var <- c("A1","A1","A1","A2","A2","A2")
+ind_var2 <- c("B1","B2","B3","B1","B2","B3")
+dep_var <- c(6,4,5,4,2,3)
+dat <- data.frame(ind_var,ind_var2,dep_var)
+interaction.plot(dat$ind_var2,dat$ind_var,dat$dep_var,legend=F,
+                 yaxt = "n", ylim=c(0,8),xlab="",ylab="")
+axis(labels=NA,side=2,tck=-0.015,at=c(seq(from=0,to=9,by=1)))
+axis(labels=NA,side=1,tck=-0.015,at=c(seq(from=0,to=4,by=1)))
+text(x=c(3.1,3.1), y=c(5.2,3.2), labels=c('A1','A2'))
+
+dep_var2 <- c(7,3.5,4,3.6,3,1.5)
+dat2 <- data.frame(ind_var,ind_var2,dep_var2)
+interaction.plot(dat2$ind_var2,dat2$ind_var,dat2$dep_var2,legend=F,
+                 yaxt = "n", ylim=c(0,8),xlab="",ylab="")
+axis(labels=NA,side=2,tck=-0.015,at=c(seq(from=0,to=9,by=1)))
+axis(labels=NA,side=1,tck=-0.015,at=c(seq(from=0,to=4,by=1)))
+text(x=c(3.1,3.1), y=c(4.2,1.7), labels=c('A1','A2'))
+```
+
+$\qquad$ Both main effects present but no interaction. \hspace{1.3in} Interaction Present.
+
+&nbsp;
+
+Interaction is indicated by a lack of a constant difference between A1 and A2 at different levels of B. The following illustrates lack of main effects for A and for B, respectively, but with no interaction present.
+
+```{r,fig.align="center",fig.height=3}
+par(mfrow=c(1,2))
+ind_var <- c("A1","A1","A1","A2","A2","A2")
+ind_var2 <- c("B1","B2","B3","B1","B2","B3")
+dep_var <- c(5.8,3.8,4.8,5.5,3.5,4.5)
+dat <- data.frame(ind_var,ind_var2,dep_var)
+interaction.plot(dat$ind_var2,dat$ind_var,dat$dep_var,legend=F,
+                 yaxt = "n", ylim=c(0,8),xlab="",ylab="")
+axis(labels=NA,side=2,tck=-0.015,at=c(seq(from=0,to=9,by=1)))
+axis(labels=NA,side=1,tck=-0.015,at=c(seq(from=0,to=4,by=1)))
+text(x=c(3.1,3.1), y=c(5.5,4), labels=c('A1','A2'))
+
+dep_var2 <- c(5,5,5,3,3,3)
+dat2 <- data.frame(ind_var,ind_var2,dep_var2)
+interaction.plot(dat2$ind_var2,dat2$ind_var,dat2$dep_var2,legend=F,
+                 yaxt = "n", ylim=c(0,8),xlab="",ylab="")
+axis(labels=NA,side=2,tck=-0.015,at=c(seq(from=0,to=9,by=1)))
+axis(labels=NA,side=1,tck=-0.015,at=c(seq(from=0,to=4,by=1)))
+text(x=c(3.1,3.1), y=c(5.2,3.2), labels=c('A1','A2'))
+```
+
+No main effect for A, but main effect for B. No Interaction. $\quad$ Main effects for A but not for B. No Interaction.
+
+&nbsp;
+
+As in one-way ANOVA, there is a sums of squares identity:
+
+$\qquad SS_{\text{Total}} = SS_A + SS_B + SS_{A \times B} + SS_{\text{error}}$
+
+And this gives rise to the following ANOVA Table:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{2.5}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{Source} & \multicolumn{1}{c|}{SS} & \multicolumn{1}{c|}{df} & \multicolumn{1}{c|}{MS}                  & \multicolumn{1}{c|}{F}        \\ \hline
+$A$                            & $SS_A$                  & $J - 1$                  & $\frac{SS_A}{(J - 1)}$                   & $\frac{MS_A}{MS_{\text{error}}}$    \\ \hline
+$B$                            & $SS_B$                  & $K - 1$                  & $\frac{SS_B}{(K - 1)}$                   & $\frac{MS_B}{MS_{\text{error}}}$    \\ \hline
+$A \times B$                 & $SS_{A \times B}$       & $(J - 1)(K - 1)$        & $\frac{SS_{A \times B}}{(J - 1)(K - 1)}$ & $\frac{MS_{AB}}{MS_{\text{error}}}$ \\ \hline
+error                        & $SS_{\text{error}}$     & $J*K*(n_{jk} - 1)$     & $\frac{SS_e}{(J*K*(n - 1))}$                    &                               \\ \hline
+Total                        & $SS_{\text{Total}}$     &                         &                                          &                               \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{2.5}
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{Source} & \multicolumn{1}{c|}{SS} & \multicolumn{1}{c|}{E(MS)}                                                                               \\ \hline
+Main Effect A                & $MS_A$                  & $\sigma_{\epsilon}^2 + \frac{nK\sum\limits_{j=1}^J \alpha_j^2}{J-1}$                                     \\ \hline
+Main Effect B                & $SS_B$                  & $\sigma_{\epsilon}^2 + \frac{nJ\sum\limits_{k=1}^K \beta_k^2}{K-1}$                                      \\ \hline
+Interaction $A \times B$     & $MS_{A \times B}$       & $\sigma_{\epsilon}^2 + \frac{n\sum\limits_{j=1}^J \sum\limits_{k=1}^K (\alpha\beta)_{jk}^2}{(J-1)(K-1)}$ \\ \hline
+Error                        & $MS_{\text{error}}$     & $\sigma_{\epsilon}^2$                                                                                    \\ \hline
+\end{tabular}}
+\end{table}
+
+*A Note of Caution:*  A researcher should not suppose that the model equation of an ANOVA represents precisely the way in which the data is generated. It is simply a model that fits the data. Because the independent variables of an ANOVA are discrete, they may not represent adequately that the underlying generating process involves continuous variables and that the researcher has only "sampled" certain values of those variables to represent the levels of his discrete experimentally manipulated variables as qualitative variables. Ultimately the researcher will want to discover what the crucial, underlying quantitative causal variables are and develop the mathematical equation that represents the dependent variable as a continuous functional relation of the causal variables (plus error).
+
+\pagebreak
+
+#Computational Formulae
+
+Let $T_{...} = \left[\sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk} \right]$
+
+Let $T_{.jk} = \sum\limits_{i=1}^n Y_{ijk}$
+
+Let $T_{.j.} = \sum\limits_{k=1}^K \sum\limits_{i=1}^n Y_{ijk}$
+
+Let $T_{..k} = \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}$ 
+
+$SS_{\text{Total}} = \sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}^2 - \frac{\left[\sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}\right]^2}{N} = \sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}^2 - \frac{T_{...}^2}{N}$
+
+$SS_{\text{AB Cells}} = \sum\limits_{k=1}^K \sum\limits_{j=1}^J \frac{\left(\sum\limits_{i=1}^n Y_{ijk} \right)^2}{n} - \frac{\left[\sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}\right]^2}{N} = \sum\limits_{k=1}^K \sum\limits_{j=1}^J \frac{T_{.jk}^2}{n} - \frac{T_{...}^2}{N}$
+
+$SS_{\text{Error}} = SS_{\text{Within Cells}} = SS_{\text{Total}} - SS_{AB}$
+
+$SS_A = \sum\limits_{j=1}^J \frac{\left(\sum\limits_{k=1}^K \sum\limits_{i=1}^n Y_{ijk}\right)^2}{Kn} - \frac{\left[\sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}\right]^2}{N} = \sum\limits_{j=1}^J \frac{T_{.j.}^2}{Kn} - \frac{T_{...}^2}{N}$
+
+$SS_B = \sum\limits_{k=1}^K \frac{\left(\sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}\right)^2}{Jn} - \frac{\left[\sum\limits_{k=1}^K \sum\limits_{j=1}^J \sum\limits_{i=1}^n Y_{ijk}\right]^2}{N} = \sum\limits_{k=1}^K \frac{T_{..k}^2}{Jn} - \frac{T_{...}^2}{N}$
+
+$SS_{A \times B} = \sum\limits_{j=1}^J \sum\limits_{k=1}^K \frac{T_{.jk}^2}{n} - \sum\limits_{j=1}^J \frac{T_{.j.}^2}{Kn} - \sum\limits_{k=1}^K \frac{T_{..k}^2}{Jn} + \frac{T_{...}^2}{N} = SS_{\text{Interaction}}$
+
+or
+
+$SS_{A \times B} = SS_{\text{Total}} - SS_A - SS_B - SS_{\text{Error}}$
+
+&nbsp;
+
+**Order of Significance Tests Performed.**  We have already mentioned that the presence of an interaction effect means one cannot interpret the effect of a treatment combination from knowing simply the effects of the respective treatments separately. This suggests that one should first test the interaction effect before testing the "main effects" of the treatments separately. If the interaction is "significant" one then knows that the interpretation of any significant main effects thereafter will be problematic, because they will be confounded with the interaction.
+
+
+#Two-Way ANOVA Problems
+
+1. Newly weaned rats from three different strains -- bright, mixed, and dull -- were assigned at random to one of two rearing environments, a free environment or a restricted environment. With eight rats from each strain assigned at random to each of the two rearing environments the resulting data was obtained on the number of errors made in a maze-running test:
+
+\begin{table}[!htb]
+\begin{tabular}{|l|ll|ll|ll|}
+\hline
+           & \multicolumn{2}{c|}{Bright}                                                                                            & \multicolumn{2}{c|}{Mixed}                                                                                                & \multicolumn{2}{c|}{Dull}                                                                                               \\ \hline
+Free       & \begin{tabular}[c]{@{}l@{}}25\\ 41\\ 25\\ 19\end{tabular}  & \begin{tabular}[c]{@{}l@{}}32\\ 33\\ 29\\ 58\end{tabular} & \begin{tabular}[c]{@{}l@{}}141\\ 76\\ 39\\ 72\end{tabular}   & \begin{tabular}[c]{@{}l@{}}72\\ 86\\ 48\\ 110\end{tabular} & \begin{tabular}[c]{@{}l@{}}56\\ 88\\ 59\\ 97\end{tabular} & \begin{tabular}[c]{@{}l@{}}87\\ 99\\ 126\\ 104\end{tabular} \\ \hline
+Restricted & \begin{tabular}[c]{@{}l@{}}51\\ 96\\ 108\\ 72\end{tabular} & \begin{tabular}[c]{@{}l@{}}35\\ 36\\ 38\\ 77\end{tabular} & \begin{tabular}[c]{@{}l@{}}49\\ 104\\ 130\\ 122\end{tabular} & \begin{tabular}[c]{@{}l@{}}114\\ 92\\ 87\\ 64\end{tabular} & \begin{tabular}[c]{@{}l@{}}32\\ 52\\ 44\\ 57\end{tabular} & \begin{tabular}[c]{@{}l@{}}44\\ 34\\ 72\\ 35\end{tabular}   \\ \hline
+\end{tabular}
+\end{table}
+
+Conduct a Two-Way ANOVA analysis. Show computational formulas used and display results in an ANOVA Table.
+
+Prepare graphical interaction plots of the cell means of the free and restricted environmental cases against the three strains. Interpret the results.
+
+2. What assumptions are made to perform statistical inference in two-way ANOVA?
+
+3. Should you interpret the main effects when there are significant interaction effects? Explain.
+
+4. What is the difference in the way one conducts significance tests between random effects and fixed effects designs in two-way ANOVA? Why the difference?
+
+\begin{table}[!htb]
+\begin{tabular}{|l|l|l|l|}
+\hline
+           & \multicolumn{1}{c|}{Bright}                               & \multicolumn{1}{c|}{Mixed}                                   & \multicolumn{1}{c|}{Dull}                                   \\ \hline
+Free       & \begin{tabular}[c]{@{}l@{}}25\\ 41\\ 25\\ 19\end{tabular} & \begin{tabular}[c]{@{}l@{}}72\\ 76\\ 55\\ 73\end{tabular}    & \begin{tabular}[c]{@{}l@{}}87\\ 99\\ 126\\ 104\end{tabular} \\ \hline
+Restricted & \begin{tabular}[c]{@{}l@{}}35\\ 36\\ 38\\ 77\end{tabular} & \begin{tabular}[c]{@{}l@{}}49\\ 104\\ 130\\ 122\end{tabular} & \begin{tabular}[c]{@{}l@{}}32\\ 52\\ 44\\ 57\end{tabular}   \\ \hline
+\end{tabular}
+\end{table}
+
+Cell Sums of Scores
+\begin{table}[!htb]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+           & \multicolumn{1}{c|}{Bright} & \multicolumn{1}{c|}{Mixed} & \multicolumn{1}{c|}{Dull} & Row Total \\ \hline
+Free       & 110                         & 276                        & 416                       & 802       \\ \hline
+Restricted & 187                         & 405                        & 185                       & 777       \\ \hline
+Col. Total & 297                         & 681                        & 601                       & 1579      \\ \hline
+\end{tabular}
+\end{table}
+
+Cell Sums of Squares
+\begin{table}[!htb]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+           & \multicolumn{1}{c|}{Bright}   & \multicolumn{1}{c|}{Mixed}   & \multicolumn{1}{c|}{Dull}   & Row Total \\ \hline
+Free       & 3292                          & 19314                        & 44062                       & 66668     \\ \hline
+Restricted & 9894                          & 45001                        & 8913                        & 63808     \\ \hline
+Col. Total & 13186                         & 64315                        & 52975                       & 130476    \\ \hline
+\end{tabular}
+\end{table}
+
+\pagebreak
+
+#Orthogonal, Planned Comparisons among Means
+
+Although the analysis of variance allows us to test whether *k* population means are simultaneously equal, a drawback to the procedure is that when we do indeed reject the null hypothesis that all population means are equal, we do not know where among the population means the difference among the means lies. There are procedures, however, we can apply known as post hoc comparisons among means, that will help us identify where the population means differ. However, there is a more powerful alternative to the analysis of variance followed by post hoc comparisons, known as the method of planned or *a priori* comparisons among means. We will first consider orthogonal or planned comparisons among means, and then follow up in a later handout with a description of post hoc comparisons among means.
+
+By a comparison or contrast among means, we mean any linear combination of population means
+
+$\qquad \gamma = c_1\mu_1 + c_2\mu_2 + ... + c_k\mu_k$
+
+that constrains the weights $c_1, c_2,..., c_k$ to be not all equal to zero while summing to zero:
+
+$\qquad c_1 + c_2 + ... + c_k = 0$.
+
+The weights may be integers or fractions so that the average of one group of means is to be contrasted with the average of some other group of means. For example, suppose in an experiment we have two experimental treatments (Groups 1 and 2) and a control group (Group 3). We may wish to test the hypothesis that the average of the two treatment groups (Groups 1 and 2) equals the average of the control group (Group 3):
+
+$\qquad H_0: \frac{\mu_1 + \mu_2}{2} = \mu_3$
+
+This is equivalent to
+
+$\qquad H_0: \frac{\mu_1 + \mu_2}{2} - \mu_3 = 0$,
+
+or, if we multiply both sides of this equation by 2, we get the equivalent expression:
+
+$\qquad H_0: \mu_1 + \mu_2 - 2\mu_3 = 0$.
+
+In this last case the weights applied to the population means are integers (1, 1, -2) and we see that their sum is zero. Not all weights in a comparison may be zero.
+
+Take another example:  Suppose in an experiment there are three experimental treatments (Groups 1, 2, and 3) and two control groups (Groups 4 and 5). We may hypothesize that the average of the three treatment groups equals the average of the control groups (this would provisionally test the hypothesis that there is no difference between the experimental treatments and the control groups). Then our null hypothesis is
+
+$\qquad H_0: \frac{\mu_1 + \mu_2 + \mu_3}{3} = \frac{\mu_4 + \mu_5}{2}$
+
+or
+
+$\qquad H_0: 2\mu_1 + 2\mu_2 + 2\mu_3 - 3\mu_4 - 3\mu_5 = 0$.
+
+Again note that the sum of the weights equals zero.
+
+The purpose then of formulating hypotheses in terms of comparisons or contrasts among means is to provide tests comparing the average of certain groups of means to the average of other groups of means. Thus we may compare the average of the experimental treatment groups against the average of the control groups, or make comparisons among the experimental treatment means.
+
+###Estimating the Value of the Comparison and Performing a Significance Test:
+
+Because the sample mean $\bar{X}_i$ of the *i*th population mean is an unbiased estimate of the population mean, we may estimate the value of the comparison by
+
+$\qquad g = c_1\bar{X}_1 + c_2\bar{X}_2 + ... + c_k\bar{X}_k$.
+
+We see that the expected value of *g* is equal to the comparison among the population means:
+
+\begin{align*}
+E(g) &= E[c_1\bar{X}_1 + c_2\bar{X}_2 + ... + c_k\bar{X}_k]\\
+&= c_1E(\bar{X}_1) + c_2E(\bar{X}_2) + ... + c_kE(\bar{X}_k)\\
+&= c_1\mu_1 + c_2\mu_2 + ... + c_k\mu_k
+\end{align*}
+
+which means that *g* is an unbiased estimate of the comparison among population means.
+
+On the other hand, if the group distributions are independently distributed, then the variance of the sampling distribution of *g* is given by
+
+$\qquad \sigma^2(g) = c_1^2\sigma^2(\bar{X}_1) + c_2^2\sigma^2(\bar{X}_2) + ... + c_k^2\sigma^2(\bar{X}_k)$.
+
+Here $\sigma^2(\bar{X}_i)$ means the variance of the sampling distribution of the *i*th group's sample mean. (Its square root would equal the standard error of the group sample mean).
+
+We usually can assume, as we normally do in analysis of variance that the group distributions are independent and normally distributed. If the variances of the respective group means were known, then we could develop a *z* statistic to test the hypothesis that the comparison $\gamma$ is equal to zero:
+
+$\qquad z = \frac{g - \gamma}{\sigma(g)}$
+
+But usually we do not have knowledge of the variances of the sample means, and so we cannot obtain directly the variance of the comparison *g*. What we can do is make a number of simplifying assumptions. We will assume, as we do in ordinary analysis of variance that the variances of the different groups are equal, i.e.
+
+$\qquad \sigma^2(X_1) = \sigma^2(X_2) = ... = \sigma^2(X_k) = \sigma^2$.
+
+Then because the variance of a sample mean is $\sigma^2(\bar{X}_i) = \frac{\sigma^2(X_i)}{n_i}$, and because the samples' variances are all the same, allowing us to write $\sigma^2(\bar{X}_i) = \frac{\sigma^2}{n_i}$, we may then write
+
+$\qquad \sigma^2(g) = c_1^2 \frac{\sigma^2}{n_1} + c_2^2 \frac{\sigma^2}{n_2} + ... + c_k^2 \frac{\sigma^2}{n_k}$
+
+or
+
+$\qquad \sigma^2(g) = \sigma^2 \sum\limits_{i=1}^k \frac{c_i^2}{n_i}$.
+
+Because we still need to estimate $\sigma^2$, we can do this with a pooled estimate:
+
+$\qquad \hat{\sigma}_{\text{pooled}}^2 = \frac{\sum\limits_{i=1}^k (n_i - 1)s_i^2}{N - k}, N = n_1 + ... + n_k$
+
+Here $s_i^2$ is the sample estimate of the variance in the *i*th group. In the above formula, the purpose of multiplying the *i*th sample variance $s_i^2$ by $(n_i - 1)$ is because the formula for the sample estimate of the variance is
+
+$\qquad s_i^2 = \frac{\sum\limits_{j=1}^{n_j} X_{ij}^2 - \cfrac{\left(\sum\limits_{j=1}^{n_j} X_{ij}\right)^2}{n_i}}{n_i - 1}$. Thus to obtain each of the sum of squared deviations around a group mean in order to add (pool) them, we must clear the denominator by multiplying by $(n_i - 1)$. This leads to the more direct computational formula
+
+$\qquad \hat{\sigma}_{\text{pooled}}^2 = \frac{\sum\limits_{i=1}^k \Bigg[\sum\limits_{j=1}^{n_j} X_{ij}^2 - \frac{\left(\sum\limits_{j=1}^{n_j} X_{ij} \right)^2}{n_i}\Bigg]}{N-k}$,
+
+Thus we can write
+
+$\qquad \hat{\sigma}^2 (g) = \hat{\sigma}_{\text{pooled}}^2 \sum\limits_{i=1}^k \frac{c_i^2}{n_i}$.
+
+If we note that $\hat{\sigma}_{\text{pooled}}^2 = MS_{\text{Error}}$ in the Analysis of Variance,
+
+$\qquad \hat{\sigma}^2(g) = MS_{\text{Error}}\sum\limits_{i=1}^k \frac{c_i^2}{n_i}$
+
+Then we may write the *t* statistic:
+
+$\qquad t_{N-k} = \frac{g - \gamma_0}{\hat{\sigma}(g)} = \frac{g - \gamma_0}{\sqrt{MS_{\text{Error}}\sum\limits_{i=1}^k \cfrac{c_i^2}{n_i}}}$.
+
+Because normally we hypothesize that $\gamma_0 = 0$, this becomes implied
+
+\boxed{t_{N-k} = \frac{g}{\sqrt{MS_{\text{Error}} \sum\limits_{i=1}^k \frac{c_i^2}{n_i}}}}
+
+The above formula is adequate for testing the null hypothesis that $\gamma = 0$. If the observed value is more extreme than the critical values at the specified level of significance for the *t* statistic with $N - k$ degrees of freedom, one rejects the null hypothesis. However, in ANOVA work it becomes more convenient to work with the square of the above *t* statistic, or which is the same thing, the *F* distribution:
+
+\boxed{F_{1,N-k} = \frac{g^2}{MS_{\text{Error}}\sum\limits_{i=1}^k \frac{c_i^2}{n_i}}}
+
+This yields a "single-degree-of-freedom test" of the hypothesis that the comparison is zero. If the value of the F statistic for 1 and $N - k$ degrees of freedom exceeds the critical value at the appropriate level of significance, one rejects the null hypothesis that the comparison is zero.
+
+###Orthogonal Comparisons
+
+Two comparisons defined on the same set of means,
+
+$\qquad \gamma_1 = c_{11}\mu_1 + c_{12}\mu_2 + ... + c_{1k}\mu_k$
+
+and
+
+$\qquad \gamma_2 = c_{21}\mu_1 + c_{22}\mu_2 + ... + c_{2k}\mu_k$
+
+are said to be **orthogonal** if their coefficients have the property
+
+$\qquad \sum\limits_{i=1}^k c_{1i}c_{2i} = 0$,
+
+i.e. the sum of the products of corresponding coefficients equals zero.
+
+For any set of *k* population means, one can construct numerous distinct sets of mutually orthogonal comparisons among these means. However, any set of mutually orthogonal comparisons of *k* means will have at most $k-1$ comparisons in the set. What the researcher needs to know is how to construct sets of orthogonal comparisons that represent interesting hypotheses to test. The importance of sets of orthogonal comparisons is that significance tests on distinct comparisons in the set will be statistically independent, and so the true alpha level (probability of rejecting the null hypothesis when it is true) of each significance test is unaffected by performing other significance tests on the same set of sample means. Planned orthogonal comparisons are also more powerful tests than *post hoc* tests conducted after rejecting the null hypothesis by the overall *F* test in ANOVA to determine where the differences between means lie.
+
+**Examples of sets of orthogonal comparisons.**  Given four means, then a set of coefficients for 3 mutually orthogonal comparisons among these four means might be given in the rows of
+
+\begin{align*}
+&\begin{matrix}
+    \mu_1 & \mu_2 & \mu_3 & \mu_4 \\
+    3     & -1    & -1    & -1    \\
+    0     & 2     & -1    & -1    \\
+    0     & 0     & 1     & -1
+\end{matrix}
+&\text{or}
+&
+&\begin{matrix}
+    \mu_1 & \mu_2 & \mu_3 & \mu_4 \\
+    1     & 1     & -1    & -1    \\
+    1     & -1    & 0     & 0     \\
+    0     & 0     & 1     & -1
+\end{matrix}
+\end{align*}
+
+
+You can verify for yourself if the sum of the products of corresponding coefficients in different rows of these sets equals zero. The first set on the left begins testing whether the first mean equals the average of the three remaining means, the second tests whether the second mean equals the average of the remaining two, the third tests whether the third group mean equals the mean of the fourth group. The second set of coefficients on the right begins in the first row testing whether the average of the first two means equals the average of the third and fourth means; the second row of coefficients is for a comparison of the first mean against the second; the third comparison compares the third mean against the fourth.
+
+The two sets illustrate two common types of sets of orthogonal comparisons. They may be used as modules in larger sets of comparisons. For example:
+
+\begin{align*}
+&\begin{matrix}
+    \mu_1 & \mu_2 & \mu_3 & \mu_4 & \mu_5 & \mu_6 \\
+    1     & 1     & 1     & 1     & -2    & -2    \\
+    3     & -1    & -1    & -1    & 0     & 0     \\
+    0     & 2     & -1    & -1    & 0     & 0     \\
+    0     & 0     & 1     & -1    & 0     & 0     \\
+    0     & 0     & 0     & 0     & 1     & -1
+\end{matrix}
+&\text{or}
+&
+&\begin{matrix}
+    \mu_1 & \mu_2 & \mu_3 & \mu_4 & \mu_5 & \mu_6 \\
+    1     & 1     & 1     & 1     & -2    & -2    \\
+    1     & 1     & -1    & -1    & 0     & 0     \\
+    1     & -1    & 0     & 0     & 0     & 0     \\
+    0     & 0     & 1     & -1    & 0     & 0     \\
+    0     & 0     & 0     & 0     & 1     & -1
+\end{matrix}
+\end{align*}
+
+###Orthogonal Comparisons and ANOVA
+
+The sum of squares for a comparison $\gamma_h$ is defined as
+
+$\qquad SS(\gamma_h) = \frac{(g_h)^2}{\sum\limits_{i=1}^k\cfrac{c_i^2}{n_i}}$.
+
+Because this sum of squares has one degree of freedom, the corresponding mean square is simply
+
+$\qquad MS(\gamma_h) = SS(\gamma_h)$
+
+Now, the F test for the particular mean square is equal to
+
+$\qquad F_{1,N-k} = \frac{MS(\gamma_h)}{MS_{\text{Error}}}$
+
+Furthermore, the sum of the $k-1$ means in a set of orthogonal comparisons equals the sum of squares due to treatments of the one-way ANOVA of the same data.
+
+$\qquad SS_{\text{Treatments}} = SS(\gamma_1) + SS(\gamma_2) + ... + SS(\gamma_{k-1})$
+
+This additive property of sums of squares of individual orthogonal comparisons allows one to analyze the sum squares due to treatments into independent components, which may then be joined together into other subtreatment effects and tested:
+
+$\qquad SS(\gamma_1 \text{ and } \gamma_2) = SS(\gamma_1) + SS(\gamma_2)$
+
+The combined sums of squares $SS(\gamma_1 \text{ and } \gamma_2)$ has two degrees of freedom, so
+
+$\qquad MS(\gamma_1 \text{ and } \gamma_2) = \frac{SS(\gamma_1 \text{ and } \gamma_2)}{2}$
+
+The F test of $MS(\gamma_1 \text{ and } \gamma_2)$ is given by
+
+$\qquad F_{2,N-k} = \frac{MS(\gamma_1 \text{ and } \gamma_2)}{MS_{\text{Error}}}$
+
+This tests simultaneously whether there are differences among the means due to at least one of the two comparisons being nonzero.
+
+&nbsp;
+
+**Problem:**  A psychiatrist consults a research clinical psychologist regarding a study of the effects of various drugs and psychotherapy in the treatment of schizophrenic patients. As the dependent variable the psychiatrist has selected a normal behavior rating scale with possible scores ranging from 0 to 25. For the drugs used in the study she has "Drug A", "Drug B", and LSD. She is also interested in the effect of psychotherapy versus the effect of drugs. She gives the psychologist the following data on several treatment groups (often psychiatrists never consult research psychologists until after the data has been collected, so you have to do the best with what you get).
+
+\begin{table}[!htb]
+\centering
+{\renewcommand{\arraystretch}{2}
+\begin{tabular}{llllllll}                                                                                                                              \cline{2-8} 
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{Drug A} & \multicolumn{1}{l|}{Drug B} & \multicolumn{1}{l|}{Drugs A\&B} & \multicolumn{1}{l|}{LSD}  & \multicolumn{1}{l|}{LSD\&Psycho} & \multicolumn{1}{l|}{Psycho Only} & \multicolumn{1}{l|}{Nothing} \\ \cline{2-8} 
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{15}     & \multicolumn{1}{l|}{16}     & \multicolumn{1}{l|}{11}   & \multicolumn{1}{l|}{12}   & \multicolumn{1}{l|}{10}          & \multicolumn{1}{l|}{16}          & \multicolumn{1}{l|}{10}      \\
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{13}     & \multicolumn{1}{l|}{10}     & \multicolumn{1}{l|}{13}   & \multicolumn{1}{l|}{11}   & \multicolumn{1}{l|}{9}           & \multicolumn{1}{l|}{15}          & \multicolumn{1}{l|}{8}       \\
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{10}     & \multicolumn{1}{l|}{14}     & \multicolumn{1}{l|}{15}   & \multicolumn{1}{l|}{10}   & \multicolumn{1}{l|}{11}          & \multicolumn{1}{l|}{13}          & \multicolumn{1}{l|}{6}       \\
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{12}     & \multicolumn{1}{l|}{13}     & \multicolumn{1}{l|}{17}   & \multicolumn{1}{l|}{9}    & \multicolumn{1}{l|}{11}          & \multicolumn{1}{l|}{15}          & \multicolumn{1}{l|}{10}      \\
+\multicolumn{1}{l|}{}           & \multicolumn{1}{l|}{11}     & \multicolumn{1}{l|}{12}     & \multicolumn{1}{l|}{19}   & \multicolumn{1}{l|}{8}    & \multicolumn{1}{l|}{8}           & \multicolumn{1}{l|}{11}          & \multicolumn{1}{l|}{7}       \\ \cline{2-8} 
+\multicolumn{1}{l|}{$\sum X$}   & \multicolumn{1}{l|}{61}     & \multicolumn{1}{l|}{65}     & \multicolumn{1}{l|}{75}   & \multicolumn{1}{l|}{50}   & \multicolumn{1}{l|}{49}          & \multicolumn{1}{l|}{70}          & \multicolumn{1}{l|}{41}      \\
+\multicolumn{1}{l|}{$\sum X^2$} & \multicolumn{1}{l|}{759}    & \multicolumn{1}{l|}{865}    & \multicolumn{1}{l|}{1165} & \multicolumn{1}{l|}{510}  & \multicolumn{1}{l|}{487}         & \multicolumn{1}{l|}{996}         & \multicolumn{1}{l|}{349}     \\
+\multicolumn{1}{l|}{$\bar{X}$}  & \multicolumn{1}{l|}{12.2}   & \multicolumn{1}{l|}{13.0}   & \multicolumn{1}{l|}{15.0} & \multicolumn{1}{l|}{10.0} & \multicolumn{1}{l|}{9.8}         & \multicolumn{1}{l|}{14.0}        & \multicolumn{1}{l|}{8.2}     \\ \cline{2-8} 
+\end{tabular}}
+\end{table}
+
+A natural set of questions might be the following:
+
+* The control group that gets no treatment differs significantly from the mean of those groups receiving some form of treatment.
+
+* The average mean of those groups receiving Drug A or Drug B or both, differs significantly from those receiving LSD, LSD & Psychotherapy or Psychotherapy Alone.
+
+* The mean of the group receiving both Drugs A and B differs from the average of the groups receiving Drug A or Drug B.
+
+* The mean of the Drug A group differs from the mean of the Drug B group.
+
+* The mean of those receiving psychotherapy alone differs significantly from the average of the groups receiving LSD either alone or with psychotherapy.
+
+* The mean of the LSD group differs from the mean of the LSD & Psychotherapy group.
+
+Formulate these questions as orthogonal comparisons and conduct a test of each comparison that it is equal to zero.
+
+\pagebreak
+
+#Modules for Constructing Sets of Orthogonal Comparisons
+
+Given a set of 3 means we can construct the following orthogonal set (only coefficients of the comparisons are shown):
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ \\ \hline
+1       & 1       & -1      & -1      \\ \hline
+1       & -1      & 0       & 0       \\ \hline
+0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+But an alternative set may be constructed with a different scheme:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ \\ \hline
+3       & -1      & -1      & -1      \\ \hline
+0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+It should be obvious that we can use the same method but in a different order:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ \\ \hline
+-1      & 3       & -1      & -1      \\ \hline
+-1      & 0       & 2       & -1      \\ \hline
+1       & 0       & 0       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+With five means, we might do the following:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ \\ \hline
+3       & 3       & -2      & -2      & -2      \\ \hline
+1       & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+Or we might instead construct the following set:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ \\ \hline
+4       & -1      & -1      & -1      & -1      \\ \hline
+0       & 3       & -1      & -1      & -1      \\ \hline
+0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+I call the above the "step-down" method. It can be used in many situations, sometimes as a module in a larger scheme, as we saw in the previous case:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ & $\mu_6$ \\ \hline
+1       & 1       & 1       & -1      & -1      & -1      \\ \hline
+2       & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 1       & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+First divide the means into two groups, then apply the step-down method within groups:
+
+\begin{table}[H]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ & $\mu_6$ & $\mu_7$ \\ \hline
+3       & 3       & 3       & 3       & -4      & -4      & -4      \\ \hline
+3       & -1      & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 2       & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 1       & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+Or divide and subdivide one of the groups and step-down in the other:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ & $\mu_6$ & $\mu_7$ \\ \hline
+3       & 3       & 3       & 3       & -4      & -4      & -4      \\ \hline
+1       & 1       & -1      & -1      & 0       & 0       & 0       \\ \hline
+1       & -1      & 0       & 0       & 0       & 0       & 0       \\ \hline
+0       & 0       & 1       & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+With an even number of means, we can divide in two, then again in two, and again:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ & $\mu_6$ & $\mu_7$ & $\mu_8$ \\ \hline
+1       & 1       & 1       & 1       & -1      & -1      & -1      & -1      \\ \hline
+1       & 1       & -1      & -1      & 0       & 0       & 0       & 0       \\ \hline
+1       & -1      & 0       & 0       & 0       & 0       & 0       & 0       \\ \hline
+0       & 0       & 1       & -1      & 0       & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 0       & 1       & 1       & -1      & -1      \\ \hline
+0       & 0       & 0       & 0       & 1       & -1      & 0       & 0       \\ \hline
+0       & 0       & 0       & 0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+Divide and step-down:
+
+\begin{table}[!htb]
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+$\mu_1$ & $\mu_2$ & $\mu_3$ & $\mu_4$ & $\mu_5$ & $\mu_6$ & $\mu_7$ & $\mu_8$ \\ \hline
+3       & 3       & 3       & 3       & 3       & -5      & -5      & -5      \\ \hline
+4       & -1      & -1      & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 3       & -1      & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 2       & -1      & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 1       & -1      & 0       & 0       & 0       \\ \hline
+0       & 0       & 0       & 0       & 0       & 2       & -1      & -1      \\ \hline
+0       & 0       & 0       & 0       & 0       & 0       & 1       & -1      \\ \hline
+\end{tabular}}
+\end{table}
+
+\pagebreak
+
+#Post-Hoc Comparisons Among Means
+
+Up to now we have considered the case of testing comparisons among means that are formulated before seeing the data and computing the overall ANOVA *F* test to determine whether there are any differences at all among the means. We introduced you to the method of formulating and testing *a priori* orthogonal comparisons among means as a method that has more power for testing those specific comparisons than is provided by the overall *F* test of ANOVA. [Power is the hypothetical probability of rejecting the null hypothesis given that some other state of affairs other than that specified by the null hypothesis is true]. We will now consider the case where the overall *F* test of ANOVA has been tested and $H_0$ rejected, which, because it concerns tests performed **after** the overall *F* test has been performed, are called *post hoc* [Latin "after this"] tests.
+
+The simplest test to perform was provided by Scheff$\'{e}$. Let $\gamma = c_1\mu_1 + c_2\mu_2 + ... + c_k\mu_k$ denote a comparison among *k* population means, which is estimated by $g = c_1\bar{X}_1 + c_2\bar{X}_2 + ... + c_k\bar{X}_k$ (see the handout on comparisons among means for the notation). We know from the previous handout on comparisons among means that the sampling variance of *g* is estimated by
+
+$\qquad \hat{\sigma}^2(g) = MS_{\text{Error}}\sum\limits_{i=1}^k\frac{c_i^2}{n_i}$.
+
+A $(1 - \alpha) \times 100$% confidence interval test of the hypothesis that $\gamma$ is equal to zero is given by the following confidence interval:
+
+$\qquad g - S\sqrt{MS_{\text{Error}}\sum\limits_{i=1}^k\frac{c_i^2}{n_i}} \leq \gamma \leq g + S\sqrt{MS_{\text{Error}}\sum\limits_{i=1}^k\frac{c_i^2}{n_i}}$
+
+where
+
+$\qquad S = \sqrt{(k-1)F_{1,N-k;\alpha}}$.
+
+and $F_{1,N-k;\alpha}$ denotes the critical value of the *F* distribution for 1 and $N-k$ degrees of freedom at the $\alpha$ level of significance. If the hypothesized value of zero is not contained within the above interval, one rejects the null hypothesis for the comparison. The probability for this confidence interval is interpreted as the probability that for any of the unlimited number of such comparisons among these means intervals so-constructed would cover the population value for the comparison. In other words, the probability is not about the proportion of samples in which such intervals would contain the true population values, but rather the proportion of the infinite set of comparisons that generate confidence intervals such as these that contain their population values.
+
+The advantage of Scheff$\'{e}$'s test is that it may be performed on an unlimited number of comparisons, none of which need to be mutually orthogonal. The disadvantage is that such tests are quite conservative, requiring bigger differences to be regarded as significant, hence such tests have considerably lower power than do tests of *a priori* comparisons.
+
+**Tukey's Procedure.**  The **range** is defined as the absolute difference between the smallest and largest value observed in a sample. Because these values vary across random samples, the range is itself a random value. If we regard as our "sample" a set of *k* sample means then a "Studentized range" for these means concerns the difference
+
+$\qquad \frac{\bar{X}_{\text{min}} - \bar{X}_{\text{max}}}{\hat{\sigma}(\bar{X})} = \frac{\bar{X}_{\text{min}} - \bar{X}_{\text{max}}}{\sqrt{\cfrac{MS_{\text{Error}}}{n}}}$
+
+where "Studentization" refers to standardizing the difference between the means by an estimate of the standard error of the sample mean. The distribution of such ranges is known as the Studentized Range Distribution and has for its parameters the number of degrees of freedom of the Mean Square Error $(N-k)$ (which estimates the common variance of the group distributions) and the number of means *k*.
+
+Tukey proposed his "Honest Significant Difference" test, known generally as the HSD test (known in Devore's text as "Tukey's T Procedure"). It is quite simple to apply:
+
+1. Select a level of significance $\alpha$ and then find in a Table of the Studentized Range Statistic the value $Q_{\alpha,k,k(n-1)}$ where *k* is the number of groups, *n* is the number of observations in a sample on which a sample mean is based, and $k(n-1) = N-k$ is the number of degrees of freedom of the Mean Square Error.
+
+2. Determine the quantity $w = Q_{\alpha,k,k(n-1)}\sqrt{MS_{\text{Error}}/n}$.
+
+3. Write down the sample means in increasing order and draw lines under those pairs that differ by less than *w*. Any pair of sample means **not** so underlined correspond to a pair of treatment means regarded as significantly different.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

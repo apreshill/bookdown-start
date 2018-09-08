@@ -1,0 +1,302 @@
+---
+title: "Notes 4: Combinatorics -- procedures for counting"
+author: "Math 530-630"
+header-includes: 
+    \usepackage{subcaption,tikz}
+    \captionsetup{compatibility=false}
+    \date{}
+    \renewcommand\plaintitle{Math 530-630, Combinatorics}
+output: rmarkdown::tufte_handout
+---
+
+A classic approach to probability is simply expressed as:  
+$$P(E) = \frac{\text{Number of outcomes to E}}{\text{Total number of outcomes}}$$  
+
+So, procedures for counting are essential to determining P(E).  
+
+_Example:_ \hspace{3mm} 
+
+a) P(birthday on a Monday)  vs. 
+
+b) P(2 persons chosen at random have a birthday on the same day of the week.)  
+
+
+a) P(E) = 1/7  
+
+$\hspace{4mm}$ For (b), draw a tree.  
+
+$\hspace{20mm}$ First person's birthday $\hspace{35mm}$ Second person's birthday  
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}
+\draw (-8.5, 2) node {M};
+\draw (-8,2) -- (0,2);
+\draw (0,2) -- (.5,3);
+\draw (.7,3) node {\tiny M};
+\draw (0,2) -- (.5,2.66);
+\draw (.7,2.66) node {\tiny T};
+\draw (0,2) -- (.5,2.33);
+\draw (.7,2.33) node {\tiny W};
+\draw (0,2) -- (.5,2);
+\draw (.7,2) node {\tiny T};
+\draw (0,2) -- (.5,1.66);
+\draw (.7,1.66) node {\tiny F};
+\draw (0,2) -- (.5,1.33);
+\draw (.7,1.33) node {\tiny S};
+\draw (0,2) -- (.5,1);
+\draw (.7,1) node {\tiny S};
+\draw (-8.5, 0) node {T};
+\draw (-8,0) -- (0,0);
+\draw (0,0) -- (.5,1);
+\draw (0,0) -- (.5,.66);
+\draw (0,0) -- (.5,.33);
+\draw (0,0) -- (.5,0);
+\draw (0,0) -- (.5,-.33);
+\draw (0,0) -- (.5,-.66);
+\draw (0,0) -- (.5,-1);
+\draw (-8.5, -2) node {W};
+\draw (-8,-2) -- (0,-2);
+\draw (0,-2) -- (.5,-1);
+\draw (0,-2) -- (.5,-1.33);
+\draw (0,-2) -- (.5,-1.66);
+\draw (0,-2) -- (.5,-2);
+\draw (0,-2) -- (.5,-2.33);
+\draw (0,-2) -- (.5,-2.66);
+\draw (0,-2) -- (.5,-3);
+\draw (-8.5, -4) node {T};
+\draw (-8,-4) -- (0,-4);
+\draw (0,-4) -- (.5,-3);
+\draw (0,-4) -- (.5,-3.33);
+\draw (0,-4) -- (.5,-3.66);
+\draw (0,-4) -- (.5,-4);
+\draw (0,-4) -- (.5,-4.33);
+\draw (0,-4) -- (.5,-4.66);
+\draw (0,-4) -- (.5,-5);
+\draw (-8.5, -6) node {F};
+\draw (-8,-6) -- (0,-6);
+\draw (2,2) node {$M - S_n$};
+\draw (2,0) node {$M - S_n$};
+\draw (2,-2) node {$M - S_n$};
+\draw (2,-4) node {$M - S_n$};
+\draw (1,-6) node {etc.};
+\end{tikzpicture}
+\end{figure}
+
+\vspace*{3mm}
+Sample space represented by a point ($D_{1}, D_{2}$) \quad e.g. (M, M), (M, T) etc.  
+How many points? For each day assigned to person 1, there are 7 assigned to person 2. Thus, there are 7x7=49 possible pairs. Only  seven of these are of the type $D_{1}=D_{2}$, thus, P(E) =1/7.  
+
+\vspace*{3mm}
+
+**Theorem 1-24.**  
+If a choice consists of **two** steps, of which one can be made in **m** ways, and the other in **n** ways, then the whole choice can be made in **m** x **n** ways. This can be generalized to **k** steps so the total could be made in $n_{1} \times n_{2} \times n_{3} \times ... \times n_{k}$ ways.  
+
+\vspace{2mm}
+_Example:_ 
+
+A test consists of 12 multiple-choice questions, each having 4 alternatives. In how many ways can one mark answers? The first item can be made in 4 ways, the second 4 ways, etc. -- so the total is $4^{12} = 16,777,216$. The probability of answering all questions correctly by random guessing is $1/4^{12} \approx 6 x 10^{-8}$.  
+
+The probability of getting **all the answers wrong** is $3^{12}/4^{12} \approx 0.03$.  
+
+It's hard not to do **anything** right!  
+
+#Permutations -- Ordered Samples  
+
+Given a set or population of n elements, $a_{1}, a_{2}, ... a_{n}$ an **ordered** arrangement $a_{j1}, a_{j2}, ... a_{jr}$ of r symbols is an **ordered sample** of size r.   
+
+Consider _two cases_:
+
+I. Sampling **with** replacement  
+
+In how many different ways can you select a 5-card ordering from a deck without regard to suit? [assume shuffling after each choice].  
+
+There are n = 13 possible values. The sample size is r = 5.  
+
+The first card can be picked in 13 ways, the second in 13 ways, etc. So the total possibilities are $13^{5}$ = 371,293.  
+
+For example, the probability of the ordering A, K, Q, J, 10  
+
+P(A, K, Q, J, 10) = 1/$13^{5} \approx$ 2.69 x $10^{-6}$.  
+
+Note that this probability would be the same for _any_ particular 5-card ordering without regard to suit.  
+
+II. Sampling **without** replacement  
+
+In how many ways can you select a 5-card ordering from a deck (_let suits count here_) **without** replacement?  
+
+The first card can be chosen in 52 ways; the seond in 51; ... ; the 5th in 48, so the number of ways is 52 * 51 * 50 * 49 * 48 = 311,875,200.  
+
+An ordering is called a **permutation** and the number of permutations of r elements taken from n elements (n $\geq$ r) is denoted $_{n}P_{r}$. 
+
+$_{n}P_{r}$ = n (n - 1)(n - 2)...[n-(r - 1)]= n(n - 1)(n - 2) ... (n - r + 1)  
+
+If r = n, $_{n}P_{r}$ is just n! = n(n - 1)(n - 2) ... 1.
+
+\vspace*{3mm} 
+
+Note that  
+
+n (n - 1)(n - 2) ... (n - r + 1) = $\displaystyle\frac{n!}{(n-r)!}$.  
+
+To see this, multiply and divide $_{n}P_{r}$ above by (n-r)!.
+
+(Remember, by definition 0! = 1).  
+
+What is the P(A, K, Q, J, 10) **without** replacement -- _not counting suits_?  
+
+There are 4 of each value and the values are distinct, so the A can be picked in 4 ways, etc. The P(A) in the first draw is 4/52, the P(K) on the second draw is 4/51, etc.  
+
+So, P(A, K, Q, J, 10) = (4/52)(4/51) ... (4/48)  
+
+$\displaystyle \frac{4^{5}}{_{52}P_{5}} = \frac{4^{5}}{52!/47!} \approx 3.28 \times  10^{-6}$   [Don't count on this happening!]  
+
+The number of possible orderings of the whole deck (suits included) is $52! \approx 8 \times 10^{67}$.  
+
+No wonder the notation, !  
+
+&nbsp;  
+
+**Theorem 1-25**. For a population of n elements and a subset of r distinct elements, there are $n_{r}$ different samples **with** replacement and $_{n}P_{r}$ **without** replacement.  
+
+If not all the elements are distinct, that is $n_{1}, n_{2}, ... n_{r}$ are alike, then  
+$$_{n}P_{n_{r}} = \frac{n!}{n_{1}!n_{2}!n_{3}!...n_{r}!}$$  
+
+Use your intuition here. Take the elements $n_{1}$.  
+
+These are all alike so the $n_{1}!$ orderings are indistinguishable, so they must be divided out in getting the total $_{n}P_{n_{1}}$, etc.  
+
+\vspace{2mm}
+_Example:_ 
+
+What is the number of distinguishable letter orderings of the word Mississippi?
+
+$$_{11}P_{4i's, 4s's, 2p's} = \frac{11!}{4! 4! 2!} = 34,650$$  
+
+
+#Combinations - Unordered Samples  
+
+Consider this problem:  
+
+$\hspace*{20mm}$ How many student committees of 3 each can be made from 100 students?  
+$\hspace*{20mm}$ Here we are **not** concerned with ordering in the committees  
+$\hspace*{20mm}$ [Sample (A, B, C) = (C, A, B), etc.]  
+
+$\hspace*{20mm}$ Start as **if you were concerned with order**. You know that the number of **ordered** 
+$\hspace*{20mm}$ samples of 3 taken from 10 is:  
+
+$$_{10}P_{3} = \frac{n!}{(n-r)!} = \frac{10!}{7!}$$  
+
+&nbsp;  
+
+$\hspace*{20mm}$ Now, you know there are r! = 3! orderings for a given sample. But, in a committee, these  
+$\hspace*{20mm}$ different orderings are unimportant. So, they should be divided out. [Just like the case of  
+$\hspace*{20mm}$ "Mississippi" above]. So, the number of 3-person committees would be  
+
+$$\binom{n}{r} = _{n}C_{r} = \frac{n!}{r!(n-r)!} = _{10}C_{3} = \frac{10!}{3!7!} = 70$$  
+
+$\hspace*{20mm}$ Such samples are called **combinations**.  
+
+&nbsp;  
+
+**Theorem 1-26**. \qquad A population of n elements possesses $\binom {n}{r}$ different subsets of size $r \leq n$ where  
+$$\binom{n}{r} = \frac{n!}{r!(n-r)!} = _{n}C_{r} = C(n, r)$$  
+
+If r=n, there is only **one** possibility  
+$$\binom{n}{n} = \frac{n!}{n!0!} = 1$$  
+\begin{center} (Remember, 0! is defined as 1). 
+\end{center}
+
+&nbsp;  
+
+You should become very familiar (and prove) a number of combination identitites, for example.  
+
+1) $\displaystyle\binom{n}{n} = 1 = \binom{n}{0}$  
+
+2) $\displaystyle\binom{n}{1} = \binom{n}{n - 1}$  
+
+3) $\displaystyle\binom{n}{r} = \binom{n}{n-1}$  
+
+[Selecting a committee of size r automatically leaves a committee of size n- r].  
+
+4) $\displaystyle\binom{n}{r} = \binom{n-1}{r} + \binom{n-1}{r-1} \qquad$  (prove)  
+
+5) $\displaystyle\binom{n+1}{r} = \binom{n}{r-1} + \binom{n}{r} \qquad$  (prove)  
+
+Note that $\binom{n}{r}$ first increases, then decreases symmetrically as r increases, e.g.  
+
+$\displaystyle\binom{3}{r}:$  
+
+$\displaystyle\binom{3}{0} = 1$
+
+$\displaystyle\binom{3}{1} = 3$  
+
+$\displaystyle\binom{3}{2} = 3$  
+
+$\displaystyle\binom{3}{3} = 1$  
+
+You may note also at this point that these are coefficients of $(a + b)^{3}$. More on this soon.  
+
+&nbsp;  
+
+##Poker Hands  
+
+These give a good work out with combinatorics. A poker hand (say, 5 card draw) is a 5-member committee drawn from a set of 52.  
+
+The number of 5 card poker hands is  
+$\displaystyle\binom{52}{5} = 2,598,960$  
+
+[Compare this with the number of bridge hands -- $\binom{52}{13} \approx 6/35*10^{11}$]  
+
+_Example 1_: What is the probability of getting a Queen of Spades ($Q\spadesuit$) in a poker hand?  
+
+There are several ways to do this:
+
+ 1. Hard way:  
+$$P(Q\spadesuit)_{\text{1st card}} + P(Q\spadesuit)_{\text{2nd}} + P(Q\spadesuit)_{\text{3rd}} + P(Q\spadesuit)_{\text{4th}} + P(Q\spadesuit)_{\text{5th}} = 5(1/52) = 5/52$$  
+
+These are mutually exclusive events.  
+
+ 2. Better way:  
+Consider the $Q\spadesuit$ as a "committee" of 1 from the deck. There is just one way to pick this committee. After you pick this "committee," you pick the remaining 4 cards from the rest of the deck (n=51), so  
+$$P(Q_{s}) = \frac{1 \binom{51}{4}}{\binom{52}{5}} = 5/52$$  
+
+ 3. Another better way:  
+$$P(Q\spadesuit) = 1 - P(Q'\spadesuit)$$  
+The number of hands _without_ a $Q\spadesuit$ is $\binom {51}{5}$, so,   
+
+$P(Q'\spadesuit) = \displaystyle\frac{\binom{51}{5}}{\binom{52}{5}} = \frac{47}{52}$  
+
+$Thus 1 - P(Q'\spadesuit) = P(Q\spadesuit) = 1 - (47/52) = 5/52$  
+
+Notice that $P(Q'\spadesuit)$ is also equal to  
+
+$$P(Q'\spadesuit)_{1} \times P(Q'\spadesuit)_{2} \times P(Q'\spadesuit)_{3} \times P(Q'\spadesuit)_{4} \times P(Q'\spadesuit)_{5}$$ 
+$$\text{("and")}$$  
+$$\binom{51}{52} \binom{50}{51} \binom{49}{50} \binom{48}{49} \binom{47}{48} = \frac{47}{52} = \frac{_{51} P_{5}}{_{52} P_{5}}$$  
+
+&nbsp;  
+
+_Example 2_: What's the probability that a poker hand contains **at least** one ace?  
+P(at least one ace) = $1 - P(A')$  
+
+There are 4 aces, so that leaves 48 non-aces from which we take a committee of 5. So,  
+$$P(A') = \frac {\binom{48}{5}}{\binom{52}{5}} \qquad \qquad \text{and}$$  
+$$P(\text{at least 1A}) = 1 - \frac {\binom{48}{5}}{\binom{52}{5}} = 0.341$$  
+
+
+_Example 3:_ What's the probability of all hearts?  [Could be a straight flush!]  
+
+There are 13 hearts and we form a committee of 5 $\binom{13}{5}$ so,  
+
+$$P(\text{all hearts}) = \frac{\binom{13}{5}}{\binom{52}{5}} \approx 4.95 \times 10^{-4}$$  
+
+Again, another way to approach this is an ordering:  
+
+$$P(\text{all hearts}) = \frac{13}{52} \times \frac{12}{51} \times \frac{11}{50} \times \frac{10}{49} \times \frac{9}{48} = \frac{\frac{13!}{8!}}{\frac{52!}{47!}} = \frac{_{13} P_{5}}{_{52} P_{5}}$$ 
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

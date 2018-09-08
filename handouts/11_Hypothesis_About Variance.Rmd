@@ -1,0 +1,589 @@
+---
+title: "Notes 11:  Hypothesis about Variance -- Chi-Square and the F-distribution"
+header-includes:
+    \usepackage{amsmath,nicefrac,xfrac}
+    \everymath=\expandafter{\the\everymath\displaystyle}
+    \usepackage[utf8]{inputenc}
+    \usepackage[english]{babel}
+    \setlength{\parskip}{2em}
+    \subtitle{MATH 530-630}
+output: pdf_document
+---
+
+To test hypotheses about **variances**, we need to consider **two** other distributions. As we shall see, these distributions are related to the distributions we already know about, those we used to test hypotheses about **means**.
+
+###Chi-square $(\chi_v^2)$
+
+Assume we start with a normal distribution of scores, Y. We know the following relations:  $E(Y) = \mu$, $\text{Var(Y)} = E(y - \mu)^2 = \sigma^2$ and $z = \frac{(y-\mu)}{\sigma}$.
+
+Now, it might seem odd at first, but imagine sampling from this distribution **one at a time** and calculating
+$z^2 = \frac{(y - \mu)^2}{\sigma^2}$.
+
+Over many such samples we would generate a distribution of z$^2$ values, called $\chi_{(1)}^2$ [chi-square with one degree of freedom]. It would look somewhat like this:
+
+```{r, echo=FALSE, fig.height= 2.5}
+library(ggplot2)
+library(grid)
+x <- seq(0,4,0.0001)   
+y <- dchisq(x,1)
+dat <- data.frame(x=x,y=y)
+norm <- ggplot(data.frame(x = c(0, 4)), aes(x)) + stat_function(fun = dchisq, args=c(df=1)) + 
+  geom_ribbon(data=subset(dat,x<=1),aes(ymin=0,ymax=y)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 4)) +
+  geom_segment(aes(x = 0, y = 0, xend = 6, yend = 0)) +
+  coord_cartesian(xlim=c(0,5),ylim=c(0,2.5))+
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank()) 
+norm + annotate("text", x = 0.3, y = 2.3, label = "f(chi[(1)]^2)", parse= TRUE, size = 4) +
+  annotate("text",x=4.8,y=0.2,label="chi[(1)]^2", parse=TRUE, size=4) +
+  geom_segment(aes(x=1.5,y=1.7,xend=0.5,yend=0.5),arrow=arrow(length = unit(0.2,"cm"))) +
+  annotate("text",x=1.6,y=1.8,label="Much of the area would lie in here -- \n Remember, 68% of z-scores are between -1 \n and +1, so that for those z-scores \n 0 < z^2 < 1.",size=4, hjust=0, family="serif")
+```  
+
+Now, take random and independent samples of **two** and calculate
+$$z_1^2 = \frac{(y_1 - \mu)^2}{\sigma^2} \text{ and } z_2^2 = \frac{(y_2 - \mu)^2}{\sigma^2},$$
+
+then **add** the two values.
+$$z_1^2 + z_2^2 = \frac{(y_1 - \mu)^2}{\sigma^2} + \frac{(y_2 - \mu)^2}{\sigma^2}.$$
+
+This is distributed as $\chi_{(2)}^2 (2df)$. In general, for N **independent** observations
+$$\chi_{(N)}^2 = \frac{1}{\sigma^2}\sum\limits_{i=1}^N (y_i - \mu)^2 = \sum\limits_{i=1}^N z_i^2.$$
+
+Here's what the distributions look like for v = 2, 8, 11.
+
+```{r, echo=FALSE, fig.height= 2.5}
+library(ggplot2)
+library(grid)
+norm <- ggplot(data.frame(x = c(0, 15)), aes(x)) + stat_function(fun=dchisq,args=c(df=2)) + stat_function(fun=dchisq,args=c(df=8)) + stat_function(fun=dchisq,args=c(df=11)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.15)) +
+  geom_segment(aes(x = 0, y = 0, xend = 30, yend = 0)) +
+  coord_cartesian(xlim=c(0,15),ylim=c(0,0.15))+
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank()) 
+norm + annotate("text", x = 0.5, y = 0.14, label = "f(chi[v]^2)", parse= TRUE, size = 4) +
+  annotate("text",x=14,y=0.01,label="chi[v]^2", parse=TRUE, size=4)+
+  annotate("text",x=3.5,y=0.12,label="v=2",size=4) +
+  annotate("text",x=7,y=0.12,label="v=8",size=4) +
+  annotate("text",x=10,y=0.1,label="v=11",size=4)
+```  
+
+You might guess that as $v \rightarrow \infty, \chi_{(v)}^2 \rightarrow$ Normal distribution. More on that later.
+
+The density function is
+
+\begin{equation*}
+f(\chi_v^2) = \frac{(\chi^2)^{(v/2)^{-1}} e^{-\chi^2/2}}{2^{(v/2)} \cdot \Gamma(v/2)} \quad \text{v:df  }   \begin{aligned} &\chi^2 \geq 0
+\\
+&v > 0
+\end{aligned}
+\end{equation*}
+
+$$\text{E}(\chi_v^2) = v, \text{Var}(\chi_v^2) = 2v \quad \text{Mode} = v - 2 (v \geq 2)$$
+
+If a random variable is distributed as $\chi_{v_1}^2$ with v$_1$ df, and an independent random variable is distributed as $\chi_{v_2}^2$ with v$_2$ df, then the sum
+$$\chi_{v_1}^2 + \chi_{v_2}^2 = \chi_{v_1 + v_2}^2 \quad (v_1 + v_2\text{ df})$$
+
+You should be able to show this from the definition of $\chi^2$.
+
+###Using the $\chi^2$ table (Table IV in Hays).
+
+```{r, echo=FALSE, fig.height= 2.5}
+library(ggplot2)
+library(grid)
+temp <- expression("Q = "*p(chi[v]^2 >= a))
+norm <- ggplot(data.frame(x = c(0, 15)), aes(x)) + stat_function(fun=dchisq,args=c(df=6)) +
+  geom_segment(aes(x = 0, y = 0, xend = 15, yend = 0)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.15)) +
+  geom_segment(aes(x = 11, y = 0, xend = 11, yend = 0.05)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 11, y = -0.015, label = "a", size = 4, family="serif") +
+  annotate("text",x=12,y=0.06,label= as.character(temp), parse=TRUE, size=4, family="serif") +
+  annotate("text",x=14,y=-0.015,label= "chi[v]^2", parse=TRUE, size=4, family="serif") +
+  annotate("text",x=-0.5,y=0.12,label= "f(chi[v]^2)", parse=TRUE, size=4, family="serif")
+```
+
+Examples:
+
+$\chi_{(5,Q=0.05)}^2 = 11.0705, p(\chi_5^2 \geq 11.0705) = 0.05$
+
+$\chi_{(2,Q=0.10)}^2 = 4.60517, p(\chi_2^2 \geq 4.60517) = 0.10$
+
+$\chi_{(24,Q=0.99)}^2 = 10.8564, p(\chi_{24}^2 \geq 10.8564) = 0.99$
+
+So, what do we use this $\chi_{(v)}^2$ for?
+
+There are several uses, but let's consider the problem of the **distribution of the sample variance from a normal population**. We actually considered this earlier when we talked about the t-distribution, but not **separately** [s was in the denominator of the t-distribution].
+
+We know that $s^2 = \displaystyle\frac{\sum\limits_{i=1}^N (y_i - \bar{y})^2}{N-1}$.
+
+Divide both sides by $\sigma^2$,
+
+$\frac{s^2}{\sigma^2} = \frac{1}{\sigma^2} \frac{\sum (y_i - \bar{y})^2}{(N-1)}$, or
+
+$\left(\frac{(N-1)s^2}{\sigma^2}\right) = \frac{\sum\limits_{i=1}^N (y_i - \bar{y})^2}{\sigma^2} = \chi_{(N-1)}^2$
+
+v = N -- 1df, for N independent observations. So, the ratio $\frac{(N-1)s^2}{\sigma^2}$ is a random variable distributed $\chi_{(N-1)}^2$.
+
+This relation is the basis for testing hypotheses about the **variance** of a population with distribution N($\mu$,$\sigma$), for example,
+
+$H_0: \sigma^2 = \sigma^2_0$
+
+$H_1: \sigma^2 \neq \sigma^2_0$, etc.
+
+Just as we used the normal distribution (z scores) or the t-test to test hypotheses about means, likewise we use
+$\chi_{(N-1)}^2 = \frac{(N-1)s^2}{\sigma^2}$ to test hypotheses about variances from a normal distribution.
+
+For example (Hays, pp. 356-357):
+\begin{equation*}\begin{aligned} 
+&H_0: \sigma^2 \geq 6.25
+\\
+&H_1: \sigma^2 < 6.25
+\\
+&N = 30, \alpha = 0.01.
+\end{aligned}
+\end{equation*}
+
+We have
+
+$\chi_{29}^2 = \frac{(29)s^2}{\sigma^2} = \frac{29s^2}{6.25}.$
+
+```{r, echo=FALSE, fig.height= 3}
+library(ggplot2)
+library(grid)
+x <- seq(0,20,0.0001)   
+y <- dchisq(x,29)
+dat <- data.frame(x=x,y=y)
+temp <- expression(sigma[0]*": "*chi^2*" = 21.11")
+temp2 <- expression(alpha~"= 0.01 = 1 - Q")
+temp3 <- expression(1 - alpha~"= 0.99 = Q ="~p(chi[(29)]^2 >= a))
+norm <- ggplot(data.frame(x = c(0, 60)), aes(x)) + stat_function(fun=dchisq,args=c(df=29)) +
+  geom_ribbon(data=subset(dat,x<=20),aes(ymin=0,ymax=y), alpha=0.4) +
+  geom_segment(aes(x = 0, y = 0, xend = 60, yend = 0)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.06)) +
+  geom_segment(aes(x = 20, y = 0, xend = 20, yend = 0.031), linetype="dotted") +
+  geom_segment(aes(x = 24, y = 0.015, xend = 24, yend = 0.001), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 10, y = -0.01, xend = 17, yend = 0.008), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 40, y = 0.045, xend = 30, yend = 0.035), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 20, y = -0.006, label = "a = 14.2565", size = 4, family="serif") +
+  annotate("text",x=4,y=0.055,label= "f(chi[(29)]^2)", parse=TRUE, size=4, family="serif") +
+  annotate("text",x=56,y=-0.005,label= "chi[(29)]^2", parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 28, y = 0.02, label = as.character(temp), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 5, y = -0.015, label = as.character(temp2), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 50, y = 0.05, label = as.character(temp3), parse=TRUE, size=4, family="serif")
+```
+
+$\chi_{(29,Q=0.99)}^2 = 14.2565$, p($\chi_{29}^2 \geq 14.2565$) = 0.99.
+
+Suppose we found s$^2$ = 4.55, so
+
+$\chi_{29}^2 = \displaystyle\frac{(29)\cdot 4.55}{6.25} = 21.11 \Rightarrow$ cannot reject H$_0$.
+
+(s$^2$ would have had to be $\leq$ 3.07 to achieve significance.)
+
+Suppose, though, that H$_1$ was: $\sigma^2 \neq 6.25$. This requires a two-tailed test, Q/2 = 0.005 =
+
+```{r, echo=FALSE, fig.height = 4}
+library(ggplot2)
+library(grid)
+x <- seq(0,20,0.0001)
+x2 <- seq(36,60,0.0001)
+y <- dchisq(x,29)
+y2 <- dchisq(x2,29)
+dat <- data.frame(x=x,y=y)
+df2 <- data.frame(x=x2,y=y2)
+temp <- expression("Obs."~chi[29]^2~"= 21.11")
+temp2 <- expression(p(chi[29]^2 >= a[1])~"="~0.995)
+temp3 <- expression(p(chi[29]^2 >= a[2])~"="~0.005)
+temp4 <- expression(a[1]~"= 13.1211")
+temp5 <- expression(a[2]~"= 52.3356")
+temp6 <- expression(chi[(29)]^2~"= 13.1211")
+temp7 <- expression(chi[(29)]^2~"= 52.3356")
+norm <- ggplot(data.frame(x = c(0, 60)), aes(x)) + stat_function(fun=dchisq,args=c(df=29)) +
+  geom_ribbon(data=subset(dat,x<=20),aes(ymin=0,ymax=y), alpha=0.4) +
+  geom_ribbon(data=subset(df2,x>=36),aes(ymin=0,ymax=y), alpha=0.4) +
+  geom_segment(aes(x = 0, y = 0, xend = 60, yend = 0)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.06)) +
+  geom_segment(aes(x = 20, y = 0, xend = 20, yend = 0.031), linetype="dotted") +
+  geom_segment(aes(x = 36, y = 0, xend = 36, yend = 0.029), linetype="dotted") +
+  geom_segment(aes(x = 24, y = 0.015, xend = 24, yend = 0.001), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x = 10, y = -0.025, xend = 17, yend = -0.013), arrow = arrow(length = unit(0.2, "cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 20, y = -0.006, label = as.character(temp4),parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 40, y = -0.006, label = as.character(temp5),parse=TRUE, size = 4, family="serif") +
+  annotate("text",x=4,y=0.055,label= "f(chi[(29)]^2)", parse=TRUE, size=4, family="serif") +
+  annotate("text",x=56,y=-0.005,label= "chi[(29)]^2", parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 28, y = 0.02, label = as.character(temp), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 5, y = -0.029, label = as.character(temp2), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 50, y = 0.03, label = as.character(temp3), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 10, y = 0.01, label = "(0.005)", size=4, family="serif") +
+  annotate("text", x = 50, y = 0.01, label = "(0.005)", size=4, family="serif") +
+  annotate("text", x = 5, y = -0.04, label = as.character(temp6), parse=TRUE, size=4, family="serif") +
+  annotate("text", x = 50, y = -0.04, label = as.character(temp7), parse=TRUE, size=4, family="serif")
+```
+
+Note that because the $\chi^2$ distribution is not symmetrical,  the confidence intervals for the variance will not be symmetrical. In this case, we would determine the confidence for $\sigma^2$ from
+
+$P\left[\chi_{29}^2,0.995 \leq \frac{(N-1)s^2}{\sigma^2} \leq \chi_{29}^2,0.005\right] = 0.99$ \quad or
+
+$P\left[\frac{(N-1)s^2}{\chi_{(29,.005)}} \leq \sigma^2 \leq \frac{(N-1)s^2}{\chi_{(29,0.995)}^2}\right] = 0.99$ \quad or
+
+$P\left[\frac{(29)(4.55)}{52.3356} \leq \sigma^2 \leq \frac{(N-1)s^2}{\chi_{(29,0.995)}^2}\right] = 0.99$ \quad or
+
+$P[2.521 \leq \sigma^2 \leq 10.056] = 0.99$.
+
+(If this seems opaque -- go back and review how we determined confidence intervals for the mean.)
+
+Notice that $\sigma^2 = 6.25$ falls within these limits as does the observed value of $s^2 = 4.55$.
+
+\pagebreak
+
+
+\begingroup\centering
+
+##Pearson $\chi^2$ Test
+\endgroup
+
+This is a very useful test for hypotheses about **frequencies** (or probabilities). Here is the simplest case:
+
+H$_0$: probability of event $A = p$.
+
+H$_1$: probability of event $A \neq p$.
+
+Consider this example from Hays (p.367) on hypotheses as the proportion of students admitting they have cheated. A total of 683 students were surveyed with the hypotheses:
+
+H$_0$: $p = 0.6$.
+
+H$_1$: $p \neq 0.6$.
+
+Here are the data gathered along with the expected data, given H$_0$.
+
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Event     & \begin{tabular}[c]{@{}l@{}}Observed \\ frequency\end{tabular}     & \begin{tabular}[c]{@{}l@{}}Observed \\ proportion\end{tabular} & \begin{tabular}[c]{@{}l@{}}Expected \\ frequency\end{tabular}     & \begin{tabular}[c]{@{}l@{}}Expected \\ proportion\end{tabular} \\ \hline
+A("yes")  & f$_1$ = 329                                                       & p = 0.48                                                       & m$_1$ = 410                                                       & p = 0.6             \\ \hline
+\textasciitilde A("no") & \begin{tabular}[c]{@{}l@{}}f$_2$ = 354\\ $(1 - f_1)$\end{tabular} & $(1 - p) = 0.52$                                               & \begin{tabular}[c]{@{}l@{}}m$_2$ = 273\\ $(N - m_1)$\end{tabular} & $(1 - p) = 0.40$    \\ \hline
+N         & 683                                                               &                                                                & 683                                                               &                     \\ \hline
+\end{tabular}
+\end{table}
+
+The Pearson $\chi^2$ test of "goodness of fit" applied to these data is
+
+$\chi_{(1)}^2 = \displaystyle \frac{(f_1 - m_1)^2}{m_1} + \frac{(f_2 - m_2)^2}{m_2}$
+
+$= \displaystyle \frac{(329 - 410)^2}{410} + \frac{(354 - 273)^2}{273} = 40.04$
+
+$v = 1\text{df,}\quad p(\chi_{(1)}^2 \geq 40.04) = 0.001$.
+
+Thus, we must reject H$_0$.
+
+Why does this work? What does this test have to do with variances? Go back to Hays, Chapter 6 where we tested the hypothesis about p from a sample drawn from a **binomial** distribution, counting the frequency of successes, X. If N is sufficiently large we know the binomial is approximated by the normal distribution, so we can write
+
+$z = \displaystyle \frac{x - Np}{\sqrt{Npq}}$.
+
+&nbsp;
+
+Remember for the binomial distribution,
+
+E(x) = Np and Var(x) = Npq, where x is the observed # of successes.
+
+In our problem,
+
+$z = \displaystyle \frac{f_1 - m_1}{\sqrt{m_1(N - m_1)/N}}$.
+
+For large N, this value can be considered normally distributed, so,
+
+$z^2 = \chi_{(1)}^2$. With a bit of algebra (e.g. Hays, p.368) [You should prove this for yourself] we get
+
+$z^2 = \displaystyle \frac{(f_1 - m_1)^2}{m_1} + \displaystyle \frac{(f_2 - m_2)^2}{m_2} = \chi_{(1)}^2$
+
+To generalize this approach, if there are J different categories and one wants to test a hypothesis about the proportion in each category, p$_j$, we have
+
+$\chi_{(j-1)}^2 = \displaystyle \frac{\displaystyle \sum \limits_j (f_j - \mu_j)}{\mu_j} \qquad v = j - 1$
+
+\begingroup \centering
+
+## The 2x2 Table:  The $\chi^2$ test for independence (or association)
+\endgroup
+
+This is a **very common** test dealing with the question of whether two independent samples differ in their frequency on some dichotomous event A (or \textasciitilde). For example, if we subjected two independent samples to two different conditions and measured the frequency in each group that **either showed an effect or not**, we could construct a data table like this.
+
+\begingroup \centering
+
+*Observed*
+
+\endgroup
+\begin{table}[htb]
+\centering
+\begin{tabular}{llll}
+\multicolumn{1}{l|}{Effect}            & Gp$_1$                        & Gp$_2$                        &                   \\ \cline{1-3}
+\multicolumn{1}{l|}{A}                 & \multicolumn{1}{l|}{f$_{11}$} & \multicolumn{1}{l|}{f$_{12}$} & $f_{11} + f_{12}$ \\ \cline{2-3}
+\multicolumn{1}{l|}{\textasciitilde A} & \multicolumn{1}{l|}{f$_{21}$} & \multicolumn{1}{l|}{f$_{22}$} & $f_{21} + f_{22}$ \\ \cline{2-4} 
+                                       & N$_1$                         & \multicolumn{1}{l|}{N$_2$}    & $N_1 + N_2 = n$  
+\end{tabular}
+\end{table}
+
+
+These are the **observed frequencies**, but how do we know what the **expected frequencies** are? The expected frequencies would appear in a table like this:  
+
+&nbsp;
+
+&nbsp;
+
+\begingroup \centering
+
+*Expected*
+
+\endgroup
+\begin{table}[htb]
+\centering
+\begin{tabular}{llll}
+\multicolumn{1}{l|}{Effect}            & Gp$_1$                        & Gp$_2$                        &                   \\ \cline{1-3}
+\multicolumn{1}{l|}{A}                 & \multicolumn{1}{l|}{m$_{11}$} & \multicolumn{1}{l|}{m$_{12}$} & $m_{11} + m_{12}$ \\ \cline{2-3}
+\multicolumn{1}{l|}{\textasciitilde A} & \multicolumn{1}{l|}{m$_{21}$} & \multicolumn{1}{l|}{m$_{22}$} & $f_{21} + f_{22}$ \\ \cline{2-4} 
+                                       & N$_1$                         & \multicolumn{1}{l|}{N$_2$}    & $N_1 + N_2 = n$  
+\end{tabular}
+\end{table}
+
+The hypothesis H$_0$ is that both samples come from the **same** population and thus have the **same** p(A). The alternative hypothesis is that the samples come from **different populations** with different p(A)'s. We use this H$_0$ to determine an estimate of [P(A) | H$_0$] from the data collected.
+
+The **best** estimate of P(A) is
+
+$P(A) = \displaystyle \frac{f_{11} + f_{12}}{n}$ and $P(\sim A) = \displaystyle \frac{f_{21} + f_{22}}{n}$
+
+where $n = N_1 + N_2$.
+
+Since there are, for example, N$_1$ people in Group 1, the expected number in that group showing the effect would be
+
+$N_1 \cdot p(A) = \displaystyle \frac{N_1(f_{11} + f_{12})}{n}$.
+
+Similarly, for $\sim A$:
+
+$N_1 \cdot p(A) = \displaystyle \frac{N_1(f_{21} + f_{22})}{n}$.
+
+etc.
+
+So, the expected frequencies are
+
+$m_{11} = \displaystyle \frac{N_1(f_{11} + f_{12})}{n}$.
+
+$m_{21} = \displaystyle \frac{N_1(f_{21} + f_{22})}{n}$.
+
+$m_{12} = \displaystyle \frac{N_2(f_{11} + f_{12})}{n}$.
+
+$m_{22} = \displaystyle \frac{N_2(f_{21} + f_{22})}{n}$.
+
+The $\chi^2$ test is
+
+$\chi_{(1)}^2 = \displaystyle \frac{(f_{11} - m_{11})^2}{m_{11}} + \frac{(f_{12} - m_{12})^2}{m_{12}} + \frac{(f_{21} - m_{21})^2}{m_{21}} + \frac{(f_{22} - m_{22})^2}{m_{22}} \qquad v = 1$
+
+Here's an example of its use.
+
+**Does caffeine delay sleep onset?**
+
+Independent groups were tested with caffeine and a placebo and time to sleep onset measured. Here are the data
+
+[T > T$_0$:  Delay, otherwise $\sim$Delay]
+
+\begingroup \centering
+
+*Observed Frequencies*
+
+\endgroup
+\begin{table}[htb]
+\centering
+\begin{tabular}{llll}
+\multicolumn{1}{l|}{Effect}      & Placebo                            & Caffeine                           &                         \\ \cline{1-3}
+\multicolumn{1}{l|}{Delay}       & \multicolumn{1}{l|}{f$_{11}$ = 8}  & \multicolumn{1}{l|}{f$_{12}$ = 30} & $f_{11} + f_{12}$ = 38  \\ \cline{2-3}
+\multicolumn{1}{l|}{$\sim$Delay} & \multicolumn{1}{l|}{f$_{21}$ = 65} & \multicolumn{1}{l|}{f$_{22}$ = 42} & $f_{21} + f_{22}$ = 107 \\ \cline{2-4} 
+Total                            & N$_1$ = 73                         & \multicolumn{1}{l|}{N$_2$ = 72}    & N = 145        
+\end{tabular}
+\end{table}
+
+If the placebo and drug samples are "equal" (i.e., drawn from the same population), then the proportions showing delay should be the same.
+
+The **expected** table would then look like this:
+
+\begingroup \centering
+
+*Expected Frequencies*
+
+\endgroup
+\begin{table}[htb]
+\centering
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{llll}
+\multicolumn{1}{l|}{Effect}      & Placebo                                                                                                                           & Caffeine                                                                                                                          &         \\ \cline{1-3}
+\multicolumn{1}{l|}{Delay}       & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}m$_{11}$ =\\ $\frac{N_1(f_{11} + f_{12})}{n}$ = 19.13\end{tabular}}  & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}m$_{12}$ = \\ $\frac{N_2(f_{11} + f_{12})}{n}$ = 18.86\end{tabular}} & 38      \\ \cline{2-3}
+\multicolumn{1}{l|}{$\sim$Delay} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}m$_{21}$ = \\ $\frac{N_1(f_{21} + f_{22})}{n}$ = 53.86\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}m$_{22}$ = \\ $\frac{N_2(f_{21} + f_{22})}{n}$ = 53.13\end{tabular}} & 107     \\ \cline{2-4} 
+Total                            & N$_1$ = 73                                                                                                                        & \multicolumn{1}{l|}{N$_2$ = 72}                                                                                                   & 145 = n
+\end{tabular}
+\end{table}
+
+$\chi_{(1)}^2 = \displaystyle \frac{(8 - 19.3)^2}{19.3} + \frac{(30 - 18.86)^2}{18.86} + \frac{(65 - 53.86)^2}{53.86} + \frac{(42 - 53.13)^2}{53.13} = 17.83$
+
+$p(\chi_{(1)}^2 \geq 17.83) < 0.001$
+
+H$_0$ is thus rejected.
+
+\begingroup\centering
+
+#The F-distribution
+\endgroup
+
+This distribution is used to **compare** variances of two populations and is the basis for the analysis of variance (ANOVA). Consider these hypotheses:
+
+$H_0: \sigma_1^2 = \sigma_2^2$
+
+$H_1: \sigma_1^2 > \sigma_2^2$
+
+We could compare two variances by taking their **ratio**; this is the basis for the F-test. Assume we have two populations with the **same** variance $\sigma^2$ (note, the means may differ). We draw N$_1$ ones from pop$_1$ and N$_2$ ones from pop$_2$ and calculate $s_1^2 / s_2^2$.
+
+This statistic is distributed as F$_{v_1,v_2}$, where $v_1 = N_1 - 1$ and $v_2 = N_2 - 1$.
+
+Now, recall that
+
+$\chi_{(N_1 - 1)}^2 = \displaystyle \frac{(N_1 - 1)s_1^2}{\sigma^2}$ and
+
+$\chi_{(N_2 - 1)}^2 = \displaystyle \frac{(N_2 - 1)s_2^2}{\sigma^2}$.
+
+The ratio of these two is ($v_1 = N_1 - 1$, $v_2 = N_2 - 1$)
+
+$F_{v_1,v_2} = \displaystyle \frac{\left. \chi_{(N_1 -1)}^2 \middle/ (N_1 - 1) \right.}{\left. \chi_{(N_2 - 1)}^2 \middle/ (N_2 - 1) \right.} = \frac{\left. s_1^2 \middle/ \sigma \right.}{\left. s_2^2 \middle/ \sigma \right.} = \frac{s_1^2}{s_2^2} = \frac{\text{est}\sigma_1^2}{\text{est}\sigma_2^2}$
+
+Again, we assume Var(pop$_1$) = Var(pop$_2$) = $\sigma^2$.
+
+This ratio of two $\chi^2$'s, each divided by their respective degrees of freedom is the **definition** of an F distribution, i.e., the ratio is a random variable distributed as F.
+
+The actual density function is
+
+\begin{equation*}
+f(F_{v_1,v_2}) = \frac{\Gamma\left(\cfrac{v_1 + v_2}{2}\right)}{\Gamma\left(\cfrac{v_1}{2}\right)\Gamma\left(\cfrac{v_2}{2}\right)} \cdot \left(\frac{v_1}{v_2}\right)^{v_1\big/2} \cdot F_{v1,v2}^{\left[\left(v_1/v_2\right)^{-1}\right]} \left(1 + \frac{v_1}{v_2} \cdot F_{v_1,v_2}\right)^{\frac{-(v_1+v_2)}{2}}
+\end{equation*}
+
+$\left[ \text{Remember, } \Gamma(v) = \int_{-\infty}^{\infty}x^{v-1}e^{-x}dx(v > 0) \right]$
+
+$E(F) = v_2\bigg/(v_2 -2)$ for v$_2$ > 4
+
+The F-Tables (Table V, Hays)
+
+Only the **upper** portion of the distribution is represented in the tables (>25%). Each significance level has a **separate** Table.
+
+```{r, echo=FALSE, fig.height=3.5}
+library(ggplot2)
+library(grid)
+x <- seq(0,2.3,0.0001)
+y <- df(x,10,50)
+dat <- data.frame(x=x,y=y)
+temp <- expression(f(F[v[1]*","*v[2]]))
+temp2 <- expression((F[v[1]*","*v[2]]))
+fdist <- ggplot(data.frame(x = c(0, 2.3)), aes(x)) + stat_function(fun = df, args=c(df1=10,df2=50)) +
+  geom_ribbon(data=subset(dat,x>=1.8), aes(ymin=0,ymax=y), alpha=0.4) +
+  geom_segment(aes(x = 0, y = 0, xend = 2.3, yend = 0)) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 1)) +
+  geom_segment(aes(x = 1.8, y = 0, xend = 1.8, yend = 0.2), linetype="dotted") +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+fdist + annotate("text", x = -0.13, y = 0.9, label = as.character(temp),parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 2.2, y = -0.08, label = as.character(temp2),parse=TRUE, size = 4, family="serif")
+```
+
+For a one-tailed test, (the most common)
+
+$H_0: \sigma_1^2 = \sigma_2^2$
+
+$H_1: \sigma_1^2 > \sigma_2^2$
+
+Choose the **larger** s$^2$ for the numerator (say, s$_1^2$)
+
+$F_{v1,v2} = s_1^2\bigg/s_2^2$
+
+Example:
+
+\begin{minipage}{0.45\textwidth}
+\begin{align*}
+N_1 &= 10 & N_2 &= 6 & \\
+v_1 &= 9 & v_2 &= 5 & \\
+s_1^2 &= 49 & s_2^2 &= 7 & F_{9,5} &= 7.00
+\end{align*}
+\end{minipage}
+
+$\qquad \qquad \alpha = 0.05$.
+
+$\qquad \qquad F_{9,5,0.05} = 4.77$, H$_0$ rejected.
+
+Suppose v$_1$ = 1 and v$_2$ = 45 and $\alpha = 0.01$.
+
+The **exact** value of F$_{1,45,0.01}$ is not in the table, but we find
+
+$\qquad 7.08 < F_{1,45} < 7.31$
+
+$\qquad v_2 = 60 \qquad v_2 = 40$
+
+So, our F is less than 7.31.
+
+For a **two-tailed test**, use the **larger** sample variance for the numerator, as usual, but look up the values for $\alpha/2$. Your hypothesis will be:
+
+$H_0: \sigma_1^2 = \sigma_2^2$
+
+$H_1: \sigma_1^2 \neq \sigma_2^2$.
+
+Remember, the use of F assumes the population distributions are **normal**. If you cannot assume this, you should have a sample size $N \geq 30$.
+
+\begingroup\centering
+
+#Relations among f, $\chi^2$, and F-distributions
+\endgroup
+
+Remember that $\displaystyle \frac{\bar{y} - \mu}{\sfrac{s}{\sqrt{N}}} = t$
+
+Using an algebraic trick, we can write this as
+
+$t = \displaystyle \frac{\cfrac{\bar{y} - \mu}{\sigma/\sqrt{N}}}{\sqrt{\cfrac{(N - 1)s^2}{\sigma^2}\bigg/(N - 1)}}$
+
+So $t^2 = \frac{\left(\cfrac{\bar{y} - \mu}{\sigma/\sqrt{N}}\right)^2}{\left[\sqrt{\cfrac{(N-1)s^2}{\sigma^2}\bigg/(N-1)}\right]^2}$
+
+Now, $\quad z = \displaystyle \frac{\bar{y} - \mu}{\sfrac{\sigma}{\sqrt{N}}}$
+
+So, $\quad z^2 = \displaystyle \frac{(\bar{y} - \mu)^2}{\sfrac{\sigma^2}{N}} = \chi_{(1)}^2$
+
+Also, $\left[\sqrt{\displaystyle\frac{\nicefrac{(N-1)s^2}{\sigma^2}}{(N-1)}}\right]^2 = \displaystyle\frac{\chi^2(N-1)}{N-1}$
+
+So, $\quad t_{(N-1)}^2 = \frac{\chi_{(1)}^2}{\chi_{(N-1)}^2\bigg/(N-1)}$
+
+This is actually a **definition** of the t-distribution written as
+
+$t = \frac{z}{\sqrt{\chi_{(N-1)}^2\bigg/(N-1)}}$
+
+Note also that:
+
+$t_{(N-1)}^2 = \displaystyle \frac{\chi_{(1)}^2}{\chi_{(N-1)}^2\bigg/(N-1)} = F_{1,(N-1)}$
+
+$\left[\text{Remember, }F_{(N_1-1)(N_2-1)} = \displaystyle \frac{\chi_{(N_1-1)}^2\bigg/(N_1-1)}{\chi_{(N_2-1)}^2\bigg/(N_2-1)} \right]$
+
+These interrelations depend on the assumption of normality.
+
+So, all the distributions we have discussed, the binomial, the normal, the t, $\chi^2$, and F are interrelated. You recall that if N is large in a binomial distribution
+
+$z = \displaystyle\frac{x - Np}{\sqrt{Npq}} \quad$ x: # of successes
+
+Thus, in the limit,
+
+$\lim_{N \to \infty} p\left(a \leq \frac{x-Np}{\sqrt{Npq}} \leq b\right) = \int_a^b e^{-z^2/2}dz$
+
+so the random variable
+
+$\displaystyle\frac{x - Np}{\sqrt{Npq}}$ is asymptotically normal.
+
+You already know the same is true of the t-distribution and the $\chi^2$ distribution.
+
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

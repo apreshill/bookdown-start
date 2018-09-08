@@ -1,0 +1,243 @@
+---
+title: "Notes 10:  The t-distribution"
+header-includes:
+    \usepackage{tikz}
+    \subtitle{MATH 530-630}
+output: pdf_document
+---
+
+To use the Normal Distribution proper, to test hypotheses about means requires two conditions:
+
+1)  A sample size of at least 30 (actually you will see recommendations ranging from 30 to greater than 100, depending on the parent distribution).
+
+2)  The sample is drawn from a **normal population** with **known variance**, $\sigma ^2$.
+
+The latter condition is almost never met. Under most practical conditions you are likely to encounter, your sample size will be $\leq$ 100 and you won't know the population variance. What can we do? First let us **assume** we are sampling from a **normal** distribution. Our problem then reduces to the issue of variance. Our only estimate of variance is the unbiased sample variance s$^2$, so that the estimated $\sigma _m$ = s/$\sqrt{N}$. To use this with the z$_m$ score distribution $z_m = \displaystyle\frac{\bar{x} - \mu}{\sigma_m}$, requires N to be large enough to estimate $\sigma_m$ (and $\sigma$). If N is not large enough, we have the following sampling distribution 
+
+$t = [\bar{y} - E(\bar{y})]/\text{est.}\sigma_m$
+
+$\qquad$ *where*
+
+est.$\sigma _m = s/\sqrt{N}$
+
+$\qquad$ *and*
+
+$s^2 = \displaystyle\sum{y^2 - N(\bar{y}^2)/(N-1)}$
+
+
+**Note the new notation.** Sorry, but this is standard. Of course, it really doesn't matter if one uses $\bar{y}$ instead of $\bar{x}$, but we are following convention.
+
+The first thing to note about the t-distribution is that both the numerator and denominator are random variables. As before with the z$_m$ distribution (normal) $\bar{y}$ is a random variable, but now we also have S as a random variable. The actual form of the density function is:
+
+$f(t,v) = \displaystyle\frac{\Gamma\left(\displaystyle\frac{v+1}{2}\right)}{\sqrt{v\pi}\Gamma\left(\displaystyle\frac{v}{2}\right)}\left(1+\displaystyle\frac{t^2}{v}\right)^{-\frac{(v+1)}{2}}$
+
+where $\Gamma(v)=\displaystyle\int_{0}^{\infty} x^{v-1}e^{-x}dx$ (*v* > 0).  
+(The latter is called the Gamma function).
+
+Don't worry, we are not going to derive this density function, or prove it *is* a density function, but you do need to understand some of its properties. Like the normal distribution, the t distribution is actually a **family** of distributions, one for each value of *v*. The distribution is symmetrical with E[f(t$_{v}$)] = 0 (It's like a z-score) and variance = $v/(v-2) [v > 2]$. Here's what it looks like:
+
+
+```{r, echo=FALSE, fig.height= 2.5, fig.align="center"}
+library(ggplot2)
+library(grid)
+norm <- ggplot(data.frame(x = c(-4, 4)), aes(x)) + stat_function(fun = dt, args=c(df=2),aes(linetype="solid")) +
+  stat_function(fun=dnorm, aes(linetype="dashed")) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  scale_linetype_manual(name="",labels=c("N(0,1) [Standard normal]","f(t,v)"),values=c("dashed","solid"))+
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(),legend.position=c(0.85,0.5))
+norm + annotate("text", x = 0, y = 0.5, label = "f(t,v)", parse= TRUE, size = 4)  + 
+  annotate('text',x = 0, y = -0.04, label = "0", size = 4)+
+  geom_segment(aes(x=1,y=.5,xend=0,yend=0.355),arrow=arrow(length = unit(0.2,"cm")))+
+  annotate('text',x=1.9,y=0.5,label="lower maximum",size=4) +
+  geom_segment(aes(x=3,y=0.07,xend=2.5,yend=0.05),arrow=arrow(length = unit(0.2,"cm")))+
+  annotate('text',x=3.7,y=0.08,label="greater area",size=4)   
+```  
+
+
+Note in comparison with the unit normal distribution, the t-distribution is "flatter" and has greater area in its tails. What is the parameter *v*? The value of *v* is called the **degrees of freedom**. With tests involving a single sample mean $v = N - 1$. As indicated earlier, this relates to the unbiased estimate of the population variance.
+
+$s^2 = \displaystyle\frac{\displaystyle\sum\limits_i^N(y_i - \bar{y})^2}{N - 1}$. Only N - 1 deviations are free to vary. (Remember, $\displaystyle\sum\limits_i^N(y_i - \bar{y}) = 0$).
+
+Thus, given N - 1 deviations, the N$^{\text{th}}$ one is known. We say a sample estimate of the variance has **N -- 1 degrees of freedom**. As *v* gets large (i.e., the sample size gets larger), t$_v \rightarrow$ z$_m$. In other words, N(0,1) is the limit of t$_v$ as $v \rightarrow \infty$. Note that since Var[f(t$_v$)] = $v/(v-2)$, as *v* gets large $v/(v-2) \rightarrow 1$, as in N(0,1). With *v* small, the variance Var[f(t$_v$)] is large as indicated by the greater tail area of the t-distribution.
+
+#Confidence Interval for Means with the t-distribution
+
+The procedure here is virtually identical except for the use of the t-tables (Table III, Hays) instead of the standard normal distribution table (Table I, Hays). For example, suppose we want to find the 95% confidence interval ($\alpha$ = 0.05) with the t-distribution. This is represented as  
+
+$P\left(\bar{y} - (t_{\alpha/2},v) \cdot s/\sqrt{N} \leq \mu \leq \bar{y} + (t_{\alpha/2},v) \cdot s/\sqrt{N}\right) = 0.95$ .
+
+Suppose N = 8, $\bar{y}$ = 49 and S/$\sqrt{N}$ = 3.70 [Hays example]. Using Table III, Q = $\alpha/2$, $v = 8-1 = 7$, so t$_{\alpha/2}, v = t_{0.025, 7} = 2.365$.
+
+This gives $P[49 - (2.365)(3.70) \leq \mu \leq 49 + (2.365)(3.70)] = 0.95$
+
+or
+
+$P(40.25 \leq \mu \leq 57.75) = 0.95$.
+
+Note that, given the assumption that we drew from a normally distributed population, our confidence interval was determined only on the basis of the **sample** characteristics.
+
+#Differences between Population Means
+
+This is a much more common test than simply some specification of a population mean, $\mu$. For example, you conduct an experiment with only two groups of subjects, a **control** group and an **experimental** group. Subjects are assigned to each group randomly and whatever is being measured is assumed to be distributed normally in the population. Your experiment yields a mean performance for each group (and a standard deviation for each as well). Your hypotheses will be about the possible **differences** between the groups. For example,  
+
+$H_0:  \mu_C - \mu_E = 0$ (no difference)  
+$\hspace*{5mm}$ against  
+$H_0:  \mu_C - \mu_E \neq 0$ (there is a difference, but without a hypothesized direction (two-tailed test)).
+
+This situation calls for consideration of a sampling distribution for **differences** in means. If one draws random independent samples in pairs and then takes the differences in the sample means ($\bar{y}_1 - \bar{y}_2$), the values obtained will have a sampling distribution. From **expectation** algebra, $E(\bar{y}_1 - \bar{y}_2) = \mu_1 - \mu_2$. What about the Var($\bar{y}_1 - \bar{y}_2$)? Again, from **variance** algebra, Var($\bar{y}_1 - \bar{y}_2$) = $\sigma_{m_1}^2 + \sigma_{m_2}^2$. We denote the associated standard deviation $\sigma_{\text{diff}} = \sqrt{\sigma_{m_1}^2 + \sigma_{m_2}^2}$ : This value is called the **standard error of the difference**.  
+For small sample sizes drawn from a normal distribution,
+
+$t = \displaystyle\frac{(\bar{y}_1 - \bar{y}_2) - E(\bar{y}_1 - \bar{y}_2)}{\text{est.} \sigma_{\text{diff}}}$
+
+Remember $E(\bar{y}_1 - \bar{y}_1) = 0$.
+
+The use of the t-distribution is based on two major assumptions:
+
+1) the populations from which you are sampling are normal; and
+
+2) the variances of these parent distributions $\sigma_1^2$ and $\sigma_2^2$ are **equal**. This condition is called **homogeneity of variance**. There are special tests for this we may consider later.
+
+The number of degrees of freedom is N$_1$-1 and N$_2$-1 for each sample so the total degrees of freedom is $v = N_1 + N_2 - 2$.
+
+If each sample size exceeds 100
+
+est.$\sigma_{\text{diff}} = \sqrt{(\text{est}\sigma_{m_1}^2) + (\text{est.}\sigma_{m_2}^2)}$ 
+
+can be used with the normal distribution. Keep in mind that $(\bar{y}_1 - \bar{y}_2)$ **is** normally distributed (if N is large enough) so, we have
+
+$z_{\text{diff}} = \displaystyle\frac{(\bar{y}_1 - \bar{y}_2) - E(\bar{y}_1 - \bar{y}_2)}{\text{est.}\sigma_{\text{diff}}}$
+
+For example, the 95% confidence interval for the difference between means would be expressed as  
+$P[(\bar{y}_1 - \bar{y}_2) - (1.96)(\text{est.}\sigma_{\text{diff}}) \leq (\mu_1 - \mu_2) \leq (\bar{y}_1 - \bar{y}_2) + 1.96(\text{est.}\sigma_{\text{diff}})] = 0.95$.
+
+If the sample size < 30, we should use the **t-distribution**, but we need to develop a proper expression for the estimated standard error of the difference.
+
+For each sample $\sigma_m = \displaystyle\frac{\sigma}{\sqrt{N}}$, so  
+$\sigma_{\text{diff}} = \sqrt{\displaystyle\frac{\sigma_1^2}{N_1} + \displaystyle\frac{\sigma_2^2}{N_2}}$. If there is homogeneity of variance $\sigma_1^2 = \sigma_2^2 = \sigma$, so  
+$\sigma_{\text{diff}} = \sqrt{\sigma^2\left(\displaystyle\frac{N_1 + N_2}{N_1N_2}\right)}$. If the sample sizes are equal,
+ $N_1 = N_2 = N$,  
+$\sigma_{\text{diff}} = \sqrt{\displaystyle\frac{2N\sigma^2}{N^2}} = \sigma\sqrt{\displaystyle\frac{2}{N}}$.
+
+If $N_1 \neq N_2$, we can use a **pooled estimate** of the variance (see Chapter 5, Hays)
+
+$\text{est.}\sigma^2 = [(N_1 - 1)s_1^2 + (N_2 - 1)s_2^2]\left(\displaystyle\frac{1}{N_1 + N_2 - 2}\right)$
+
+Note that if $N_1 = N_2$,
+
+$\text{est.}\sigma^2 = 1/2(s_1^2 + s_2^2)$, just the **average** of the two sample variances.
+
+So $\text{est.}\sigma_{\text{diff}} = \sqrt{\sigma^2\left(\displaystyle\frac{N_1 + N_2}{N_1N_2}\right)} = \sqrt{\displaystyle\frac{(N_1 - 1)S_1^2 + (N_2 - 1)S_2^2}{N_1 + N_2 - 2}\left(\displaystyle\frac{N_1 + N_2}{N_1N_2}\right)}$
+
+If $N_1 = N_2$
+
+est.$\sigma_{\text{diff}} = \sqrt{\displaystyle\frac{s_1^2 + s_2^2}{N}}$.
+
+Consider the following example from Hays (p.326).
+
+The experiment involves a motor learning task with two groups. In one group each correct response is reinforced; in the other, each error is punished. Over a fixed set of trials, the number of errors for each subject in each group is recorded. The experiment question is "Does the consequence of performance make a difference?"
+
+The formal hypotheses are:
+
+$H_0: \mu_1 - \mu_2 = 0$    [no difference]
+
+$H_1: \mu_1 - \mu_2 \neq 0$
+
+&nbsp;
+$\alpha = 0.01 = 2Q$
+
+&nbsp;
+$N_1 = 5, N_2 = 7$
+
+&nbsp;
+$v = N_1 + N_2 - 2 = 10$
+
+&nbsp;
+$t_{\mu} = 3.169$
+
+Results:\qquad Group 1\qquad Group 2
+
+$\qquad \qquad \qquad \bar{y}_1 = 18 \qquad \bar{y}_2 = 20$
+
+$\qquad \qquad \qquad s_1^2 = 7.00 \quad s_2^2 = 5.83$
+
+$\quad\text{est.}\sigma_{\text{diff}} = \sqrt{\text{est.}\sigma^2\left(\displaystyle\frac{1}{N_1}+\displaystyle\frac{1}{N_2}\right)} = \sqrt{\text{est.}\sigma^2\left(\displaystyle\frac{N_1 + N_2}{N_1N_2}\right)}$
+
+$\quad\text{est.}\sigma_{\text{diff}} = \sqrt{\displaystyle\frac{(N_1 - 1)s_1^2 + (N_2 - 1)s_2^2}{N_1 + N_2 - 2}\left(\displaystyle\frac{N_1 + N_2}{N_1N_2}\right)}$
+
+$\qquad \qquad \quad = \sqrt{\displaystyle\frac{4 \times 7 + 6 \times 5.83}{10}\left(\displaystyle\frac{12}{35}\right)} = 1.47$
+&nbsp;
+
+&nbsp;
+
+\setlength{\unitlength}{0.75mm}
+\begin{picture}(20,10)
+\put(100,20){\vector(-3,-1){40}}
+\put(101,20){$= 0$}
+So $\qquad t = \displaystyle\frac{(\bar{y}_1 - \bar{y}_2) - E(\bar{y}_1 - \bar{y}_2)}{\text{est.}\sigma_{\text{diff}}} = \displaystyle\frac{-2}{1.47} = -1.36$
+\end{picture}
+
+&nbsp;
+
+The confidence interval for the difference:
+
+$\mu_1 - \mu_2$ is
+
+$(\bar{y}_1 - \bar{y}_2) - t_{\alpha/2,v}(\text{est.}\sigma_{\text{diff}}) \leq (\mu_1 - \mu_2) \leq (\bar{y}_1 - \bar{y}_2) + t_{\alpha/2,v}(\text{est.}\sigma_{\text{diff}}).$
+
+so,
+
+$p(-6.66 \leq (\mu_1 - \mu_2) \leq 2.66) = 0.99$
+
+Note that 0 is included in this interval.
+
+##Importance of assumptions to the t-test
+
+**Two basic assumptions:**  Sampling from a normal distribution; homogeneity of variance $(\sigma_1^2 = \sigma_2^2)$. Of these two, sampling from a normal distribution is of lesser importance, given adequate sample size. Try to have equal sample size, but if this is not possible, use Behrens-Fisher procedure to modify degrees of freedom (see p. 328, Hays).
+
+##t-test with paired observations
+
+Study section 8.16 on paired observations, i.e. **matched** pairs. This is a common test, but is dependent on treating the data as coming from two single samples of **matched pairs**.
+
+Here's the arrangement:
+
+**Group 1** $\qquad$ **Group 2**
+
+$y_{11} \qquad \qquad \qquad y_{12}$
+
+$y_{12} \qquad \qquad \qquad y_{22}$
+
+$y_{31} \qquad \qquad \qquad y_{32}$
+
+$y_{i1} \qquad \qquad \qquad y_{i2}$
+
+$y_{n1} \qquad \qquad \qquad y_{n2}$
+
+&nbsp;
+
+$D_i = (y_{i1} - y_{i2})$
+
+$\bar{D} = \displaystyle\frac{\displaystyle\sum\limits_{i=1}^n (y_{i1} - y_{i2})}{N}$
+
+$S_D^2 = \displaystyle\frac{1}{(N-1)}\left[\sum (D_i^2) - N(\bar{D})^2\right]$
+
+where N: = **# pairs**.
+
+$\text{est.}\sigma_{m_D} = \displaystyle\frac{S_D}{\sqrt{N}}$
+
+The t-test is
+
+$t_v = \displaystyle\frac{\bar{D} - E(\bar{D})}{\text{est.}\sigma_{m_D}} \qquad v = (N-1) \text{ d.f.}$
+
+Typically,
+
+$\qquad \qquad H_0:  E(\bar{D}) = \mu_D = 0$
+
+$\qquad \qquad H_1:  \mu_D \neq 0$.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

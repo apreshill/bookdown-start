@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>A Minimal Bookdown Book</title>
+  <title>Probability &amp; Statistics</title>
   <meta name="description" content="Everything you need (and nothing more) to start a bookdown book.">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="A Minimal Bookdown Book" />
+  <meta property="og:title" content="Probability &amp; Statistics" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="http://seankross.com/bookdown-start/" />
   
@@ -17,12 +17,12 @@
   <meta name="github-repo" content="seankross/bookdown-start" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="A Minimal Bookdown Book" />
+  <meta name="twitter:title" content="Probability &amp; Statistics" />
   
   <meta name="twitter:description" content="Everything you need (and nothing more) to start a bookdown book." />
   
 
-<meta name="author" content="Sean Kross">
+<meta name="author" content="Alison Presmanes Hill, Katina Papadakis, and M. Jackson Marr">
 
 
 <meta name="date" content="2018-08-24">
@@ -67,7 +67,9 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
-<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#sets"><i class="fa fa-check"></i><b>1.1</b> Sets</a></li>
+</ul></li>
 <li class="chapter" data-level="2" data-path="diving-in.html"><a href="diving-in.html"><i class="fa fa-check"></i><b>2</b> Diving In</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -81,7 +83,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Minimal Bookdown Book</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Probability &amp; Statistics</a>
           </h1>
         </div>
 
@@ -92,7 +94,22 @@
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
 <p>This is the first real chapter.</p>
+<blockquote>
+<p><em>“A set is a Many that allows itself to be thought of as a One.” - Georg Cantor</em></p>
+</blockquote>
+<div id="sets" class="section level2">
+<h2><span class="header-section-number">1.1</span> Sets</h2>
+<p>A set is a collection of objects. The objects in a set can be anything. In probability theory, we call these objects <em>elements</em> or <em>numbers</em> or <em>outcomes</em> or <em>events</em>.</p>
+<p>Sets usually denoted by capital letters, A, B, C, etc.<br />
+Elements of sets denoted by a, b, c, etc.</p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> If <em>a</em> belongs to A we write</p>
+<p><span class="math inline">\(\hspace{20 mm} \textit{a} \in A\)</span></p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> If <em>a</em> does not belong to A we write</p>
+<p><span class="math inline">\(\hspace{20 mm} \textit{a} \notin A\)</span></p>
+<p><span class="math inline">\(\hspace{1 mm}\)</span> <em>Example 1:</em> V = {x | x is a vowel} (read “|” as “such that”)</p>
+<p><span class="math inline">\(\hspace{29 mm}\)</span> = {a, e, i, o, u}</p>
 
+</div>
 </div>
             </section>
 
@@ -141,6 +158,19 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

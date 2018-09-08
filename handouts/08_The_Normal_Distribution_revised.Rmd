@@ -1,0 +1,300 @@
+---
+title: "Notes 8: The Normal Distribution"
+header-includes:
+    \usepackage{graphicx}
+    \subtitle{MATH 530-630}
+output: 
+    pdf_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r load_packages, include = FALSE}
+suppressWarnings(suppressMessages(library(ggplot2)))
+suppressWarnings(suppressMessages(library(grid)))
+```
+
+
+```{r, echo=FALSE, fig.height= 2.5, fig.align='center'}
+norm <- ggplot(data.frame(x = c(-4, 4)), aes(x)) + stat_function(fun = dnorm) + 
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(x)", parse= TRUE, size = 4,family="serif")  + 
+  annotate('text',x = 0, y = -0.04, label = "mu",parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma", parse = TRUE, size = 4, family="serif")
+```  
+
+A density function $f(x) = \displaystyle\frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2 \sigma^2}} \hspace{5mm}$ [also denoted by $N(\mu, \sigma^2)$] 
+
+is called a **normal density function**, or distribution. This is a whole (infinite) family of distributions with $\mu$ any finite value and $\sigma^2 > 0$. This is a probability density function (p.d.f.) because $f(x) \geq 0$ and  
+
+
+$\displaystyle\frac{1}{\sigma \sqrt{2\pi}} \displaystyle\int_{-\infty}^{\infty}e^{-\frac{(x-\mu)^2}{2 \sigma^2}} dx=1$.  
+
+The proof of this is not difficult, but depends on double integration that most of you haven't studied. One can also show that  
+$E[f(x)] = \mu \hspace{5mm}$ and $\hspace{5mm} Var[f(x)] = \sigma^2$  
+
+Again, to prove these requires more mathematical machinery than you probably are comfortable with.  
+
+
+#Significance of the Normal Distribution  
+
+1) Measurements and errors of measurements seem often to follow a normal distribution.  
+
+2) Assumption of normality is important for mathematical reasons and underlies much of inferential statistics. For example, many uses of inferential statistics **assume** that $\mu$ and $\sigma^2$ are **independent** -- but this is true only for the normal distribution. Recall, for example the Binomial Distribution where $E(X) = \mu = np$ and $Var(X) = \sigma^2 = npq$, so $Var(X) = qE(X)$, i.e. $\mu$ and $\sigma^2$ are not independent.  
+
+3) Many other distributions approach normality in the limit, e.g., Binomial, Poisson, and t-distributions. We have already indicated this with the binomial. As $n \rightarrow \infty, B(n,p) \rightarrow N(\mu, \sigma)$. Even for n relatively small, the normal distribution is a good approximation. That the normal distribution is so common in nature is probably because random variables in nature are a reflection of lots of binomial processes.  
+
+4) **The Central Limit Theorem**. This is the most significant (and remarkable) theorem in statistics.  
+
+_Theorem 40._ The distribution of sample means derived from samples of size $N$ drawn from a parent population with finite mean $\mu$ and variance $\sigma^2$ approaches a normal distribution with mean $\mu$ and variance $\sigma^2/N$. A more useful way to express this is that for any two real numbers _a_ and _b_ $(a<b)$  
+
+$$p\left \{ a < \frac{\bar{X} - \mu}{\sigma/ \sqrt{N}} < b \right \} \rightarrow \frac{1}{2\pi} \int_{a}^{b} e^{\frac{-z^2}{2}} dz \hspace{5mm} \text{as } N \rightarrow \infty$$  
+
+Notice that the original parent distribution is **unspecified**. As we draw larger and larger samples from this population and calculate sample means, those means will be distributed normally with a mean, $\mu$ equal to the $\mu$ of the parent distribution and variance $\sigma^2/N$, where $\sigma^2$ is the variance of the parent distribution. A corollary of the Central Limit Theorem is that the parent distribution **is** normal, the distribution of sample means $\bar{X}_i$ is normal, irrespective of N for N > 0.  
+
+###Probabilities as Area under the Normal Curve  
+
+```{r, echo=FALSE, fig.height= 2.5, fig.align='center'}
+x <- pretty(c(-4,4), 1000)
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x<=2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.2)) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(x)", parse= TRUE, size = 4, family="serif")  + 
+  annotate('text',x = 0, y = -0.04, label = "mu",parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma", parse = TRUE, size = 4, family="serif") +
+  annotate("text", x = 2, y = -0.02, label = "a", size = 4, family="serif")
+```  
+
+$P(x \leq a) = F(a)$  
+
+$= \displaystyle\frac{1}{\sigma \sqrt{2\pi}} \displaystyle\int_{-\infty}^{a} e^{-\frac{(x-\mu)^2}{2\sigma^2}} dx$  
+
+F(a) is called the **cumulative distribution function**.  
+
+```{r, echo=FALSE, fig.height= 2.5, fig.align='center'}
+cumdistfunc <- qplot(rnorm(10000), stat = "ecdf", geom = "step") +
+    geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+    geom_segment(aes(x=0,y=0,xend=0,yend=1)) +
+    theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+cumdistfunc + annotate("text", x = -.3, y = 0.5, label = "1/2", size = 4) +
+    annotate("text", x = -.3, y = 1, label = "1", size = 4, family="serif") +
+    annotate("text", x = 0, y = -.08, label = "mu", parse = TRUE, size = 4, family="serif") +
+    annotate("text", x = 4.2, y = 0, label = "a", size = 4, family="serif")
+```
+
+As $a \rightarrow \infty \hspace{7mm} F(a) \rightarrow 1$  
+As $a \rightarrow -\infty \hspace{5mm} F(a) \rightarrow 0$  
+
+It is this kind of function that is represented by the Table 1 in Hays (and elsewhere). Note that $P(x \geq a) = 1 - P(x \leq a) = 1 - F(a)$.  
+
+```{r, echo=FALSE, fig.height= 2.5,fig.align='center'}
+x <- pretty(c(-4,4), 1000)  
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x>2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.2)) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(x)", parse= TRUE, size = 4, family="serif")  + 
+  annotate('text',x = 0, y = -0.04, label = "mu",parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma", parse = TRUE, size = 4, family="serif") +
+  annotate("text", x = 2, y = -0.02, label = "a", size = 4, family="serif")
+```  
+
+To actually carry out these integrations requires numerical methods (given the parameters). Moreover, there are an infinite number of possible distributions with different $\mu$'s and $\sigma$'s. But we can use z scores to **standardize any** normal distribution.  The z scores are called **standard scores**.  
+
+$z = \displaystyle\frac{(X - \mu)}{\sigma}$ is a **transformation** of the random variable _x_. We start with the cumulative distribution function  
+
+$F(a) = \displaystyle\frac{1}{\sigma \sqrt{2\pi}} \displaystyle\int_{-\infty}^{a} e^{-\frac{(x-\mu)^2}{2\sigma^2}} dx$  
+
+We recognize the exponent of _e_ as $(-z^2/2)$. So we have  
+
+$F(a) = \displaystyle\frac{1}{\sigma \sqrt{2\pi}} \displaystyle\int_{-\infty}^{a} e^{-\frac{z^2}{2}} dx$. But we need to know how _z_ changes with _x_.  
+
+$z = \displaystyle\frac{x-m}{s} \hspace{5mm} dz = \displaystyle\frac{1}{s}dx \hspace{5mm} \text{or} \hspace{5mm} dx = \sigma dz$  
+
+So,
+
+$F(a) = \displaystyle\frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}} dz = P(z \leq a)$  
+
+The mean of the transformed distribution  
+
+$f(a) = \displaystyle\frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}}$ is 0 and the standard deviation is 1.  
+
+So, the probability density function depends only on _z_. The use of z scores allows us to use a single table of values [Table 1, Appendix E, Hays]. The table is set up as  
+
+$P(z \leq a)= \hspace{5mm} F(a) = \displaystyle\frac{1}{\sqrt{2\pi}} \displaystyle\int_{-\infty}^{a} e^{-\frac{z^2}{2}} dz$.  
+
+###Using the Table  
+
+Examples:
+
+a) $p(z \geq 2) = F(z) = 0.9772499$  
+
+b) $p(z > 2) = 1 - p(z > 2) = 1 - 0.9772499$   
+$= 0.0227501$  
+
+c) $p(z \leq -1) = 1 - f(1) = 1 - 0.8413447$   
+$= 0.1586553$  
+
+If SAT math scores have $\mu = 500$ and $\sigma = 100$, what is $p(x \geq 700) \hspace{1in}$ x:score  
+
+$z = \displaystyle\frac{700-500}{100} = 2$  
+
+$p(x \geq 700) = p(z \geq 2) = 1 - p (z < 2) = 1 - 0.9772499 = 0.022750$  
+
+~upper 2% of scores or the 98th percentile.  
+
+e) What is the 99th percentile, i.e. what z-score yields this value $F(z) = 0.99$? $z \approx 2.33$.  
+
+f) What SAT score is that?  
+$z = 2.33 = \displaystyle\frac{x - 500}{100} = 733$  
+
+```{r, echo=FALSE, fig.height= 2.5,fig.align='center'}
+par(mar=c(5.1,4.1,4.1,2.1))
+x <- pretty(c(-4,4), 1000)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x<=2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.2)) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate("text", x = 0.4, y = 0.41, label = "f(x)", parse= TRUE, size = 4, family="serif")  + 
+  annotate('text',x = 0, y = -0.04, label = "mu",parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -1.3, y = -0.02, label = "-sigma", parse = TRUE, size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.02, label = "sigma", parse = TRUE, size = 4, family="serif") +
+  annotate("text", x = 2.4, y = -0.04, label = "99th percentile", size = 4, family="serif") +
+  annotate("text", x = -1.3, y = -0.08, label = "400", size = 4, family="serif") + 
+  annotate("text", x = 1.3, y = -0.08, label = "600", size = 4, family="serif") +
+  annotate("text", x = 2.4, y = -0.08, label = "z = 2.33", size = 4, family="serif") +
+  annotate('text',x = 0, y = -0.1, label = "500",size = 4, family="serif")  
+```
+
+#Confidence Interval for the Mean  
+
+We know that if the population is normally distributed, the sampling distribution of $\bar{x}$ is normal. Even if the population distribution is not normal and the sample size $N \geq 30$, then $\bar{x}$ is normally distributed (Central Limit Theorem). Recall from our analysis using Tchebychev's inequality that we are interested in 
+
+$p(-k \leq z_m \leq k)$.
+
+We can determine this value **exactly** using the normal distribution. For example,  
+
+$\qquad \qquad p(-1.96 \leq z_m \leq 1.96) = 0.95$
+
+```{r, echo=FALSE, fig.height= 2.5,fig.align='center'}
+library(grid)
+x <- pretty(c(-4,4), 1000)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,x>2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_ribbon(data=subset(df,x< -2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x = -1.5, y = 0.5, xend = -0.1, yend = 0.3), arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(x=-0.2,y=-0.04,xend=-2,yend=-0.04),arrow=arrow(length = unit(0.2,"cm"))) +
+  geom_segment(aes(x=0.2,y=-0.04,xend=2,yend=-0.04),arrow=arrow(length = unit(0.2,"cm"))) +
+  geom_segment(aes(x=-2.4,y=0.06,xend=-2.2,yend=0.01),arrow=arrow(length = unit(0.2,"cm"))) +
+  geom_segment(aes(x=2.4,y=0.06,xend=2.2,yend=0.01),arrow=arrow(length = unit(0.2,"cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate('text',x = 0, y = -0.04, label = "z[m]",parse = TRUE, size = 6, family="serif") +
+  annotate("text", x = 0, y = 0.25, label = "0.95", family="serif") +
+  annotate('text',x=-2.4,y=0.1,label="0.025", family="serif") +
+  annotate('text',x=2.4,y=0.1,label="0.025", family="serif")
+```   
+
+$p = 2F(1.96) - 1 = 0.95$  
+
+Another way of looking at this is  
+
+$p[(\bar{x} - 1.96 \sigma_m) \leq \mu \leq (\bar{x} + 1.96\sigma_m)] = 0.95$  
+
+In other words, the probability is 0.95 that the range $(\bar{x} - 1.96 \sigma_m, \bar{x} + 1.96\sigma_m)$ will include the true mean $\mu$.  
+
+\pagebreak
+\hspace{65mm} p($\mu$ somewhere in here) = 0.95
+
+```{r, echo=FALSE, fig.height= 2.5,fig.align='center'}
+x <- pretty(c(-4,4), 1000)   
+y <- dnorm(x,0,1)
+df <- data.frame(x=x,y=y)
+norm <- ggplot(df, aes(x)) + stat_function(fun = dnorm) +
+  geom_ribbon(data=subset(df,-2<x & x<2),aes(ymin=0,ymax=y), alpha = .25) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 0.45)) +
+  geom_segment(aes(x = -1.3, y = 0, xend = -1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 1.3, y = 0, xend = 1.3, yend = 0.4), linetype="dashed") +
+  geom_segment(aes(x = 2, y = 0, xend = 2, yend = 0.2)) +
+  geom_segment(aes(x = -2, y = 0, xend = -2, yend = 0.2)) +
+  geom_segment(aes(x = -4, y = 0, xend = 4, yend = 0)) +
+  geom_segment(aes(x=1,y=0.45,xend=0.5,yend=0.3),arrow=arrow(length = unit(0.2,"cm"))) +
+  theme(axis.title= element_blank(), panel.grid= element_blank(), 
+             panel.background=element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) 
+norm + annotate('text',x = 0, y = -0.04, label = "bar(X)",parse = TRUE, size = 6, family="serif")  + 
+  annotate("text", x = -2.4, y = -0.04, label = "-1.96",size=4, family="serif") +
+  annotate("text", x = -1.95, y = -0.05, label = "sigma[m]", parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 2, y = -0.04, label = "1.96",size=4, family="serif") +
+  annotate("text", x = 2.37, y = -0.05, label = "sigma[m]", parse=TRUE, size = 4, family="serif") +
+  annotate("text", x =-1.3, y = -0.05, label = "- sigma[m]",parse=TRUE, size = 4, family="serif") +
+  annotate("text", x = 1.3, y = -0.05, label = "sigma[m]", parse=TRUE, size = 4, family="serif")
+``` 
+
+$\bar{x} \pm 1.960$ is called the **95% confidence interval** for $\mu$ and $\bar{x} - 1.96 \sigma_m$,$\bar{x} + 1.96 \sigma_m$ the **95% confidence limits**, i.e., 95% of samples will include $\mu$ in the interval $(\bar{x} - 1.96 \sigma_m, \bar{x} + 1.96 \sigma_m)$. You should show similarly that  
+
+$p[(\bar{x} - 2.580 \sigma_m) \leq \mu \leq (\bar{x} + 2.580\sigma_m)] = 0.99$.  
+
+Note that we need $N \geq 30$ and $\sigma$ must be known to apply this method. If $\sigma$ is unknown (typical) we must use the sample standard deviation _s_.  
+
+$\sigma_m \approx \displaystyle\frac{s}{\sqrt{N}} \text{ where } s^2 = \displaystyle\frac{\sum x_i^2 - N(\bar{x}^2)}{N-1}$  
+
+The 95% confidence interval for $\mu$ is then 
+
+$(\bar{x} - 1.96(s/\sqrt{N})$, $\bar{x} + 1.96(s/\sqrt{N}))$.  
+
+We can determine the sample size needed for a desired precision. For example, how many cases should be sampled to make $p(|\bar{x} - \mu| \leq 0.1 \sigma) = 0.99$; that is, with $p = 0.99$, the sample mean lies within $0.1\sigma$ of the true mean.  
+
+Now 
+
+$|\bar{x} - \mu| \leq 0.1 \sigma$ is equivalent to $(\bar{x} - 0.1\sigma \leq \mu \leq + 0.1 \sigma)$.  
+
+The 99% confidence interval for $\mu$ is  
+$\bar{x} - 2.58\sigma_m$, $\bar{x} + 2.58\sigma_m$ or  
+$p[(\bar{x} - 2.580 \sigma_m) \leq \mu \leq (\bar{x} + 2.580\sigma_m)] = 0.99$.  
+
+So, $2.58\sigma_m = 0.1\sigma$  or  
+$0.1\sigma = \displaystyle\frac{2.58\sigma}{\sqrt{N}}$  
+
+$\sqrt{N} = 25.8$ or $N \approx 666$.
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

@@ -1,0 +1,393 @@
+---
+title: "2: Random Experiments"
+author: "Math 530-630"
+header-includes:
+    \usepackage{tikz,subcaption}
+    \captionsetup{compatibility=false}
+    \date{}
+    \renewcommand\plaintitle{Math 530-630, Random Experiments}
+output: rmarkdown::tufte_handout
+---
+
+```{r setup, include = FALSE, cache = FALSE, eval = TRUE}
+library(knitr)
+knitr::opts_chunk$set(error = TRUE, comment = NA, warnings = FALSE, messages = FALSE, tidy = FALSE, echo = FALSE, eval = TRUE, include = TRUE)
+```
+
+```{r load_packages, include = FALSE, eval = TRUE}
+suppressWarnings(suppressMessages(library(grid)))
+suppressWarnings(suppressMessages(library(ggplot2)))
+```
+
+Outcomes of an experiment may not be the same even if conditions are nearly identical.  
+
+Examples:$\hspace{10mm}$ Toss of coin {H, T}  
+$\hspace*{1in}$ Toss of a die {1, 2, 3, 4, 5, 6}  
+$\hspace*{1in}$ Toss of a coin twice {HH,HT, TH, TT}  
+$\hspace*{1in}$ Reaction times in an experiment.  
+
+**Sample Space**: S [corresponds to Universal set, U]  
+
+S: The set of all possible outcomes of a random experiment.  
+The **sample points** of a sample space depend on specification of the experiment.  
+
+$\hspace*{.5in}$ _Example:_ $\hspace{8mm}$ Toss of a die S = {1, 2, 3, 4, 5, 6}  
+$\hspace*{1.5in}$ Even: {2, 4, 6}  
+$\hspace*{1.5in}$ Odd: {1, 3, 5}  
+$\hspace*{1.5in}$ Divisible by 3: {3, 6}  
+
+
+
+```{r, fig.margin = TRUE, fig.cap = "Sample space graph: two tosses of a coin (H = 1, T = 0)"}
+library(grid)
+x <- c(0, 0, 1, 1)
+y <- c(0, 1, 0, 1)
+dat1 <- data.frame(x, y)
+example1 <- ggplot(dat1, aes(x=x, y=y))+
+  geom_point()+
+  scale_x_continuous(expand = c(0,0), limits = c(-.03,1.5))+
+  scale_y_continuous(expand=c(0,0), limits = c(-.03,1.5))
+example1 + annotate("text", x=1.2, y=1, label = "(1,1)", size=3)+
+  annotate("text", x=1.15, y=0.1, label = "(1,0)", size=3)+
+  annotate("text", x=0.2, y=1, label = "(0,1)", size=3)+
+  annotate("text", x=0.2, y=0.1, label = "(0,0)", size=3)+
+  theme(axis.title= element_blank(), axis.text=element_blank(), 
+        axis.ticks=element_blank(), panel.background=element_blank(), 
+        panel.grid= element_blank(), axis.line=element_line(linetype= "solid"),
+        plot.margin=unit(c(1,1,1,1),'cm'))
+``` 
+
+ 
+
+```{r, echo=FALSE, fig.height=2.5, fig.width=7}
+library(grid)
+df <- data.frame(
+  x = c(0, .8, 1.1, 1.2, 2, 3, 4.5, 4.5),
+  y = c(.1, 1, NA, 1, .1, NA, 1, .1))
+
+p2 <- qplot(x, y, data = df, geom = "line")+
+  scale_x_continuous(limits=c(-.5,5.5))+
+  scale_y_continuous(limits=c(-.5,1.5))
+p2 + annotate("text", x=1, y=1.1, label = "Discrete", size=3)+
+  annotate("text", x=0, y=0, label = "Finite", size=3)+
+  annotate("text", x=2, y=0, label = "Countably Infinte", size=3)+  
+  annotate("text", x=3, y=.5, label = "vs.", size=3)+
+  annotate("text", x=4.5, y=1.1, label = "Continuous Sample Spaces", size=3)+
+  annotate("text", x=4.5, y=0, label = "Uncountably Infinite", size=3)+
+  theme(axis.title= element_blank(), axis.text=element_blank(), 
+        panel.grid= element_blank(), axis.ticks=element_blank(), 
+        panel.background=element_blank())
+```
+
+##Events  
+
+An event **E** is a subset of a sample space, **S**.  
+If an outcome of an experiment is an element of the set E, then we say event E has occurred. If an event consists of a single point of S, it is called a **simple** or **elementary** event.  
+
+$\hspace*{.5in}$ _Examples:_ $\hspace{8mm}$ Heads or Tails in a single toss of a coin.  
+$\hspace*{1.5in}$ Value of a die in a single toss.  
+
+**Compound event** - e.g. Only one head in two tosses of a coin {HT, TH}  
+
+
+```{r, echo=FALSE, fig.height=2.5, fig.width=2.5}
+library(grid)
+x <- c(0, 0, 1, 1)
+y <- c(0, 1, 0, 1)
+dat1 <- data.frame(x, y)
+example1 <- ggplot(dat1, aes(x=x, y=y))+
+  geom_point()+
+  coord_cartesian()
+example1 + annotate("text", x=1.2, y=1, label = "(1,1)", size=3)+
+  annotate("text", x=1.15, y=0.1, label = "(1,0)", size=3)+
+  annotate("text", x=0.2, y=1, label = "(0,1)", size=3)+
+  annotate("text", x=0.2, y=0.1, label = "(0,0)", size=3)+
+  theme(axis.title= element_blank(), axis.text=element_blank(), 
+        axis.ticks=element_blank(), panel.background=element_blank(), 
+        panel.grid= element_blank(), axis.line=element_blank(),
+        plot.margin=unit(c(1,1,1,1),'cm'))+
+  geom_segment(aes(x = 0.1, y = 1.4, xend = -.4, yend = 1.2),linetype=2) +
+  geom_segment(aes(x = -.4, y = 1.2, xend = 1.1, yend = -0.4),linetype=2) +
+  geom_segment(aes(x = 1.1, y = -0.4, xend = 1.6, yend = -0.2),linetype=2) +
+  geom_segment(aes(x = 1.6, y = -0.2, xend = 0.1, yend = 1.4),linetype=2) +
+  geom_segment(aes(x=0,y=0,xend=0,yend=1.5),linetype=1)+
+  geom_segment(aes(x=0,y=0,xend=1.2,yend=0),linetype=1)
+```   
+
+S itself represents the **certain event** and the **impossible event**, ${S}' = \o$.  
+
+##Sets and Sample Spaces: the Algebra of Events  
+
+If A and B are events then  
+
+1) $A \cup B \hspace{.5in}$ - &nbsp;&nbsp; "either A or B or both occurred."  
+2) $A \cap B \hspace{.5in}$ - &nbsp;&nbsp; "both A _and_ B or both occurred."  
+3) ${A}' \hspace{.75in}$ - &nbsp;&nbsp; "A did not occur."  
+4) $A - B \hspace{.5in}$ - &nbsp;&nbsp; "A, but not B, occurred."  
+5) $A \cap B = \o \hspace{.25in}$ - &nbsp;&nbsp; disjoint/mutually exclusive  
+$\hspace*{1.25in}$"Either A or B could occur, but not both together."  
+
+$\hspace*{.5in}$ _Example:_ $\hspace{.5in}$ Toss coin twice.  
+
+$\hspace*{1in}$ 1) "At least one head" A: {H, HT, TH}  
+
+$\hspace*{1in}$ 2) "Second toss is a tail" B: {HT, TT}  
+
+$\hspace*{2in} A\cup B$ ={HH, HT, TH, TT}  
+
+$\hspace*{1in}$ 3) "At least one head _and_ the second toss is a tail" $A\cap B$: {HT}  
+
+$\hspace*{1in}$ 4) "No heads" ${A}'$  = {TT}  
+
+
+Note: The **complement** of "at least one head" is "no heads." This is most useful in solving many problems.  
+
+\begingroup\centering
+
+##Concepts of Probability  
+\endgroup
+
+Began with an analysis of games of chance. Though there were earlier efforts, the birth of the mathematical theory of probability can be traced to the year 1654 when the French gentleman, Antoine Gombauld Chevalier DeMéré consulted Blaise Pascal about a game of chance:  
+
+_**Simple Case**_: The House is willing to bet even money that a player will throw **at least one 6** in four tosses of 2 die.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P(at least one 6) = 1 - P($\bar{6}$'s) in four tosses  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = $1 - \left( \frac{5}{6}\right)^{4}$ = 1-0.48 = 0.52
+
+&nbsp;  
+
+_**More Complicated Case**_: How many tosses will give beneift to the House when **two dice** are tossed and double sixes is the point?  
+$\hspace*{.5in}$ 6 x 4 = 24 &nbsp;&nbsp;&nbsp; -- No [although two dice have six times more possibilities than one]  
+$\hspace*{.5in}$  1 - P $\left (\bar{66} \right)^{24}$ = (1 - 0.508) = 0.492 = P(at least one 66)  
+$\hspace*{.5in}$  1 - P $\left (\bar{66} \right)^{25}$ = (1 - 0.492) = 0.508 = P(at least one 66) 
+
+Take at least 25 times to give benefit to the House.  
+
+&nbsp;  
+
+*Probl$\grave{e}$m des parties* -- Proper payoff when game must be stopped. Also, how much should one pay to play a given game [e.g. how much should you pay for a lottery ticket?]  
+
+Early figures: Pascal, Fermat, Huygens, Bernoulli, Laplace.  
+
+> "It is remarkable that a science which began with the consideration of game of chance  should have become 
+> the most important object of human knowledge."  
+$\hspace*{1.5in}$ ~Laplace, _Théorie Analytique des Probabilit$\grave{e}$s._  
+
+&nbsp;  
+
+&nbsp;  
+
+1. Classical or **a priori** approach.  
+$\hspace*{.5in}$ Definition: The probability of an event E, P(E), is defined by  
+$\hspace*{1in}$ P(E) =n/N  
+$\hspace*{.5in}$ Where N is the total number of **equally probable** outcomes, and n is the number of  
+$\hspace*{.5in}$ outcomes that constitute the event E.
+
+$\hspace*{.5in}$ _Example:_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fair coin N = 2 {H, T}  
+$\hspace*{1.5in}$ P(H) = 1/2  
+$\hspace*{1.5in}$ Fair die N = 6  
+$\hspace*{1.5in}$ P('2') = $\frac{1}{6}$  
+
+Problem:$\hspace*{.5in}$ What does **equally probable** mean? Attemps to define lead to circularity.  
+
+2. Frequency or **a posteriori** approach. ["In the long run"] - **empirical** probability  
+$\hspace*{.5in}$ Definition: If after N repetitions of an experiment, where N is very large, a given event E   
+$\hspace*{.5in}$ is observed to occur n of these, then  
+$\hspace*{1.5in}$ P(E) = n/N  
+
+[What does "N is very large" mean] -- Need concept of a **limit** -- Takes an initially empirical concept and turns it into an abstract one.  
+
+3. **Axiomatic** Approach - **Modern Probability Theory**  
+$\hspace*{.5in}$ Probability is a measure on **sets of events**.  
+$\hspace*{.5in}$ Assume sample space, S. If S is discrete (countable) all subsets of S are events E.  
+$\hspace*{.5in}$ If S is continuous, then measurable (lengths, areas, etc.) subsets constitute events E.  
+
+&nbsp;  
+
+To each event E we assign a real number, P(E) -- i.e. P is a real-valued function defined on S, a **probability function**.  
+P(E) is called the probability of E.  
+
+$\hspace*{.5in}$ _Axiom I._  For every event E in S  
+$\hspace*{1in} P(E) \geq 0$.  
+
+$\hspace*{.5in}$ _Axiom II._  For the **certain event** S 
+$\hspace*{1in}$ (probability that **something** happens)  
+$\hspace*{1in} P(S) = 1$
+
+$\hspace*{.5in}$ _Axiom III._  For any number of **mutually exclusive** events $E_{1}, E_{2}, E_{3}, ..., E_{n}$, in S.  
+$\hspace*{1in} P(E_{1} \cup E_{2} \cup E_{3} \cup ... \cup E{n}) =$  
+$\hspace*{1in} P(E_{1}) + P(E_{2}) + P(E_{3}) + ... + P(E_{n})$  
+
+&nbsp;  
+
+##Some Basic Theorems  
+
+_Theorem 1-14_. If $E_{1} \subset E_{2}$, then  
+$\hspace*{1in} P(E_{1}) \leq P(E_{2})$ and $P(E_{2} - E_{1}) = P(E_{2}) - P(E_{1})$.  
+
+_Theorem 1-15_. For every event E,  
+$\hspace*{1in}  0 \leq P(E) \leq 1$ 
+
+_Theorem 1-16_. $P(\o) = 0$  
+
+_Theorem 1-17_. If $E'$ is the complement of $E$, then   
+$\hspace*{1in}$  $P(E') = 1 - P(E)$  
+
+_Theorem 1-18_. If $\bar{E} = E_{1} \cup E_{2} \cup E_{3} \cup ... \cup E_{n}$ where the $E_{j}$s are mutually exclusive  
+$\hspace*{1in} P(\bar{E}) = P(E_{1}) + P(E_{2}) + P(E_{3}) + ... + P(E_{n})$.  
+$\hspace*{1in}$ If $\bar{E} = S, P(E)= 1$ 
+
+_Theorem 1-19_. If $E_{1}$ and $E_{2}$ are **any** two events, then  
+$\hspace*{1in} P(E_{1} \cup E_{2}) = P(E_{1}) + P(E_{2}) - P(E_{1} \cap E_{2})$  
+
+Note:    
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{scope} % start of clip scope
+\clip (0,0) circle (1cm);
+\fill[gray] (1.5,0) circle (1cm);
+\end{scope} % end of clip scope
+\draw (0,0) circle (1cm);
+\draw (1.5,0) circle (1cm);
+\draw (0,1.2) node {$E_1$};
+\draw (1.5,1.2) node {$E_2$};
+\draw[thick, ->] (.75,-1.3) -- (.75,-.3);
+\draw (.75,-1.5) node {$E_1 \cap E_2 - \text{ count only once}$};
+\end{tikzpicture}
+\end{subfigure}
+\end{figure}
+
+$\hspace*{1in} P(E_{1} \cup E_{2} \cup E_{3}) = P(E_{1}) + P(E_{2}) + P(E_{3})$  
+$\hspace*{2in} - P(E_{1} \cap E_{2}) - P(E_{2} \cap E_{3})$  
+$\hspace*{2in} - P(E_{1} \cap E_{3}) + P(E_{1} \cap E_{2} \cap E_{3})$
+
+
+\begin{figure}[!htb]
+\centering
+\resizebox{.75 \linewidth}{!}{
+\def\firstcircle{(270:3.25cm) circle (2.5cm)}
+\def\secondcircle{(210:1.75cm) circle (2.5cm)}
+\def\thirdcircle{(330:1.75cm) circle (2.5cm)}
+\begin{tikzpicture}
+\begin{scope} [fill opacity=0.5]
+\clip \secondcircle;
+\fill[gray] \thirdcircle;
+\fill[gray] \firstcircle;
+\end{scope}
+\begin{scope} [fill opacity=0.5]
+\clip \firstcircle;
+\fill[gray] \secondcircle;
+\fill[gray] \thirdcircle;
+\end{scope}
+\draw \firstcircle;
+\draw \secondcircle;
+\draw \thirdcircle;
+\draw [->] (-4.4,-4) -- (-1.25,-2.5);
+\draw (-4.6,-4.3) node {$(E_1 \cap E_3)$};
+\draw [->] (4.4,-4) -- (1.25,-2.5);
+\draw (4.6,-4.3) node {$(E_2 \cap E_3$)};
+\draw [->] (4.4,1) -- (0,-1.3);
+\draw [align=left] (7,1.5) node {$(E_1 \cap E_2 \cap E_3)$ \\ subtracted 3 times -- needs to be added in};
+\draw [->] (0,3) -- (0,0);
+\draw (0,3.3) node {$(E_1 \cap E_2)$};
+\end{tikzpicture}
+}
+\end{figure}
+
+_______  
+
+
+_Theorem 1-20_. $P(E_{1}) = P(E_{1} \cap E_{2}) + P(E_{1} \cap E')$  
+
+_Theorem 1-21_. If an event $E$ must result in one of the mutually exclusive events $E_{1}, E_{2}, E_{3}, ..., E_{n}$, then   
+$\hspace*{1in} P(E) = P(E \cap E_{1}) + P(E \cap E_{2}) + ... + P(E \cap E_{n})$  
+
+##Assignment of Probabilities  
+
+If a sample space is made up of only elementary (simple) events, $E_{1}, E_{2}, E_{3}, ... E_{n}$, then  
+$\hspace*{1in} \sum\limits_{i}^{N} P(E_{i}) = 1$  
+
+&nbsp;  
+
+If we assume equal probabilities, $P(E_{i}) = 1/N$.  $i = 1, 2, 3, ..., N$.  
+
+If $E$ is any event made up of $n$ such simple events, then  
+$\hspace*{1in} P(E) = n/N \hspace*{1in}$ \qquad (NOTE, this is the classical approach)  
+
+&nbsp;
+
+Probability Theory offers a mathematical model of the occurrence of events that must be tested _by experiment_ (frequency or empirical approach).  
+
+&nbsp;  
+
+Example 1: $\hspace*{1in}$ A single die is tossed. What is the probability of 2 **or** 5 turning up?  
+$\hspace*{2in}$ P(2 **or** 5) = P(2) + P(5) = $\frac{1}{6} + \frac{1}{6} = \frac{1}{3} \hspace{.5in}$ [mutually exclusive]  
+
+&nbsp;  
+
+Example 2: $\hspace*{1in}$ A single card is drawn from an ordinary deck.  
+$\hspace*{2in} P(\text{Ace}) = 4/52 = 1/13$  
+$\hspace*{2in} P(J \heartsuit) = 1/52$  
+$\hspace*{2in} P(3 \clubsuit \text{ or } 6 \diamondsuit) = 1/52 + 1/52 = 1/26$  
+$\hspace*{2in} P(\heartsuit) = 13/52 = 1 - P(\overline{\heartsuit})$  
+$\hspace*{2in} P(\overline{\heartsuit}) = 39/52$
+
+$\hspace*{2.1in} \cup$  
+Example 3: $\hspace*{1in} P(10 \textit{ or } \spadesuit) = (4/52 + 13/52) - (1/52) = 4/13$  
+
+$\hspace*{2.1in} \cap$  
+$\hspace*{1.75in} P(4' \textit{ nor } \clubsuit ') = 1 - P(4 \text{ or } \clubsuit) = 1 - (4/52 +13/52 - 1/52) = 9/13$  
+
+Example 4: $\hspace*{.25in}$ 2500 freshmen  
+$\hspace*{1in}$ 1000 are women $\Rightarrow$ 1500 are men  
+$\hspace*{1in}$ 1200 weigh > 140#  
+$\hspace*{.75in}$ women: 700 taller > 5'5"  
+$\hspace*{.75in}$ men: 1300 taller > 5'5"  
+$\hspace*{.75in}$ P(male) = 1500/2500 = 3/5  
+$\hspace*{.75in}$ P(>140#) = 1200/2500 = 12/25  
+$\hspace*{.75in}$ P(>5'5") = 2000/2500 = 4/5  
+$\hspace*{.75in}$ P(male < 5'5") = 200/2500 = 2/25  
+
+
+##Gaining intuition  
+
+Example:  
+
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,1.7) node {I};
+\draw (.75,.5) circle (.7cm) node {W};
+\draw (-.75,-.5) circle (.7cm) node {R};
+\draw (2.25,-.5) circle (.7cm) node {W};
+\end{tikzpicture}
+}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\textwidth}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}
+\draw (-2,-1.5) rectangle (3.5,1.5);
+\draw (.75,1.7) node {II};
+\draw (.75,.5) circle (.7cm) node {W};
+\draw (-.75,-.5) circle (.7cm) node {R};
+\draw (2.25,-.5) circle (.7cm) node {R};
+\end{tikzpicture}
+}
+\end{subfigure}
+\end{figure}
+
+$\hspace*{1in}$ Choose at random 1 ball from I and put into II.  
+$\hspace*{1in}$ What is the a priori probability that the ball drawn from II will be white?  
+$\hspace*{1in}$ $(2/3)(1/2) + (1/3)(1/4) = 5/12$  
+
+\vfill
+------------------------------------------------
+
+\includegraphics{cc.png}  
+This work is licensed under a \href{http://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License}. These notes were adapted from notes written by M. Jackson Marr at Georgia Institute of Technology.

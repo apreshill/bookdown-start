@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Probability &amp; Statistics</title>
+  <meta name="description" content="Everything you need (and nothing more) to start a bookdown book.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Probability &amp; Statistics" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="http://seankross.com/bookdown-start/" />
+  
+  <meta property="og:description" content="Everything you need (and nothing more) to start a bookdown book." />
+  <meta name="github-repo" content="seankross/bookdown-start" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Probability &amp; Statistics" />
+  
+  <meta name="twitter:description" content="Everything you need (and nothing more) to start a bookdown book." />
+  
+
+<meta name="author" content="Alison Presmanes Hill, Katina Papadakis, and M. Jackson Marr">
+
+
+<meta name="date" content="2018-08-24">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="set-operations.html">
+<link rel="next" href="diving-in.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Bookdown Book</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-the-algebra-of-sets.html"><a href="introduction-to-the-algebra-of-sets.html"><i class="fa fa-check"></i><b>1</b> Introduction to the Algebra of Sets</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-the-algebra-of-sets.html"><a href="introduction-to-the-algebra-of-sets.html#sets"><i class="fa fa-check"></i><b>1.1</b> Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="subsets.html"><a href="subsets.html"><i class="fa fa-check"></i><b>2</b> Subsets</a><ul>
+<li class="chapter" data-level="2.1" data-path="subsets.html"><a href="subsets.html#venn-diagrams"><i class="fa fa-check"></i><b>2.1</b> Venn Diagrams</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="set-operations.html"><a href="set-operations.html"><i class="fa fa-check"></i><b>3</b> Set Operations</a><ul>
+<li class="chapter" data-level="3.1" data-path="set-operations.html"><a href="set-operations.html#union"><i class="fa fa-check"></i><b>3.1</b> 1. Union</a></li>
+<li class="chapter" data-level="3.2" data-path="set-operations.html"><a href="set-operations.html#intersection"><i class="fa fa-check"></i><b>3.2</b> 2. Intersection</a></li>
+<li class="chapter" data-level="3.3" data-path="set-operations.html"><a href="set-operations.html#difference"><i class="fa fa-check"></i><b>3.3</b> 3. Difference</a></li>
+<li class="chapter" data-level="3.4" data-path="set-operations.html"><a href="set-operations.html#complement"><i class="fa fa-check"></i><b>3.4</b> 4. Complement</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="some-theorems-involving-sets.html"><a href="some-theorems-involving-sets.html"><i class="fa fa-check"></i><b>4</b> Some Theorems Involving Sets</a></li>
+<li class="chapter" data-level="5" data-path="diving-in.html"><a href="diving-in.html"><i class="fa fa-check"></i><b>5</b> Diving In</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Probability &amp; Statistics</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="some-theorems-involving-sets" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Some Theorems Involving Sets</h1>
+<p>You should be able to <strong>prove</strong> the following:</p>
+<p><em>Theorem 1-1.</em><span class="math inline">\(\hspace{10 mm}\)</span> If <span class="math inline">\(A \subset B\)</span> and <span class="math inline">\(B \subset C\)</span>, then <span class="math inline">\(A \subset C\)</span>.</p>
+<p><span class="math inline">\(\hspace{32 mm} x \in A \Rightarrow x \in B \Rightarrow x \in C\)</span>.</p>
+<p><span class="math inline">\(\hspace{32 mm}\)</span> Then <span class="math inline">\(x \in A \Rightarrow x \in C\)</span>.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-2.</em><span class="math inline">\(\hspace{10 mm} A \cup B = B \cup A\)</span>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-3.</em><span class="math inline">\(\hspace{10 mm} A\cup ( B \cup C ) = (A \cup B) \cup C = A \cup B \cup C\)</span>.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-4.</em> <span class="math inline">\(\hspace{10 mm} A \cap B = B \cap A\)</span>.<br />
+<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-5.</em><span class="math inline">\(\hspace{10 mm} A\cap ( B \cap C ) = (A \cap B) \cap C = A \cap B \cap C\)</span>.<br />
+<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-6.</em> <span class="math inline">\(\hspace{10 mm} A \cap(B \cup C) = (A \cap B) \cup (A \cap C)\)</span>.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-7.</em> <span class="math inline">\(\hspace{10 mm} A \cup(B \cap C) = (A \cup B) \cap (A \cup C)\)</span>.<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a></p>
+
+<p><em>Theorem 1-8.</em> <span class="math inline">\(\hspace{10 mm} A - B = A \cap {B}&#39;\)</span>.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-9.</em> <span class="math inline">\(\hspace{10 mm}\)</span> If <span class="math inline">\(A \subset B\)</span>, then <span class="math inline">\({B}&#39; \subset {A}&#39;\)</span>.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-10.</em> <span class="math inline">\(\hspace{10 mm} A \cup \o = A\)</span>. <span class="math inline">\(A \cap \o = \o\)</span>.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-11.</em> <span class="math inline">\(\hspace{10 mm} A \cup U = U\)</span>. <span class="math inline">\(A \cap U = A\)</span>.<br />
+<span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-12a.</em> <span class="math inline">\(\hspace{10 mm} {(A \cup B)}&#39; = {A}&#39; \cap {B}&#39;\)</span>.<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-12b.</em><span class="math inline">\(\hspace{10 mm} {(A \cap B)}&#39; = {A}&#39; \cup {B}&#39;\)</span>.<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a> <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><em>Theorem 1-13.</em> <span class="math inline">\(\hspace{10 mm} A = (A \cap B) \cup (A \cap {B}&#39;)\)</span>. <span class="math inline">\(\vspace{1 mm}\)</span></p>
+<p><span class="math inline">\(\pagebreak\)</span></p>
+<p><strong>Principle of Duality:</strong> Any true relation remains true if we replace ‘<span class="math inline">\(\cup\)</span>’ by ‘<span class="math inline">\(\cap\)</span>’, ‘<span class="math inline">\(\cap\)</span>’ by ‘<span class="math inline">\(\cup\)</span>’, sets by their complements and if we reverse inclusion symbols ‘<span class="math inline">\(\subset\)</span>’ and ‘<span class="math inline">\(\supset\)</span>’.</p>
+<p>Consider the following sets:</p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> U = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4}</p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> A = {<span class="math inline">\(-\sqrt{2}\)</span>, <span class="math inline">\(\pi\)</span>, 0}</p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> B = {5, 1/2, <span class="math inline">\(-\sqrt{2}\)</span>, -4}</p>
+<p><span class="math inline">\(\hspace{10 mm}\)</span> C = {1/2, -4}</p>
+<p>Use these sets to illustrate Theorems 2-13.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p><span class="math inline">\(A \cup B\)</span> = {<span class="math inline">\(1/2, 0, \pi, 5, -\sqrt{2}, -4\)</span>} = <span class="math inline">\(B \cup A\)</span>.</p></li>
+<li><p><span class="math inline">\(A \cup (B \cup C) = (A \cup B) \cup C = A \cup B \cup C\)</span> = {<span class="math inline">\(1/2, 0, \pi, 5, -\sqrt{2}, -4\)</span>}.</p></li>
+<li><p><span class="math inline">\(A \cap B\)</span> = {<span class="math inline">\(-\sqrt{2}\)</span>} = <span class="math inline">\(B \cap A\)</span>.</p></li>
+<li><p><span class="math inline">\(A \cap (B \cup C)\)</span> = <span class="math inline">\(A \cap\)</span> ({1/2, -4}) = {<span class="math inline">\(-\sqrt{2}, \pi, 0\)</span>} <span class="math inline">\(\cap\)</span> {1/2, -4} = <span class="math inline">\(\o\)</span></p></li>
+<li><p><span class="math inline">\(A \cap (B \cap C)\)</span> = {<span class="math inline">\(-\sqrt{2}, \pi, 0\)</span>} <span class="math inline">\(\cap\)</span> {<span class="math inline">\(5, 1/2, -\sqrt{2}, -4\)</span>} = <span class="math inline">\((A \cap B) \cup (A \cap C)\)</span> = {<span class="math inline">\(-\sqrt{2}\)</span>} <span class="math inline">\(\cup \o\)</span> = {<span class="math inline">\(-\sqrt{2}\)</span>}.</p></li>
+<li><p><span class="math inline">\(A \cup (B \cap C)\)</span> = {<span class="math inline">\(-\sqrt{2}, \pi\)</span>, 0} <span class="math inline">\(\cup\)</span> {1/2,-4} = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4}.<br />
+              = <span class="math inline">\((A \cup B) \cap (A \cup C)\)</span> = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4} <span class="math inline">\(\cap\)</span> {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4} = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4}.</p></li>
+<li><p><span class="math inline">\(B - A = B \cap {A}&#39;\)</span><br />
+{<span class="math inline">\(5, 1/2, -\sqrt{2}, -4\)</span>} - {<span class="math inline">\(-\sqrt{2}, \pi\)</span>, 0} = {5, 1/2, -4} = {<span class="math inline">\(5, 1/2, -\sqrt{2}, -4\)</span>} <span class="math inline">\(\cap\)</span> {5, 1/2, -4}.</p></li>
+<li><p><span class="math inline">\(C \subset B\)</span><br />
+{1/2, -4} <span class="math inline">\(\subset\)</span> {<span class="math inline">\(5, 1/2, -\sqrt{2}, -4\)</span>}.<br />
+<span class="math inline">\({C}&#39;\)</span> = {<span class="math inline">\(0, \pi, 5, -\sqrt{2}\)</span>}.<br />
+<span class="math inline">\({B}&#39;\)</span> = {0, <span class="math inline">\(\pi\)</span>} <span class="math inline">\(\Rightarrow {B}&#39; \subset {A}&#39;\)</span>.</p></li>
+<li><p><span class="math inline">\(A \cup U\)</span> = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, <span class="math inline">\(-\sqrt{2}\)</span>, -4}.</p></li>
+<li><p><span class="math inline">\((A \cup {B})&#39;\)</span> = <span class="math inline">\(\o\)</span>.                <span class="math inline">\({A}&#39; \cap {B}&#39;\)</span> = {5, 1/2, -4} <span class="math inline">\(\cap\)</span> {<span class="math inline">\(\pi\)</span>, 0} = <span class="math inline">\(\o\)</span>.</p></li>
+<li><p><span class="math inline">\((A \cap B)&#39;\)</span> = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, -4}.<br />
+<span class="math inline">\({A}&#39; \cup {B}&#39;\)</span> = {5, 1/2, -4} <span class="math inline">\(\cup\)</span> {<span class="math inline">\(\pi\)</span>, 0} = {1/2, 0, <span class="math inline">\(\pi\)</span>, 5, -4}.</p></li>
+<li><p>(A <span class="math inline">\(\cap\)</span> B) <span class="math inline">\(\cup\)</span> (A <span class="math inline">\(\cap {B}&#39;\)</span>) = {1/2} <span class="math inline">\(\cup\)</span> {<span class="math inline">\(-\sqrt{2}, \pi, 0\)</span>} <span class="math inline">\(\cap\)</span> {<span class="math inline">\(\pi\)</span>, 0} = {<span class="math inline">\(-\sqrt{2}, \pi\)</span>, 0} = A.</p></li>
+</ol>
+
+
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>Commutative law for unions<a href="some-theorems-involving-sets.html#fnref1">↩</a></p></li>
+<li id="fn2"><p>Associative law for unions<a href="some-theorems-involving-sets.html#fnref2">↩</a></p></li>
+<li id="fn3"><p>Commutative law for intersections<a href="some-theorems-involving-sets.html#fnref3">↩</a></p></li>
+<li id="fn4"><p>Associative law for intersections<a href="some-theorems-involving-sets.html#fnref4">↩</a></p></li>
+<li id="fn5"><p>First distributive law<a href="some-theorems-involving-sets.html#fnref5">↩</a></p></li>
+<li id="fn6"><p>Second distributive law<a href="some-theorems-involving-sets.html#fnref6">↩</a></p></li>
+<li id="fn7"><p>DeMorgan’s First Law<a href="some-theorems-involving-sets.html#fnref7">↩</a></p></li>
+<li id="fn8"><p>DeMorgan’s Second Law<a href="some-theorems-involving-sets.html#fnref8">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="set-operations.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="diving-in.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

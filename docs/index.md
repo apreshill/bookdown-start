@@ -1,7 +1,7 @@
 --- 
 title: "Probability & Statistics"
 author: "Alison Presmanes Hill, Katina Papadakis, and M. Jackson Marr"
-date: "2018-08-24"
+date: "2018-09-08"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib]
